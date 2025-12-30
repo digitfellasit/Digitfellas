@@ -1,0 +1,343 @@
+{
+  "brand": {
+    "name": "Digitfellas"
+  },
+  "navigation": {
+    "items": [
+      {
+        "id": "806d1633-d1c3-4df1-b7d9-9e6eb414e94b",
+        "label": "Home",
+        "href": "/"
+      },
+      {
+        "id": "5e75e468-5df8-4a03-b6c0-3be76678b2b5",
+        "label": "About",
+        "href": "/about"
+      },
+      {
+        "id": "c7d5ddd1-f25e-427e-96cd-e832d0db3af1",
+        "label": "Services",
+        "href": "/services"
+      },
+      {
+        "id": "ff277d86-b1b9-4fa5-a9ba-2e432a98ced5",
+        "label": "Projects",
+        "href": "/projects"
+      },
+      {
+        "id": "d99f0e0f-7c0d-4a2b-b776-acac64533a16",
+        "label": "Blog",
+        "href": "/blog"
+      },
+      {
+        "id": "dba6ed93-2fbe-4af5-8407-9e7f4a365078",
+        "label": "Contact",
+        "href": "/contact"
+      }
+    ],
+    "cta": {
+      "label": "Get a quote",
+      "href": "/contact"
+    }
+  },
+  "home": {
+    "hero": {
+      "kicker": "Digitfellas • IT Solutions LLP",
+      "title": "We craft modern software for modern businesses.",
+      "subtitle": "Product engineering, web development, automation, and cloud-ready solutions—designed to move fast without breaking things.",
+      "primaryCta": {
+        "label": "Start a project",
+        "href": "/contact"
+      },
+      "secondaryCta": {
+        "label": "Explore services",
+        "href": "/services"
+      },
+      "bullets": [
+        {
+          "id": "ef8396d8-f6a6-47a0-8fc2-9bc7478f32de",
+          "text": "Web apps • Dashboards • Portals"
+        },
+        {
+          "id": "26bce5f6-f5d1-4b25-a23c-000cc20a54e6",
+          "text": "Automation & Integrations"
+        },
+        {
+          "id": "a2d2c8ac-d728-4c15-b844-ce63a6a7085e",
+          "text": "Performance, security & reliability focus"
+        }
+      ],
+      "stats": [
+        {
+          "id": "6f0a4bac-75a7-430d-8e12-c0eae8bdf329",
+          "value": "7+ yrs",
+          "label": "Delivery experience"
+        },
+        {
+          "id": "12dc4b63-281e-469d-9551-8eab5617759d",
+          "value": "24/7",
+          "label": "Support mindset"
+        },
+        {
+          "id": "a86de21c-c1d6-46f1-9de6-8f310930a3d5",
+          "value": "Fast",
+          "label": "Execution"
+        }
+      ],
+      "mediaLabel": "Digitfellas",
+      "media": {
+        "desktop": [
+          {
+            "id": "dcd2bbee-98dd-41cb-a24a-a0a9b664a125",
+            "type": "image",
+            "url": "/uploads/placeholder-hero.jpg",
+            "alt": "Digitfellas hero"
+          }
+        ],
+        "mobile": [
+          {
+            "id": "0b1f4522-3293-4f28-92a7-dcb1220784bd",
+            "type": "image",
+            "url": "/uploads/placeholder-hero.jpg",
+            "alt": "Digitfellas hero mobile"
+          }
+        ]
+      }
+    },
+    "services": {
+      "eyebrow": "Services",
+      "title": "Everything you need to build, ship, and scale.",
+      "subtitle": "From UI engineering to backend systems and automation — delivered end-to-end.",
+      "items": [
+        {
+          "id": "6363e05b-00c7-48f3-abdc-3d555b20ae7d",
+          "slug": "web-development",
+          "title": "Web Development",
+          "description": "High-performance websites, portals, and web apps with modern UX.",
+          "tag": "Frontend + Backend",
+          "meta": "Next.js / Node / APIs",
+          "href": "/services/web-development",
+          "images": {
+            "desktop": [],
+            "mobile": []
+          }
+        },
+        {
+          "id": "424b756c-6394-49bd-8f72-4dc5f4074fa8",
+          "slug": "automation",
+          "title": "Automation & Integrations",
+          "description": "Connect tools, reduce manual work, and ship reliable workflows.",
+          "tag": "Automation",
+          "meta": "APIs / Webhooks / ETL",
+          "href": "/services/automation",
+          "images": {
+            "desktop": [],
+            "mobile": []
+          }
+        },
+        {
+          "id": "eb71528b-8a46-4ddf-981b-68e4e3a3d1fb",
+          "slug": "cloud-devops",
+          "title": "Cloud & DevOps",
+          "description": "Deployment pipelines, monitoring, and scalable infrastructure.",
+          "tag": "DevOps",
+          "meta": "CI/CD / Observability",
+          "href": "/services/cloud-devops",
+          "images": {
+            "desktop": [],
+            "mobile": []
+          }
+        }
+      ]
+    },
+    "projects": {
+      "eyebrow": "Projects",
+      "title": "A selection of builds.",
+      "subtitle": "Case studies, internal tools, and product work.",
+      "items": [
+        {
+          "id": "3dc14776-01e3-4564-98b2-97e335653054",
+          "title": "Operations Dashboard",
+          "description": "KPI dashboard with role-based access and export workflows.",
+          "category": "Dashboard",
+          "link": "/projects",
+          "images": {
+            "desktop": [
+              {
+                "id": "6de951e4-431c-49d3-be97-0b5284f9908b",
+                "url": "/uploads/placeholder-project.jpg",
+                "alt": "Project"
+              }
+            ],
+            "mobile": []
+          }
+        },
+        {
+          "id": "a3ae448c-e5c2-48dd-ab00-a093fb946dd8",
+          "title": "Lead Management CRM",
+          "description": "Pipeline, follow-ups, and automation to accelerate sales.",
+          "category": "CRM",
+          "link": "/projects",
+          "images": {
+            "desktop": [
+              {
+                "id": "a113eb26-7b5f-4e07-8415-2085cf9ced2c",
+                "url": "/uploads/placeholder-project.jpg",
+                "alt": "Project"
+              }
+            ],
+            "mobile": []
+          }
+        },
+        {
+          "id": "34cc6c1d-8314-46e4-bf56-4e0e05378c65",
+          "title": "Service Booking Platform",
+          "description": "Scheduling, payments-ready flows, and admin control.",
+          "category": "Platform",
+          "link": "/projects",
+          "images": {
+            "desktop": [
+              {
+                "id": "df619604-7da9-4254-b285-0f3be4564b2c",
+                "url": "/uploads/placeholder-project.jpg",
+                "alt": "Project"
+              }
+            ],
+            "mobile": []
+          }
+        }
+      ]
+    },
+    "blog": {
+      "eyebrow": "Blog",
+      "title": "Notes for builders.",
+      "subtitle": "Short reads about product engineering and delivery.",
+      "items": [
+        {
+          "id": "61250bae-07e7-4711-b86a-a195317e915e",
+          "slug": "shipping-fast-with-quality",
+          "title": "Shipping fast without losing quality",
+          "excerpt": "Practical ways to keep speed high while maintaining reliability.",
+          "date": "2025-12-27",
+          "content": "# Shipping fast without losing quality\n\nSpeed and quality are not enemies. They need a process: small batches, good feedback loops, and strong defaults.",
+          "featured": [
+            {
+              "id": "f59d517a-b0dd-49e9-898b-37faf2c304a2",
+              "url": "/uploads/placeholder-blog.jpg",
+              "alt": "Blog cover"
+            }
+          ]
+        },
+        {
+          "id": "0718142b-df59-4a59-a533-3061e11245d5",
+          "slug": "a-simple-automation-stack",
+          "title": "A simple automation stack for SMEs",
+          "excerpt": "How to connect tools, reduce manual work, and keep things maintainable.",
+          "date": "2025-12-27",
+          "content": "# A simple automation stack for SMEs\n\nStart with the processes that waste the most time, then automate with webhooks and reliable integrations.",
+          "featured": [
+            {
+              "id": "a352b9aa-da7a-4b59-906f-b9f86ee73e7a",
+              "url": "/uploads/placeholder-blog.jpg",
+              "alt": "Blog cover"
+            }
+          ]
+        },
+        {
+          "id": "9e65f9fb-8e26-40a2-a7ab-915a71f99bb0",
+          "slug": "building-dashboards-that-people-use",
+          "title": "Building dashboards that people actually use",
+          "excerpt": "Design for decisions, not for vanity charts.",
+          "date": "2025-12-27",
+          "content": "# Building dashboards that people actually use\n\nFocus on decisions, keep charts simple, and bake in trust with data quality checks.",
+          "featured": [
+            {
+              "id": "b2a25fa2-2d07-423f-b2c2-096fe5fafd86",
+              "url": "/uploads/placeholder-blog.jpg",
+              "alt": "Blog cover"
+            }
+          ]
+        }
+      ]
+    },
+    "testimonials": {
+      "eyebrow": "Testimonials",
+      "title": "Teams trust Digitfellas.",
+      "subtitle": "A few words from partners and clients.",
+      "items": [
+        {
+          "id": "d41d0e3f-e980-4ef6-b144-f88ba5925703",
+          "name": "Client Partner",
+          "role": "Operations",
+          "quote": "Digitfellas delivered a clean dashboard experience and helped us automate the boring parts."
+        },
+        {
+          "id": "5ffd2bb7-94d6-42df-a223-b49cf3c3ce7c",
+          "name": "Founder",
+          "role": "SaaS",
+          "quote": "Fast iterations, great communication, and production-ready quality."
+        }
+      ]
+    },
+    "logos": {
+      "title": "Partners",
+      "items": [
+        {
+          "id": "e59841b9-2985-4228-8299-c6946bf1de8b",
+          "label": "Partner One",
+          "url": "/uploads/placeholder-logo.svg"
+        },
+        {
+          "id": "84b10547-1e0b-481e-b05d-363a1185b21f",
+          "label": "Partner Two",
+          "url": "/uploads/placeholder-logo.svg"
+        },
+        {
+          "id": "5ef10582-e18e-4780-b0ce-bcae03b859c6",
+          "label": "Partner Three",
+          "url": "/uploads/placeholder-logo.svg"
+        }
+      ]
+    }
+  },
+  "pages": {
+    "about": {
+      "title": "About Digitfellas",
+      "content": "Digitfellas IT Solutions LLP is a professional IT organization delivering modern web development, automation, and scalable systems for teams that want to move fast.",
+      "media": {
+        "desktop": [],
+        "mobile": []
+      }
+    },
+    "contact": {
+      "title": "Contact",
+      "subtitle": "Tell us what you want to build. We respond quickly.",
+      "form": {
+        "enabled": true
+      }
+    }
+  },
+  "footer": {
+    "tagline": "Professional IT solutions for modern teams.",
+    "contact": {
+      "email": "info@digitfellas.com",
+      "phone": "+91",
+      "address": "India"
+    },
+    "socials": [
+      {
+        "id": "c38484b5-d3c5-4a92-b3a4-0a3a8ff7440e",
+        "label": "LinkedIn",
+        "href": "https://linkedin.com"
+      },
+      {
+        "id": "1e82325b-b8b4-4b8e-a4b0-8f79c4bceb0e",
+        "label": "GitHub",
+        "href": "https://github.com"
+      }
+    ]
+  },
+  "_meta": {
+    "updatedAt": "2025-12-27T09:00:43.240Z"
+  }
+}

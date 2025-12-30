@@ -1,0 +1,409 @@
+﻿
+> nextjs-mongo-template@0.1.0 build
+> next build
+
+  Γû▓ Next.js 14.2.35
+  - Environments: .env
+
+   Creating an optimized production build ...
+node.exe : <w> [webpa
+ck.cache.PackFileCach
+eStrategy] Skipped 
+not serializable 
+cache item 'Compilati
+on/modules|C:\Users\d
+fuser\Desktop\digitfe
+llas-main\node_module
+s\next\dist\build\web
+pack\loaders\css-load
+er\src\index.js??rule
+Set[1].rules[14].oneO
+f[12].use[2]!C:\Users
+\dfuser\Desktop\digit
+fellas-main\node_modu
+les\next\dist\build\w
+ebpack\loaders\postcs
+s-loader\src\index.js
+??ruleSet[1].rules[14
+].oneOf[12].use[3]!C:
+\Users\dfuser\Desktop
+\digitfellas-main\app
+\globals.css': No 
+serializer 
+registered for 
+PostCSSSyntaxError
+At C:\Program Files\n
+odejs\npm.ps1:29 
+char:3
++   & $NODE_EXE 
+$NPM_CLI_JS $args
++   ~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~
+    + CategoryInfo   
+           : NotSpe  
+  cified: (<w> [we   
+ bpack.ca...tCSSS    
+yntaxError:Strin    
+g) [], RemoteExc    
+eption
+    + FullyQualified 
+   ErrorId : Native  
+  CommandError
+ 
+<w> while 
+serializing webpack/l
+ib/cache/PackFileCach
+eStrategy.PackContent
+Items -> webpack/lib/
+NormalModule -> webpa
+ck/lib/ModuleBuildErr
+or -> 
+PostCSSSyntaxError
+Failed to compile.
+
+./app/globals.css:110
+:5
+Syntax error: C:\User
+s\dfuser\Desktop\digi
+tfellas-main\app\glob
+als.css The `after:[m
+ask:linear-gradient(#
+fff_0_0)_content-box,
+` class does not 
+exist. If `after:[mas
+k:linear-gradient(#ff
+f_0_0)_content-box,` 
+is a custom class, 
+make sure it is 
+defined within a 
+`@layer` directive.
+
+ [90m 108 | [39m
+ [90m 109 | [39m  
+[33m.border-gradient
+[39m [33m{[39m
+[1m[31m>[39m[22m
+[90m 110 | [39m    
+[36m@apply[39m 
+relative after[33m:
+[39mabsolute after[3
+3m:[39minset-0 after
+[33m:[39mrounded-[
+33m[[39minherit[33m
+][39m after[33m:[3
+9mp-[33m[[39m1px[3
+3m][39m after[33m:
+[39mbg-gradient-to-br
+ after[33m:[39mfrom
+-white/20 after[33m:
+[39mto-transparent a
+fter[33m:[39m[33m[
+[39mmask[33m:[39m
+[36mlinear-gradient[
+39m[36m(#fff_0_0)[3
+9m_content-box, [36m
+linear-gradient[39m
+[36m(#fff_0_0)[39m[
+33m][39m after[33m:
+[39m[33m[[39mmask-
+composite[33m:[39mx
+or[33m][39m after[
+33m:[39mpointer-even
+ts-none[33m;[39m
+ [90m     | [39m   
+ [1m[31m^[39m[22m
+ [90m 111 | [39m  
+[33m}[39m
+ [90m 112 | [39m
+
+./app/globals.css
+Syntax error: C:\User
+s\dfuser\Desktop\digi
+tfellas-main\app\glob
+als.css The `after:[m
+ask:linear-gradient(#
+fff_0_0)_content-box,
+` class does not 
+exist. If `after:[mas
+k:linear-gradient(#ff
+f_0_0)_content-box,` 
+is a custom class, 
+make sure it is 
+defined within a 
+`@layer` directive. 
+(110:5)
+
+ [90m 108 | [39m
+ [90m 109 | [39m  
+[33m.border-gradient
+[39m [33m{[39m
+[1m[31m>[39m[22m
+[90m 110 | [39m    
+[36m@apply[39m 
+relative after[33m:
+[39mabsolute after[3
+3m:[39minset-0 after
+[33m:[39mrounded-[
+33m[[39minherit[33m
+][39m after[33m:[3
+9mp-[33m[[39m1px[3
+3m][39m after[33m:
+[39mbg-gradient-to-br
+ after[33m:[39mfrom
+-white/20 after[33m:
+[39mto-transparent a
+fter[33m:[39m[33m[
+[39mmask[33m:[39m
+[36mlinear-gradient[
+39m[36m(#fff_0_0)[3
+9m_content-box, [36m
+linear-gradient[39m
+[36m(#fff_0_0)[39m[
+33m][39m after[33m:
+[39m[33m[[39mmask-
+composite[33m:[39mx
+or[33m][39m after[
+33m:[39mpointer-even
+ts-none[33m;[39m
+ [90m     | [39m   
+ [1m[31m^[39m[22m
+ [90m 111 | [39m  
+[33m}[39m
+ [90m 112 | [39m
+
+    at 
+tryRunOrWebpackError 
+(C:\Users\dfuser\Desk
+top\digitfellas-main\
+node_modules\next\dis
+t\compiled\webpack\bu
+ndle5.js:28:312989)
+    at __webpack_requ
+ire_module__ (C:\User
+s\dfuser\Desktop\digi
+tfellas-main\node_mod
+ules\next\dist\compil
+ed\webpack\bundle5.js
+:28:131165)
+    at __nested_webpa
+ck_require_153728__ (
+C:\Users\dfuser\Deskt
+op\digitfellas-main\n
+ode_modules\next\dist
+\compiled\webpack\bun
+dle5.js:28:130607)
+    at C:\Users\dfuse
+r\Desktop\digitfellas
+-main\node_modules\ne
+xt\dist\compiled\webp
+ack\bundle5.js:28:131
+454
+    at 
+symbolIterator (C:\Us
+ers\dfuser\Desktop\di
+gitfellas-main\node_m
+odules\next\dist\comp
+iled\neo-async\async.
+js:1:14444)
+    at done (C:\Users
+\dfuser\Desktop\digit
+fellas-main\node_modu
+les\next\dist\compile
+d\neo-async\async.js:
+1:14824)
+    at Hook.eval [as 
+callAsync] (eval at 
+create (C:\Users\dfus
+er\Desktop\digitfella
+s-main\node_modules\n
+ext\dist\compiled\web
+pack\bundle5.js:13:28
+858), 
+<anonymous>:15:1)
+    at Hook.CALL_ASYN
+C_DELEGATE [as 
+_callAsync] (C:\Users
+\dfuser\Desktop\digit
+fellas-main\node_modu
+les\next\dist\compile
+d\webpack\bundle5.js:
+13:26012)
+    at C:\Users\dfuse
+r\Desktop\digitfellas
+-main\node_modules\ne
+xt\dist\compiled\webp
+ack\bundle5.js:28:130
+328
+    at 
+symbolIterator (C:\Us
+ers\dfuser\Desktop\di
+gitfellas-main\node_m
+odules\next\dist\comp
+iled\neo-async\async.
+js:1:14402)
+-- inner error --
+Syntax error: C:\User
+s\dfuser\Desktop\digi
+tfellas-main\app\glob
+als.css The `after:[m
+ask:linear-gradient(#
+fff_0_0)_content-box,
+` class does not 
+exist. If `after:[mas
+k:linear-gradient(#ff
+f_0_0)_content-box,` 
+is a custom class, 
+make sure it is 
+defined within a 
+`@layer` directive. 
+(110:5)
+
+ [90m 108 | [39m
+ [90m 109 | [39m  
+[33m.border-gradient
+[39m [33m{[39m
+[1m[31m>[39m[22m
+[90m 110 | [39m    
+[36m@apply[39m 
+relative after[33m:
+[39mabsolute after[3
+3m:[39minset-0 after
+[33m:[39mrounded-[
+33m[[39minherit[33m
+][39m after[33m:[3
+9mp-[33m[[39m1px[3
+3m][39m after[33m:
+[39mbg-gradient-to-br
+ after[33m:[39mfrom
+-white/20 after[33m:
+[39mto-transparent a
+fter[33m:[39m[33m[
+[39mmask[33m:[39m
+[36mlinear-gradient[
+39m[36m(#fff_0_0)[3
+9m_content-box, [36m
+linear-gradient[39m
+[36m(#fff_0_0)[39m[
+33m][39m after[33m:
+[39m[33m[[39mmask-
+composite[33m:[39mx
+or[33m][39m after[
+33m:[39mpointer-even
+ts-none[33m;[39m
+ [90m     | [39m   
+ [1m[31m^[39m[22m
+ [90m 111 | [39m  
+[33m}[39m
+ [90m 112 | [39m
+
+    at 
+Object.<anonymous> (C
+:\Users\dfuser\Deskto
+p\digitfellas-main\no
+de_modules\next\dist\
+build\webpack\loaders
+\css-loader\src\index
+.js??ruleSet[1].rules
+[14].oneOf[12].use[2]
+!C:\Users\dfuser\Desk
+top\digitfellas-main\
+node_modules\next\dis
+t\build\webpack\loade
+rs\postcss-loader\src
+\index.js??ruleSet[1]
+.rules[14].oneOf[12].
+use[3]!C:\Users\dfuse
+r\Desktop\digitfellas
+-main\app\globals.css
+:1:7)
+    at C:\Users\dfuse
+r\Desktop\digitfellas
+-main\node_modules\ne
+xt\dist\compiled\webp
+ack\bundle5.js:28:922
+493
+    at Hook.eval [as 
+call] (eval at 
+create (C:\Users\dfus
+er\Desktop\digitfella
+s-main\node_modules\n
+ext\dist\compiled\web
+pack\bundle5.js:13:28
+636), 
+<anonymous>:7:1)
+    at 
+Hook.CALL_DELEGATE 
+[as _call] (C:\Users\
+dfuser\Desktop\digitf
+ellas-main\node_modul
+es\next\dist\compiled
+\webpack\bundle5.js:1
+3:25906)
+    at C:\Users\dfuse
+r\Desktop\digitfellas
+-main\node_modules\ne
+xt\dist\compiled\webp
+ack\bundle5.js:28:131
+198
+    at 
+tryRunOrWebpackError 
+(C:\Users\dfuser\Desk
+top\digitfellas-main\
+node_modules\next\dis
+t\compiled\webpack\bu
+ndle5.js:28:312943)
+    at __webpack_requ
+ire_module__ (C:\User
+s\dfuser\Desktop\digi
+tfellas-main\node_mod
+ules\next\dist\compil
+ed\webpack\bundle5.js
+:28:131165)
+    at __nested_webpa
+ck_require_153728__ (
+C:\Users\dfuser\Deskt
+op\digitfellas-main\n
+ode_modules\next\dist
+\compiled\webpack\bun
+dle5.js:28:130607)
+    at C:\Users\dfuse
+r\Desktop\digitfellas
+-main\node_modules\ne
+xt\dist\compiled\webp
+ack\bundle5.js:28:131
+454
+    at 
+symbolIterator (C:\Us
+ers\dfuser\Desktop\di
+gitfellas-main\node_m
+odules\next\dist\comp
+iled\neo-async\async.
+js:1:14444)
+
+Generated code for C:
+\Users\dfuser\Desktop
+\digitfellas-main\nod
+e_modules\next\dist\b
+uild\webpack\loaders\
+css-loader\src\index.
+js??ruleSet[1].rules[
+14].oneOf[12].use[2]!
+C:\Users\dfuser\Deskt
+op\digitfellas-main\n
+ode_modules\next\dist
+\build\webpack\loader
+s\postcss-loader\src\
+index.js??ruleSet[1].
+rules[14].oneOf[12].u
+se[3]!C:\Users\dfuser
+\Desktop\digitfellas-
+main\app\globals.css
+
+Import trace for 
+requested module:
+./app/globals.css
+
+
+> Build failed 
+because of webpack 
+errors

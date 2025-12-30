@@ -1,0 +1,17 @@
+{
+  "users": [
+    {
+      "id": "136ea4ff-332e-4edf-ae32-d81128976512",
+      "email": "admin@digitfellas.com",
+      "salt": "2c8736321a3cf5308da49d89d46bf4ac",
+      "hash": "c551efe1b144e93ed7b3c2977cd5a46995df69815f14b4da929924057a07a044",
+      "role": "admin",
+      "createdAt": "2025-12-27T08:59:24.718Z"
+    }
+  ],
+  "_seed": {
+    "email": "admin@digitfellas.com",
+    "passwordHint": "Change in /data/users.json later",
+    "createdAt": "2025-12-27T08:59:24.718Z"
+  }
+}
