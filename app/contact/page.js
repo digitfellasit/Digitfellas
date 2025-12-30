@@ -25,7 +25,6 @@ export default function Page() {
 
   return (
     <div className="container py-14 md:py-16">
-      <div className="text-xs font-medium uppercase tracking-widest text-primary">Contact</div>
       <h1 className="mt-3 text-3xl font-semibold tracking-tight md:text-4xl">{contact?.title || 'Contact'}</h1>
       <div className="mt-3 max-w-2xl text-muted-foreground" dangerouslySetInnerHTML={{ __html: renderMarkdown(contact?.subtitle || 'Tell us about your project.') }} />
 

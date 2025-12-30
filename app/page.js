@@ -133,8 +133,6 @@ function Hero({ hero }) {
     for (let i = 0; i < allMedia.length; i += 3) {
       sets.push(allMedia.slice(i, i + 3))
     }
-    // If we only have one set and it's partial, or if we have leftovers, 
-    // we might want to pad or just cycle what we have.
     return sets
   }, [allMedia])
 
