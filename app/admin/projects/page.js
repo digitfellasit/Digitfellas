@@ -30,7 +30,7 @@ export default function ProjectsPage() {
     const [dialogOpen, setDialogOpen] = useState(false)
     const [editing, setEditing] = useState(null)
     const [formData, setFormData] = useState({
-        title: '', slug: '', description: '', content: '', excerpt: '', client_name: '', project_url: '',
+        title: '', slug: '', description: '', short_description: '', content: '', excerpt: '', client_name: '', project_url: '', service_id: '',
         meta_title: '', meta_description: '', is_featured: false, is_published: true, sort_order: 0, images: [],
         hero: { title: '', subtitle: '', media: [] },
         featured_image: []
@@ -60,7 +60,7 @@ export default function ProjectsPage() {
     const handleCreate = () => {
         setEditing(null)
         setFormData({
-            title: '', slug: '', description: '', content: '', excerpt: '', client_name: '', project_url: '',
+            title: '', slug: '', description: '', short_description: '', content: '', excerpt: '', client_name: '', project_url: '', service_id: '',
             meta_title: '', meta_description: '', is_featured: false, is_published: true, sort_order: 0, images: [],
             hero: { title: '', subtitle: '', media: [] },
             featured_image: []
@@ -72,8 +72,8 @@ export default function ProjectsPage() {
         setEditing(project)
         setFormData({
             title: project.title || '', slug: project.slug || '', description: project.description || '',
-            content: project.content || '', excerpt: project.excerpt || '', client_name: project.client_name || '',
-            project_url: project.project_url || '', meta_title: project.meta_title || '', meta_description: project.meta_description || '',
+            short_description: project.short_description || '', content: project.content || '', excerpt: project.excerpt || '', client_name: project.client_name || '',
+            project_url: project.project_url || '', service_id: project.service_id || '', meta_title: project.meta_title || '', meta_description: project.meta_description || '',
             is_featured: project.is_featured || false, is_published: project.is_published !== false, sort_order: project.sort_order || 0,
             images: project.images || [],
             hero: project.hero || { title: '', subtitle: '', media: [] },
@@ -139,6 +139,7 @@ export default function ProjectsPage() {
                                 <div><Label>Project URL</Label><Input value={formData.project_url} onChange={(e) => setFormData({ ...formData, project_url: e.target.value })} placeholder="https://..." /></div>
                             </div>
                             <div><Label>Excerpt</Label><Textarea value={formData.excerpt} onChange={(e) => setFormData({ ...formData, excerpt: e.target.value })} rows={2} /></div>
+                            <div><Label>Short Description (Listings)</Label><Textarea value={formData.short_description} onChange={(e) => setFormData({ ...formData, short_description: e.target.value })} placeholder="Brief summary for listings" rows={2} /></div>
                             <RichEditor label="Full Content" value={formData.content} onChange={(content) => setFormData({ ...formData, content })} />
                             <MediaGallery label="Project Images (Gallery)" images={formData.images} onChange={(images) => setFormData({ ...formData, images })} maxImages={-1} />
 

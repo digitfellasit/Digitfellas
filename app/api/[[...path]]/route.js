@@ -611,15 +611,9 @@ async function handleRoute(request, { params }) {
           SELECT s.*, c.name as category_name,
                  json_agg(DISTINCT jsonb_build_object('id', si.id, 'url', mi.url, 'alt', mi.alt_text, 'variant', si.variant)) FILTER (WHERE si.id IS NOT NULL) as images,
                  (
-                   SELECT row_to_json(h_row) FROM (
-                     SELECT h.*, (
-                        SELECT json_agg(json_build_object('url', m.url, 'variant', hm.variant, 'type', m.mime_type))
-                        FROM hero_media hm JOIN media_items m ON hm.media_id = m.id
-                        WHERE hm.hero_id = h.id
-                     ) as media
-                     FROM hero_sections h WHERE h.id = s.hero_section_id
-                   ) h_row
-                 ) as hero
+                   SELECT json_build_object('id', fmi.id, 'url', fmi.url, 'alt', fmi.alt_text)
+                   FROM media_items fmi WHERE fmi.id = s.featured_image_id
+                 ) as featured_image
           FROM services s
           LEFT JOIN categories c ON s.category_id = c.id
           LEFT JOIN service_images si ON s.id = si.service_id
@@ -642,15 +636,11 @@ async function handleRoute(request, { params }) {
       const id = uuidv4()
       let heroSectionId = null
 
-      if (body.hero) {
-        heroSectionId = await upsertHero(pool, body.hero, `service-${body.slug}`)
-      }
-
       const result = await pool.query(`
-        INSERT INTO services (id, title, slug, description, content, excerpt, icon_url, category_id, meta_title, meta_description, is_featured, is_published, sort_order, hero_section_id, featured_image_id)
-        VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15)
+        INSERT INTO services (id, title, slug, description, short_description, content, excerpt, icon_url, category_id, meta_title, meta_description, is_featured, is_published, sort_order, featured_image_id, hero_data, intro_content, features, details_sections)
+        VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17, $18, $19)
         RETURNING *
-      `, [id, body.title, body.slug, body.description, body.content, body.excerpt, body.icon_url, body.category_id, body.meta_title, body.meta_description, body.is_featured || false, body.is_published !== false, body.sort_order || 0, heroSectionId, body.featured_image_id || null])
+      `, [id, body.title, body.slug, body.description, body.short_description, body.content, body.excerpt, body.icon_url, body.category_id, body.meta_title, body.meta_description, body.is_featured || false, body.is_published !== false, body.sort_order || 0, body.featured_image_id || null, JSON.stringify(body.hero_data || {}), body.intro_content || '', JSON.stringify(body.features || []), JSON.stringify(body.details_sections || [])])
 
       return handleCORS(NextResponse.json(result.rows[0]))
     }
@@ -663,21 +653,14 @@ async function handleRoute(request, { params }) {
       const body = await request.json()
       const pool = getPool()
 
-      let heroSectionId = null
-      if (body.hero) {
-        // Get existing hero ID if exists
-        const current = await pool.query('SELECT hero_section_id FROM services WHERE id = $1', [id])
-        const existingId = current.rows[0]?.hero_section_id
-        heroSectionId = await upsertHero(pool, body.hero, `service-${body.slug}`, existingId)
-      }
-
       const result = await pool.query(`
         UPDATE services 
-        SET title = $1, slug = $2, description = $3, content = $4, excerpt = $5, icon_url = $6, 
-            category_id = $7, meta_title = $8, meta_description = $9, is_featured = $10, is_published = $11, sort_order = $12, hero_section_id = COALESCE($14, hero_section_id), featured_image_id = $15
-        WHERE id = $13 AND deleted_at IS NULL
+        SET title = $1, slug = $2, description = $3, short_description = $4, content = $5, excerpt = $6, icon_url = $7, 
+            category_id = $8, meta_title = $9, meta_description = $10, is_featured = $11, is_published = $12, sort_order = $13, featured_image_id = $15,
+            hero_data = $16, intro_content = $17, features = $18, details_sections = $19
+        WHERE id = $14 AND deleted_at IS NULL
         RETURNING *
-      `, [body.title, body.slug, body.description, body.content, body.excerpt, body.icon_url, body.category_id, body.meta_title, body.meta_description, body.is_featured, body.is_published, body.sort_order, id, heroSectionId, body.featured_image_id])
+      `, [body.title, body.slug, body.description, body.short_description, body.content, body.excerpt, body.icon_url, body.category_id, body.meta_title, body.meta_description, body.is_featured, body.is_published, body.sort_order, id, body.featured_image_id, JSON.stringify(body.hero_data || {}), body.intro_content || '', JSON.stringify(body.features || []), JSON.stringify(body.details_sections || [])])
 
       if (!result.rows[0]) return handleCORS(NextResponse.json({ error: 'Service not found' }, { status: 404 }))
       return handleCORS(NextResponse.json(result.rows[0]))
@@ -781,10 +764,10 @@ async function handleRoute(request, { params }) {
       }
 
       const result = await pool.query(`
-        INSERT INTO projects (id, title, slug, description, content, excerpt, client_name, project_url, category_id, meta_title, meta_description, is_featured, is_published, completed_at, sort_order, hero_section_id, featured_image_id)
-        VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17)
+        INSERT INTO projects (id, title, slug, description, short_description, content, excerpt, client_name, project_url, service_id, category_id, meta_title, meta_description, is_featured, is_published, completed_at, sort_order, hero_section_id, featured_image_id)
+        VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17, $18, $19)
         RETURNING *
-      `, [id, body.title, body.slug, body.description, body.content, body.excerpt, body.client_name, body.project_url, body.category_id, body.meta_title, body.meta_description, body.is_featured || false, body.is_published !== false, body.completed_at, body.sort_order || 0, heroSectionId, body.featured_image_id || null])
+      `, [id, body.title, body.slug, body.description, body.short_description, body.content, body.excerpt, body.client_name, body.project_url, body.service_id, body.category_id, body.meta_title, body.meta_description, body.is_featured || false, body.is_published !== false, body.completed_at, body.sort_order || 0, heroSectionId, body.featured_image_id || null])
 
       return handleCORS(NextResponse.json(result.rows[0]))
     }
@@ -806,11 +789,11 @@ async function handleRoute(request, { params }) {
 
       const result = await pool.query(`
         UPDATE projects 
-        SET title = $1, slug = $2, description = $3, content = $4, excerpt = $5, client_name = $6, 
-            project_url = $7, category_id = $8, meta_title = $9, meta_description = $10, is_featured = $11, is_published = $12, completed_at = $13, sort_order = $14, hero_section_id = COALESCE($16, hero_section_id), featured_image_id = $17
-        WHERE id = $15 AND deleted_at IS NULL
+        SET title = $1, slug = $2, description = $3, short_description = $4, content = $5, excerpt = $6, client_name = $7, 
+            project_url = $8, service_id = $9, category_id = $10, meta_title = $11, meta_description = $12, is_featured = $13, is_published = $14, completed_at = $15, sort_order = $16, hero_section_id = COALESCE($18, hero_section_id), featured_image_id = $19
+        WHERE id = $17 AND deleted_at IS NULL
         RETURNING *
-      `, [body.title, body.slug, body.description, body.content, body.excerpt, body.client_name, body.project_url, body.category_id, body.meta_title, body.meta_description, body.is_featured, body.is_published, body.completed_at, body.sort_order, id, heroSectionId, body.featured_image_id])
+      `, [body.title, body.slug, body.description, body.short_description, body.content, body.excerpt, body.client_name, body.project_url, body.service_id, body.category_id, body.meta_title, body.meta_description, body.is_featured, body.is_published, body.completed_at, body.sort_order, id, heroSectionId, body.featured_image_id])
 
       if (!result.rows[0]) return handleCORS(NextResponse.json({ error: 'Project not found' }, { status: 404 }))
       return handleCORS(NextResponse.json(result.rows[0]))
@@ -890,10 +873,10 @@ async function handleRoute(request, { params }) {
       const id = uuidv4()
 
       const result = await pool.query(`
-        INSERT INTO blog_posts (id, title, slug, excerpt, content, author_id, category_id, meta_title, meta_description, is_featured, is_published, published_at, reading_time_minutes, featured_image_id)
-        VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14)
+        INSERT INTO blog_posts (id, title, slug, excerpt, short_description, content, category_id, author_id, meta_title, meta_description, is_featured, is_published, published_at, reading_time_minutes, featured_image_id)
+        VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15)
         RETURNING *
-      `, [id, body.title, body.slug, body.excerpt, body.content, session.userId, body.category_id, body.meta_title, body.meta_description, body.is_featured || false, body.is_published || false, body.is_published ? new Date() : null, body.reading_time_minutes, body.featured_image_id || null])
+      `, [id, body.title, body.slug, body.excerpt, body.short_description, body.content, body.category_id, session.userId, body.meta_title, body.meta_description, body.is_featured || false, body.is_published || false, body.is_published ? new Date() : null, body.reading_time_minutes || 5, body.featured_image_id || null])
 
       return handleCORS(NextResponse.json(result.rows[0]))
     }
@@ -908,11 +891,11 @@ async function handleRoute(request, { params }) {
 
       const result = await pool.query(`
         UPDATE blog_posts 
-        SET title = $1, slug = $2, excerpt = $3, content = $4, category_id = $5, meta_title = $6, meta_description = $7, 
-            is_featured = $8, is_published = $9, published_at = $10, reading_time_minutes = $11, featured_image_id = $13
-        WHERE id = $12 AND deleted_at IS NULL
+        SET title = $1, slug = $2, excerpt = $3, short_description = $4, content = $5, category_id = $6, meta_title = $7, meta_description = $8, 
+            is_featured = $9, is_published = $10, published_at = $11, reading_time_minutes = $12, featured_image_id = $14
+        WHERE id = $13 AND deleted_at IS NULL
         RETURNING *
-      `, [body.title, body.slug, body.excerpt, body.content, body.category_id, body.meta_title, body.meta_description, body.is_featured, body.is_published, body.is_published && !body.published_at ? new Date() : body.published_at, body.reading_time_minutes, id, body.featured_image_id])
+      `, [body.title, body.slug, body.excerpt, body.short_description, body.content, body.category_id, body.meta_title, body.meta_description, body.is_featured, body.is_published, body.is_published && !body.published_at ? new Date() : body.published_at, body.reading_time_minutes, id, body.featured_image_id])
 
       if (!result.rows[0]) return handleCORS(NextResponse.json({ error: 'Blog post not found' }, { status: 404 }))
       return handleCORS(NextResponse.json(result.rows[0]))

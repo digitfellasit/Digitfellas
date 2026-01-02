@@ -30,7 +30,7 @@ export default function BlogPage() {
     const [dialogOpen, setDialogOpen] = useState(false)
     const [editing, setEditing] = useState(null)
     const [formData, setFormData] = useState({
-        title: '', slug: '', excerpt: '', content: '', meta_title: '', meta_description: '',
+        title: '', slug: '', excerpt: '', short_description: '', content: '', meta_title: '', meta_description: '',
         is_featured: false, is_published: false, reading_time_minutes: 5,
         featured_image: []
     })
@@ -51,14 +51,14 @@ export default function BlogPage() {
 
     const handleCreate = () => {
         setEditing(null)
-        setFormData({ title: '', slug: '', excerpt: '', content: '', meta_title: '', meta_description: '', is_featured: false, is_published: false, reading_time_minutes: 5, featured_image: [] })
+        setFormData({ title: '', slug: '', excerpt: '', short_description: '', content: '', meta_title: '', meta_description: '', is_featured: false, is_published: false, reading_time_minutes: 5, featured_image: [] })
         setDialogOpen(true)
     }
 
     const handleEdit = (post) => {
         setEditing(post)
         setFormData({
-            title: post.title || '', slug: post.slug || '', excerpt: post.excerpt || '', content: post.content || '',
+            title: post.title || '', slug: post.slug || '', excerpt: post.excerpt || '', short_description: post.short_description || '', content: post.content || '',
             meta_title: post.meta_title || '', meta_description: post.meta_description || '',
             is_featured: post.is_featured || false, is_published: post.is_published || false,
             reading_time_minutes: post.reading_time_minutes || 5,
@@ -121,6 +121,7 @@ export default function BlogPage() {
                             <div><Label>Title *</Label><Input value={formData.title} onChange={(e) => setFormData({ ...formData, title: e.target.value, slug: formData.slug || generateSlug(e.target.value) })} /></div>
                             <div><Label>Slug *</Label><Input value={formData.slug} onChange={(e) => setFormData({ ...formData, slug: e.target.value })} /></div>
                             <div><Label>Excerpt</Label><Textarea value={formData.excerpt} onChange={(e) => setFormData({ ...formData, excerpt: e.target.value })} rows={2} placeholder="Brief summary for listings" /></div>
+                            <div><Label>Short Description (Listings)</Label><Textarea value={formData.short_description} onChange={(e) => setFormData({ ...formData, short_description: e.target.value })} rows={2} placeholder="Very brief summary for cards" /></div>
                             <RichEditor label="Content *" value={formData.content} onChange={(content) => setFormData({ ...formData, content })} minHeight="400px" />
                             <div><Label>Reading Time (minutes)</Label><Input type="number" value={formData.reading_time_minutes} onChange={(e) => setFormData({ ...formData, reading_time_minutes: parseInt(e.target.value) || 5 })} /></div>
 

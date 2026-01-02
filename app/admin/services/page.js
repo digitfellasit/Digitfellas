@@ -1,11 +1,13 @@
 'use client'
 
 import { useEffect, useState } from 'react'
-import { Plus, Save } from 'lucide-react'
+import { Plus, Save, Loader2, Eye, ExternalLink } from 'lucide-react'
 import { AdminLayout } from '@/components/admin/AdminLayout'
 import { DataTable, StatusBadge } from '@/components/admin/DataTable'
 import { RichEditor } from '@/components/admin/RichEditor'
 import { MediaGallery } from '@/components/admin/MediaGallery'
+import { FeaturesEditor } from '@/components/admin/FeaturesEditor'
+import { DetailsListEditor } from '@/components/admin/DetailsListEditor'
 import { Button } from '@/components/ui/button'
 import { Card } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
@@ -18,6 +20,7 @@ import {
 } from '@/components/ui/dialog'
 import { Label } from '@/components/ui/label'
 import { Switch } from '@/components/ui/switch'
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 
 async function apiCall(url, options = {}) {
     const res = await fetch(url, {
@@ -49,25 +52,22 @@ export default function ServicesPage() {
         title: '',
         slug: '',
         description: '',
+        short_description: '',
         content: '',
+        intro_content: '',
+        features: [],
+        details_sections: [],
+        hero_data: { title: '', tagline: '', desktop: [], mobile: [] },
         excerpt: '',
         icon_url: '',
         meta_title: '',
         meta_description: '',
         is_featured: false,
         is_published: true,
-        is_published: true,
         sort_order: 0,
-        hero: { title: '', subtitle: '', media: [] },
         featured_image: []
     })
-
-    const handleHeroMediaChange = (newImages, variant) => {
-        const currentMedia = formData.hero?.media || []
-        const others = currentMedia.filter(m => m.variant !== variant)
-        const updated = [...others, ...newImages.map(img => ({ ...img, variant }))]
-        setFormData({ ...formData, hero: { ...(formData.hero || {}), media: updated } })
-    }
+    const [saving, setSaving] = useState(false)
 
     const loadServices = async () => {
         setLoading(true)
@@ -91,16 +91,19 @@ export default function ServicesPage() {
             title: '',
             slug: '',
             description: '',
+            short_description: '',
             content: '',
+            intro_content: '',
+            features: [],
+            details_sections: [],
+            hero_data: { title: '', tagline: '', desktop: [], mobile: [] },
             excerpt: '',
             icon_url: '',
             meta_title: '',
             meta_description: '',
             is_featured: false,
             is_published: true,
-            is_published: true,
             sort_order: 0,
-            hero: { title: '', subtitle: '', media: [] },
             featured_image: []
         })
         setDialogOpen(true)
@@ -108,20 +111,30 @@ export default function ServicesPage() {
 
     const handleEdit = (service) => {
         setEditingService(service)
+
+        // Backward compatibility for single details_section
+        let sections = service.details_sections || []
+        if (sections.length === 0 && service.details_section?.content) {
+            sections = [service.details_section]
+        }
+
         setFormData({
             title: service.title || '',
             slug: service.slug || '',
             description: service.description || '',
+            short_description: service.short_description || '',
             content: service.content || '',
+            intro_content: service.intro_content || '',
+            features: service.features || [],
+            details_sections: sections,
+            hero_data: service.hero_data || { title: '', tagline: '', desktop: [], mobile: [] },
             excerpt: service.excerpt || '',
             icon_url: service.icon_url || '',
             meta_title: service.meta_title || '',
             meta_description: service.meta_description || '',
             is_featured: service.is_featured || false,
             is_published: service.is_published !== false,
-            is_published: service.is_published !== false,
             sort_order: service.sort_order || 0,
-            hero: service.hero || { title: '', subtitle: '', media: [] },
             featured_image: service.featured_image ? [service.featured_image] : []
         })
         setDialogOpen(true)
@@ -129,7 +142,6 @@ export default function ServicesPage() {
 
     const handleDelete = async (service) => {
         if (!confirm(`Delete "${service.title}"?`)) return
-
         try {
             await apiCall(`/api/services/${service.id}`, { method: 'DELETE' })
             await loadServices()
@@ -139,6 +151,7 @@ export default function ServicesPage() {
     }
 
     const handleSave = async () => {
+        setSaving(true)
         try {
             const payload = { ...formData, featured_image_id: formData.featured_image?.[0]?.id || null }
             if (editingService) {
@@ -156,6 +169,8 @@ export default function ServicesPage() {
             await loadServices()
         } catch (error) {
             alert('Failed to save service: ' + error.message)
+        } finally {
+            setSaving(false)
         }
     }
 
@@ -166,6 +181,12 @@ export default function ServicesPage() {
             slug: formData.slug || generateSlug(title),
             meta_title: formData.meta_title || title,
         })
+    }
+
+    const handlePreview = () => {
+        if (formData.slug) {
+            window.open(`/services/${formData.slug}`, '_blank')
+        }
     }
 
     const columns = [
@@ -180,32 +201,12 @@ export default function ServicesPage() {
                 </div>
             ),
         },
-        {
-            key: 'excerpt',
-            header: 'Excerpt',
-            render: (row) => (
-                <div className="max-w-md truncate text-sm text-muted-foreground">
-                    {row.excerpt || row.description}
-                </div>
-            ),
-        },
-        {
-            key: 'is_published',
-            header: 'Status',
-            render: (row) => (
-                <StatusBadge status={row.is_published ? 'published' : 'draft'} />
-            ),
-        },
-        {
-            key: 'is_featured',
-            header: 'Featured',
-            render: (row) => (row.is_featured ? '⭐' : ''),
-        },
+        { key: 'is_published', header: 'Status', render: (row) => <StatusBadge status={row.is_published ? 'published' : 'draft'} /> },
+        { key: 'sort_order', header: 'Order' },
         {
             key: 'created_at',
-            header: 'Created',
-            sortable: true,
-            render: (row) => row.created_at ? new Date(row.created_at).toLocaleDateString() : '-',
+            header: 'Updated',
+            render: (row) => row.updated_at ? new Date(row.updated_at).toLocaleDateString() : '-',
         },
     ]
 
@@ -215,9 +216,7 @@ export default function ServicesPage() {
                 <div className="flex items-center justify-between">
                     <div>
                         <h1 className="text-3xl font-bold">Services</h1>
-                        <p className="text-muted-foreground mt-1">
-                            Manage your service offerings
-                        </p>
+                        <p className="text-muted-foreground mt-1">Manage your service offerings</p>
                     </div>
                     <Button onClick={handleCreate}>
                         <Plus className="h-4 w-4 mr-2" />
@@ -227,9 +226,7 @@ export default function ServicesPage() {
 
                 <Card className="p-6">
                     {loading ? (
-                        <div className="text-center py-12 text-muted-foreground">
-                            Loading services...
-                        </div>
+                        <div className="text-center py-12 text-muted-foreground">Loading services...</div>
                     ) : (
                         <DataTable
                             data={services}
@@ -237,200 +234,135 @@ export default function ServicesPage() {
                             onEdit={handleEdit}
                             onDelete={handleDelete}
                             searchPlaceholder="Search services..."
-                            emptyMessage="No services yet. Create your first service!"
+                            emptyMessage="No services yet."
                         />
                     )}
                 </Card>
             </div>
 
             <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
-                <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
-                    <DialogHeader>
-                        <DialogTitle>
-                            {editingService ? 'Edit Service' : 'Create Service'}
-                        </DialogTitle>
+                <DialogContent className="max-w-5xl max-h-[90vh] overflow-y-auto">
+                    <DialogHeader className="flex flex-row items-center justify-between">
+                        <DialogTitle>{editingService ? 'Edit Service' : 'Create Service'}</DialogTitle>
+                        {formData.slug && (
+                            <Button variant="outline" size="sm" onClick={handlePreview} className="mr-8">
+                                <Eye className="w-4 h-4 mr-2" />
+                                Preview Page
+                            </Button>
+                        )}
                     </DialogHeader>
 
-                    <div className="space-y-6 py-4">
-                        <div className="grid gap-4">
-                            <div>
-                                <Label>Title *</Label>
-                                <Input
-                                    value={formData.title}
-                                    onChange={(e) => handleTitleChange(e.target.value)}
-                                    placeholder="Service title"
-                                />
-                            </div>
+                    <Tabs defaultValue="basic" className="w-full">
+                        <TabsList className="grid w-full grid-cols-4">
+                            <TabsTrigger value="basic">Basic Info</TabsTrigger>
+                            <TabsTrigger value="hero">Hero & Header</TabsTrigger>
+                            <TabsTrigger value="content">Page Content</TabsTrigger>
+                            <TabsTrigger value="seo">SEO & Settings</TabsTrigger>
+                        </TabsList>
 
-                            <div>
-                                <Label>Slug *</Label>
-                                <Input
-                                    value={formData.slug}
-                                    onChange={(e) => setFormData({ ...formData, slug: e.target.value })}
-                                    placeholder="service-slug"
-                                />
-                            </div>
-
-                            <div>
-                                <Label>Excerpt</Label>
-                                <Textarea
-                                    value={formData.excerpt}
-                                    onChange={(e) => setFormData({ ...formData, excerpt: e.target.value })}
-                                    placeholder="Short description for cards and previews"
-                                    rows={2}
-                                />
-                            </div>
-
-                            <div>
-                                <Label>Description</Label>
-                                <Textarea
-                                    value={formData.description}
-                                    onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-                                    placeholder="Service description"
-                                    rows={3}
-                                />
-                            </div>
-
-                            <RichEditor
-                                label="Full Content"
-                                value={formData.content}
-                                onChange={(content) => setFormData({ ...formData, content })}
-                            />
-
-                            <div className="grid grid-cols-2 gap-4">
-                                <div>
-                                    <Label>Icon URL (optional)</Label>
-                                    <Input
-                                        value={formData.icon_url}
-                                        onChange={(e) => setFormData({ ...formData, icon_url: e.target.value })}
-                                        placeholder="/uploads/icon.svg"
-                                    />
-                                </div>
-
-                                <div>
-                                    <Label>Sort Order</Label>
-                                    <Input
-                                        type="number"
-                                        value={formData.sort_order}
-                                        onChange={(e) => setFormData({ ...formData, sort_order: parseInt(e.target.value) || 0 })}
-                                    />
-                                </div>
-                            </div>
-                        </div>
-
-
-                        <MediaGallery
-                            label="Featured Image (List Card)"
-                            images={formData.featured_image}
-                            onChange={(images) => setFormData({ ...formData, featured_image: images })}
-                            maxImages={1}
-                        />
-
-                        <div className="border-t pt-4">
-                            <h3 className="font-medium mb-4">Hero Banner (Desktop & Mobile)</h3>
-                            <div className="space-y-4">
+                        <div className="py-6 space-y-6">
+                            <TabsContent value="basic" className="space-y-4">
                                 <div className="grid grid-cols-2 gap-4">
                                     <div>
-                                        <Label>Hero Title</Label>
-                                        <Input
-                                            value={formData.hero?.title || ''}
-                                            onChange={e => setFormData({ ...formData, hero: { ...(formData.hero || {}), title: e.target.value } })}
-                                            placeholder="Overlay title"
-                                        />
+                                        <Label>Title *</Label>
+                                        <Input value={formData.title} onChange={(e) => handleTitleChange(e.target.value)} placeholder="Service title" />
                                     </div>
                                     <div>
-                                        <Label>Hero Subtitle</Label>
-                                        <Input
-                                            value={formData.hero?.subtitle || ''}
-                                            onChange={e => setFormData({ ...formData, hero: { ...(formData.hero || {}), subtitle: e.target.value } })}
-                                            placeholder="Overlay subtitle"
+                                        <Label>Slug *</Label>
+                                        <Input value={formData.slug} onChange={(e) => setFormData({ ...formData, slug: e.target.value })} placeholder="service-slug" />
+                                    </div>
+                                </div>
+                                <div>
+                                    <Label>Short Description (Card Summary)</Label>
+                                    <Textarea value={formData.short_description} onChange={(e) => setFormData({ ...formData, short_description: e.target.value })} rows={2} />
+                                </div>
+                                <div className="grid grid-cols-2 gap-4">
+                                    <MediaGallery label="Card Image (Featured)" images={formData.featured_image} onChange={imgs => setFormData({ ...formData, featured_image: imgs })} maxImages={1} />
+                                    <div>
+                                        <Label>Icon URL</Label>
+                                        <Input value={formData.icon_url} onChange={(e) => setFormData({ ...formData, icon_url: e.target.value })} placeholder="/uploads/icon.svg" />
+                                        <div className="mt-4">
+                                            <Label>Sort Order</Label>
+                                            <Input type="number" value={formData.sort_order} onChange={(e) => setFormData({ ...formData, sort_order: parseInt(e.target.value) || 0 })} />
+                                        </div>
+                                    </div>
+                                </div>
+                            </TabsContent>
+
+                            <TabsContent value="hero" className="space-y-6">
+                                <div className="space-y-4">
+                                    <div className="grid grid-cols-2 gap-4">
+                                        <div>
+                                            <Label>Hero Title</Label>
+                                            <Input value={formData.hero_data?.title || ''} onChange={e => setFormData({ ...formData, hero_data: { ...formData.hero_data, title: e.target.value } })} placeholder="Title Overlay" />
+                                        </div>
+                                        <div>
+                                            <Label>Hero Tagline</Label>
+                                            <Input value={formData.hero_data?.tagline || ''} onChange={e => setFormData({ ...formData, hero_data: { ...formData.hero_data, tagline: e.target.value } })} placeholder="Small tagline" />
+                                        </div>
+                                    </div>
+                                    <div className="grid grid-cols-2 gap-4">
+                                        <MediaGallery
+                                            label="Desktop Background"
+                                            images={formData.hero_data?.desktop || []}
+                                            onChange={imgs => setFormData({ ...formData, hero_data: { ...formData.hero_data, desktop: imgs } })}
+                                            maxImages={1}
+                                        />
+                                        <MediaGallery
+                                            label="Mobile Background"
+                                            images={formData.hero_data?.mobile || []}
+                                            onChange={imgs => setFormData({ ...formData, hero_data: { ...formData.hero_data, mobile: imgs } })}
+                                            maxImages={1}
                                         />
                                     </div>
                                 </div>
+                            </TabsContent>
 
-                                <div className="grid grid-cols-2 gap-4">
-                                    <MediaGallery
-                                        label="Desktop Banner Image"
-                                        images={formData.hero?.media?.filter(m => m.variant === 'desktop') || []}
-                                        onChange={imgs => handleHeroMediaChange(imgs, 'desktop')}
-                                        maxImages={1}
-                                        variant="desktop"
-                                    />
-                                    <MediaGallery
-                                        label="Mobile Banner Image"
-                                        images={formData.hero?.media?.filter(m => m.variant === 'mobile') || []}
-                                        onChange={imgs => handleHeroMediaChange(imgs, 'mobile')}
-                                        maxImages={1}
-                                        variant="mobile"
-                                    />
+                            <TabsContent value="content" className="space-y-8">
+                                <div className="space-y-2">
+                                    <h3 className="font-semibold text-lg">1. Intro Content (Below Hero)</h3>
+                                    <RichEditor value={formData.intro_content || ''} onChange={val => setFormData({ ...formData, intro_content: val })} label="Introduction Text" />
                                 </div>
-                            </div>
+
+                                <div className="space-y-2">
+                                    <h3 className="font-semibold text-lg">2. Features Grid</h3>
+                                    <FeaturesEditor value={formData.features || []} onChange={val => setFormData({ ...formData, features: val })} />
+                                </div>
+
+                                <div className="space-y-2">
+                                    <h3 className="font-semibold text-lg">3. Details / Swap Sections</h3>
+                                    <DetailsListEditor value={formData.details_sections || []} onChange={val => setFormData({ ...formData, details_sections: val })} />
+                                </div>
+                            </TabsContent>
+
+                            <TabsContent value="seo" className="space-y-4">
+                                <div className="space-y-4">
+                                    <div>
+                                        <Label>Meta Title</Label>
+                                        <Input value={formData.meta_title} onChange={(e) => setFormData({ ...formData, meta_title: e.target.value })} placeholder="SEO Title" />
+                                    </div>
+                                    <div>
+                                        <Label>Meta Description</Label>
+                                        <Textarea value={formData.meta_description} onChange={(e) => setFormData({ ...formData, meta_description: e.target.value })} rows={2} />
+                                    </div>
+                                    <div className="flex items-center justify-between border-t pt-4">
+                                        <Label>Published Status</Label>
+                                        <Switch checked={formData.is_published} onCheckedChange={(checked) => setFormData({ ...formData, is_published: checked })} />
+                                    </div>
+                                </div>
+                            </TabsContent>
                         </div>
-
-                        <div className="border-t pt-4">
-                            <h3 className="font-medium mb-4">SEO Settings</h3>
-                            <div className="space-y-4">
-                                <div>
-                                    <Label>Meta Title</Label>
-                                    <Input
-                                        value={formData.meta_title}
-                                        onChange={(e) => setFormData({ ...formData, meta_title: e.target.value })}
-                                        placeholder="SEO title"
-                                    />
-                                </div>
-                                <div>
-                                    <Label>Meta Description</Label>
-                                    <Textarea
-                                        value={formData.meta_description}
-                                        onChange={(e) => setFormData({ ...formData, meta_description: e.target.value })}
-                                        placeholder="SEO description"
-                                        rows={2}
-                                    />
-                                </div>
-                            </div>
-                        </div>
-
-                        <div className="border-t pt-4 space-y-4">
-                            <div className="flex items-center justify-between">
-                                <div>
-                                    <Label>Published</Label>
-                                    <p className="text-sm text-muted-foreground">
-                                        Make this service visible on the website
-                                    </p>
-                                </div>
-                                <Switch
-                                    checked={formData.is_published}
-                                    onCheckedChange={(checked) => setFormData({ ...formData, is_published: checked })}
-                                />
-                            </div>
-
-                            <div className="flex items-center justify-between">
-                                <div>
-                                    <Label>Featured</Label>
-                                    <p className="text-sm text-muted-foreground">
-                                        Highlight this service
-                                    </p>
-                                </div>
-                                <Switch
-                                    checked={formData.is_featured}
-                                    onCheckedChange={(checked) => setFormData({ ...formData, is_featured: checked })}
-                                />
-                            </div>
-                        </div>
-                    </div>
+                    </Tabs>
 
                     <div className="flex justify-end gap-2 pt-4 border-t">
-                        <Button variant="outline" onClick={() => setDialogOpen(false)}>
-                            Cancel
-                        </Button>
-                        <Button onClick={handleSave}>
-                            <Save className="h-4 w-4 mr-2" />
+                        <Button variant="outline" onClick={() => setDialogOpen(false)} disabled={saving}>Cancel</Button>
+                        <Button onClick={handleSave} disabled={saving}>
+                            {saving ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : <Save className="w-4 h-4 mr-2" />}
                             Save Service
                         </Button>
                     </div>
-
                 </DialogContent>
-            </Dialog >
-        </AdminLayout >
+            </Dialog>
+        </AdminLayout>
     )
 }

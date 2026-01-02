@@ -45,6 +45,7 @@ CREATE TABLE IF NOT EXISTS services (
     title VARCHAR(255) NOT NULL,
     slug VARCHAR(255) UNIQUE NOT NULL,
     description TEXT,
+    short_description TEXT, -- Brief summary for home page service section
     content TEXT, -- Rich content
     excerpt TEXT,
     icon_url TEXT,
@@ -76,10 +77,12 @@ CREATE TABLE IF NOT EXISTS projects (
     title VARCHAR(255) NOT NULL,
     slug VARCHAR(255) UNIQUE NOT NULL,
     description TEXT,
+    short_description TEXT, -- Brief summary for listings
     content TEXT, -- Rich content
     excerpt TEXT,
     client_name VARCHAR(255),
     project_url TEXT,
+    service_id UUID REFERENCES services(id), -- Link to related service
     category_id UUID REFERENCES categories(id),
     featured_image_id UUID REFERENCES media_items(id),
     meta_title VARCHAR(255),
@@ -116,6 +119,7 @@ CREATE TABLE IF NOT EXISTS blog_posts (
     title VARCHAR(255) NOT NULL,
     slug VARCHAR(255) UNIQUE NOT NULL,
     excerpt TEXT,
+    short_description TEXT, -- Brief summary for listings
     content TEXT NOT NULL, -- Rich content
     featured_image_id UUID REFERENCES media_items(id),
     author_id UUID REFERENCES df_users(id),
@@ -260,3 +264,82 @@ CREATE TRIGGER update_navigation_items_updated_at BEFORE UPDATE ON navigation_it
 
 CREATE TRIGGER update_categories_updated_at BEFORE UPDATE ON categories
     FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
+
+-- ============================================
+-- HOMEPAGE REDESIGN TABLES
+-- ============================================
+
+-- Client logos table for homepage
+CREATE TABLE IF NOT EXISTS client_logos (
+    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    name VARCHAR(255) NOT NULL,
+    logo_url TEXT NOT NULL,
+    website_url TEXT,
+    sort_order INTEGER DEFAULT 0,
+    is_published BOOLEAN DEFAULT TRUE,
+    created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+    updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+);
+
+-- Testimonials table
+CREATE TABLE IF NOT EXISTS testimonials (
+    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    client_name VARCHAR(255) NOT NULL,
+    client_role VARCHAR(255),
+    client_company VARCHAR(255),
+    client_image_url TEXT,
+    rating INTEGER DEFAULT 5 CHECK (rating >= 1 AND rating <= 5),
+    testimonial_text TEXT NOT NULL,
+    is_featured BOOLEAN DEFAULT FALSE,
+    is_published BOOLEAN DEFAULT TRUE,
+    sort_order INTEGER DEFAULT 0,
+    created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+    updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+);
+
+-- Tech stack table
+CREATE TABLE IF NOT EXISTS tech_stack (
+    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    name VARCHAR(255) NOT NULL,
+    icon_url TEXT NOT NULL,
+    category VARCHAR(100),
+    website_url TEXT,
+    sort_order INTEGER DEFAULT 0,
+    is_published BOOLEAN DEFAULT TRUE,
+    created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+    updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+);
+
+-- Process steps table
+CREATE TABLE IF NOT EXISTS process_steps (
+    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    step_number INTEGER NOT NULL,
+    title VARCHAR(255) NOT NULL,
+    description TEXT NOT NULL,
+    icon_name VARCHAR(100),
+    sort_order INTEGER DEFAULT 0,
+    is_published BOOLEAN DEFAULT TRUE,
+    created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+    updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+);
+
+-- Triggers for new tables
+CREATE TRIGGER update_client_logos_updated_at BEFORE UPDATE ON client_logos
+    FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
+
+CREATE TRIGGER update_testimonials_updated_at BEFORE UPDATE ON testimonials
+    FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
+
+CREATE TRIGGER update_tech_stack_updated_at BEFORE UPDATE ON tech_stack
+    FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
+
+CREATE TRIGGER update_process_steps_updated_at BEFORE UPDATE ON process_steps
+    FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
+
+-- Indexes for new tables
+CREATE INDEX IF NOT EXISTS idx_client_logos_published ON client_logos(is_published);
+CREATE INDEX IF NOT EXISTS idx_testimonials_published ON testimonials(is_published);
+CREATE INDEX IF NOT EXISTS idx_testimonials_featured ON testimonials(is_featured);
+CREATE INDEX IF NOT EXISTS idx_tech_stack_published ON tech_stack(is_published);
+CREATE INDEX IF NOT EXISTS idx_tech_stack_category ON tech_stack(category);
+CREATE INDEX IF NOT EXISTS idx_process_steps_published ON process_steps(is_published);
