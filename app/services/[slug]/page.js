@@ -3,6 +3,7 @@
 import { useMemo, useState } from 'react'
 import { useParams } from 'next/navigation'
 import Link from 'next/link'
+import Image from 'next/image'
 import { ArrowLeft, ArrowRight } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Card } from '@/components/ui/card'
@@ -18,11 +19,13 @@ function FeatureCard({ feature }) {
   return (
     <div className="bg-white p-8 rounded-2xl shadow-sm hover:shadow-xl transition-all duration-300 border border-gray-100 group flex flex-col h-full">
       {feature.image?.[0]?.url && (
-        <div className="mb-6 h-48 overflow-hidden rounded-xl bg-gray-100 w-full shrink-0">
-          <img
+        <div className="mb-6 h-48 overflow-hidden rounded-xl bg-gray-100 w-full shrink-0 relative">
+          <Image
             src={feature.image[0].url}
             alt={feature.title}
-            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+            fill
+            className="object-cover group-hover:scale-105 transition-transform duration-500"
+            sizes="(max-width: 768px) 100vw, 33vw"
           />
         </div>
       )}
@@ -92,10 +95,11 @@ export default function ServiceDetailPage() {
       {/* 1. HERO SECTION */}
       <section className="relative w-full min-h-[60vh] md:min-h-[700px] flex items-center overflow-hidden bg-[#0F0F0F] text-white">
         <div className="absolute inset-0 z-0">
-          <picture>
-            <source media="(max-width: 768px)" srcSet={mobileBg} />
-            <img src={desktopBg} alt="Hero Background" className="w-full h-full object-cover opacity-60" />
-          </picture>
+          <img
+            src={desktopBg}
+            alt="Hero Background"
+            className="w-full h-full object-cover opacity-60"
+          />
           <div className="absolute inset-0 bg-gradient-to-r from-black/80 via-black/50 to-transparent" />
         </div>
 
@@ -183,12 +187,14 @@ export default function ServiceDetailPage() {
                 {hasImage && (
                   <div className={`w-full ${isFull ? 'w-full' : imgWidth}`}>
                     <ScrollReveal variant={swap ? "fadeUp" : "fadeUp"} delay={0.2}>
-                      <div className="relative rounded-3xl overflow-hidden shadow-2xl">
-                        <div className="absolute inset-0 bg-primary/10 mix-blend-overlay"></div>
-                        <img
+                      <div className="relative rounded-3xl overflow-hidden shadow-2xl aspect-video">
+                        <div className="absolute inset-0 bg-primary/10 mix-blend-overlay z-10"></div>
+                        <Image
                           src={details.image[0].url}
                           alt="Service Details"
-                          className="w-full h-auto object-cover"
+                          fill
+                          className="object-cover"
+                          sizes="(max-width: 1024px) 100vw, 50vw"
                         />
                       </div>
                     </ScrollReveal>

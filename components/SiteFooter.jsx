@@ -2,11 +2,16 @@
 
 import { useEffect, useState } from 'react'
 import Link from 'next/link'
+import Image from 'next/image'
 import { Facebook, Twitter, Instagram, Linkedin, Mail, Phone, MapPin } from 'lucide-react'
+import { usePathname } from 'next/navigation'
 
 export function SiteFooter() {
     const currentYear = new Date().getFullYear()
     const [site, setSite] = useState(null)
+    const pathname = usePathname()
+
+    if (pathname?.startsWith('/admin')) return null
 
     useEffect(() => {
         fetch('/api/site')
@@ -26,10 +31,13 @@ export function SiteFooter() {
                     {/* COLUMN 1: Brand & Contact */}
                     <div className="lg:col-span-2">
                         <Link href="/" className="inline-block mb-8">
-                            <img
+                            <Image
                                 src="/images/digitfellas_logo.png"
                                 alt="DigitFellas"
+                                width={200}
+                                height={96}
                                 className="h-24 w-auto object-contain"
+                                priority
                             />
                         </Link>
 

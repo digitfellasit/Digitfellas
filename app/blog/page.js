@@ -2,12 +2,13 @@
 
 import Link from 'next/link'
 import { ArrowRight, Calendar } from 'lucide-react'
-import { motion } from 'framer-motion'
+import Image from 'next/image'
 import { Card } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import { useBlog, useHero } from '@/lib/api-hooks'
 import { HeroSection } from '@/components/HeroSection'
+import { ScrollReveal } from '@/components/ui/ScrollReveal'
 
 export default function BlogListingPage() {
   const { posts, loading } = useBlog()
@@ -35,10 +36,8 @@ export default function BlogListingPage() {
 
       <section className="container py-16 md:py-24">
         {!hero && (
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6 }}
+          <ScrollReveal
+            variant="fade-up"
           >
             <div className="text-xs font-bold uppercase tracking-[0.2em] text-primary mb-4">Blog</div>
             <h1 className="text-4xl md:text-6xl font-extrabold tracking-tight mb-6">
@@ -47,24 +46,25 @@ export default function BlogListingPage() {
             <p className="text-xl text-muted-foreground max-w-2xl mb-12">
               Practical engineering notes, product thinking, and delivery lessons.
             </p>
-          </motion.div>
+          </ScrollReveal>
         )}
 
         <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-3">
           {posts.map((post, i) => (
-            <motion.div
+            <ScrollReveal
               key={post.id}
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6, delay: i * 0.1 }}
+              variant="fade-up"
+              delay={i * 100}
             >
               <Link href={`/blog/${post.slug}`} className="group block h-full">
                 <Card className="h-full overflow-hidden rounded-3xl border-border hover:shadow-2xl transition-shadow">
                   <div className="relative aspect-[4/3] overflow-hidden">
-                    <img
+                    <Image
                       alt={post.title}
                       src={post.featured_image?.url || post.featured_image_url || '/uploads/placeholder-blog.jpg'}
-                      className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-110"
+                      fill
+                      className="object-cover transition-transform duration-700 group-hover:scale-110"
+                      sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
                     />
                     <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
                   </div>
@@ -102,7 +102,7 @@ export default function BlogListingPage() {
                   </div>
                 </Card>
               </Link>
-            </motion.div>
+            </ScrollReveal>
           ))}
         </div>
 

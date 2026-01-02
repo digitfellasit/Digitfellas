@@ -2,12 +2,13 @@
 
 import Link from 'next/link'
 import { ArrowRight } from 'lucide-react'
-import { motion } from 'framer-motion'
+import Image from 'next/image'
 import { Card } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import { useProjects, useHero } from '@/lib/api-hooks'
 import { HeroSection } from '@/components/HeroSection'
+import { ScrollReveal } from '@/components/ui/ScrollReveal'
 
 export default function ProjectsListingPage() {
   const { projects, loading } = useProjects()
@@ -35,10 +36,8 @@ export default function ProjectsListingPage() {
 
       <section className="container py-16 md:py-24">
         {!hero && (
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6 }}
+          <ScrollReveal
+            variant="fade-up"
           >
             <div className="text-xs font-bold uppercase tracking-[0.2em] text-primary mb-4">Portfolio</div>
             <h1 className="text-4xl md:text-6xl font-extrabold tracking-tight mb-6">
@@ -47,26 +46,26 @@ export default function ProjectsListingPage() {
             <p className="text-xl text-muted-foreground max-w-2xl mb-12">
               Selected case studies and builds across web, automation, and product engineering.
             </p>
-          </motion.div>
+          </ScrollReveal>
         )}
 
         <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-3">
           {projects.map((project, i) => (
-            <motion.div
+            <ScrollReveal
               key={project.id}
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6, delay: i * 0.1 }}
-              whileHover={{ y: -8 }}
+              variant="fade-up"
+              delay={i * 100}
               className="group"
             >
               <Link href={`/projects/${project.slug}`}>
                 <Card className="overflow-hidden rounded-3xl border-white/10 shadow-2xl hover:shadow-primary/10 transition-shadow">
                   <div className="relative aspect-[16/10] overflow-hidden">
-                    <img
+                    <Image
                       alt={project.title}
                       src={project.featured_image?.url || project.images?.[0]?.url || '/uploads/placeholder-project.jpg'}
-                      className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-110"
+                      fill
+                      className="object-cover transition-transform duration-700 group-hover:scale-110"
+                      sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
                     />
                     <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent opacity-60 group-hover:opacity-80 transition-opacity" />
                     <div className="absolute bottom-6 left-6 right-6">
@@ -99,7 +98,7 @@ export default function ProjectsListingPage() {
                   </div>
                 </Card>
               </Link>
-            </motion.div>
+            </ScrollReveal>
           ))}
         </div>
 

@@ -6,17 +6,32 @@ export function HeroSection({ hero, className = '' }) {
 
     const desktopMedia = hero.media?.find(m => m.variant === 'desktop');
     const mobileMedia = hero.media?.find(m => m.variant === 'mobile') || desktopMedia;
+    const fallbackImage = '/uploads/placeholder-hero.jpg';
 
     return (
         <section className={`relative w-full h-[60vh] md:h-[80vh] flex items-center justify-center overflow-hidden ${className}`}>
             <div className='absolute inset-0 z-0'>
+                {/* Mobile Image */}
                 <div className='block md:hidden w-full h-full relative'>
-                    {mobileMedia && <img src={mobileMedia.url} alt={hero.title || 'Hero'} className='w-full h-full object-cover' />}
-                    {!mobileMedia && <div className='w-full h-full bg-muted/80' />}
+                    <Image
+                        src={mobileMedia?.url || fallbackImage}
+                        alt={hero.title || 'Hero'}
+                        fill
+                        priority
+                        className='object-cover'
+                        sizes="100vw"
+                    />
                 </div>
+                {/* Desktop Image */}
                 <div className='hidden md:block w-full h-full relative'>
-                    {desktopMedia && <img src={desktopMedia.url} alt={hero.title || 'Hero'} className='w-full h-full object-cover' />}
-                    {!desktopMedia && <div className='w-full h-full bg-muted/80' />}
+                    <Image
+                        src={desktopMedia?.url || fallbackImage}
+                        alt={hero.title || 'Hero'}
+                        fill
+                        priority
+                        className='object-cover'
+                        sizes="100vw"
+                    />
                 </div>
                 <div className='absolute inset-0 bg-black/40' />
             </div>

@@ -17,7 +17,10 @@ import {
     X,
     Sun,
     Moon,
-    UserCircle
+    UserCircle,
+    ChevronLeft,
+    PanelLeftClose,
+    PanelLeftOpen
 } from 'lucide-react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { useTheme } from 'next-themes'
@@ -40,6 +43,7 @@ const navItems = [
 
 export function AdminLayout({ children }) {
     const [sidebarOpen, setSidebarOpen] = useState(false)
+    const [isCollapsed, setIsCollapsed] = useState(false)
     const [mounted, setMounted] = useState(false)
     const pathname = usePathname()
     const { theme, setTheme } = useTheme()
@@ -76,14 +80,16 @@ export function AdminLayout({ children }) {
             {/* Sidebar */}
             <aside
                 className={cn(
-                    "fixed top-0 left-0 bottom-0 z-50 w-64 bg-card border-r border-border transition-transform lg:translate-x-0",
-                    sidebarOpen ? "translate-x-0" : "-translate-x-full"
+                    "fixed top-0 left-0 bottom-0 z-50 bg-card border-r border-border transition-all duration-300 transform lg:translate-x-0",
+                    sidebarOpen ? "translate-x-0" : "-translate-x-full",
+                    isCollapsed ? "lg:w-20" : "lg:w-64"
                 )}
             >
                 <div className="flex flex-col h-full">
                     {/* Sidebar Header */}
                     <div className="h-16 flex items-center justify-between px-6 border-b border-border">
-                        <h2 className="text-lg font-bold">Admin Panel</h2>
+                        {!isCollapsed && <h2 className="text-lg font-bold">Admin Panel</h2>}
+                        {isCollapsed && <div className="mx-auto"><Sparkles className="h-6 w-6 text-primary" /></div>}
                         <Button
                             variant="ghost"
                             size="icon"
@@ -110,11 +116,13 @@ export function AdminLayout({ children }) {
                                             "flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium transition-colors",
                                             isActive
                                                 ? "bg-primary text-primary-foreground"
-                                                : "text-muted-foreground hover:bg-muted hover:text-foreground"
+                                                : "text-muted-foreground hover:bg-muted hover:text-foreground",
+                                            isCollapsed && "lg:justify-center lg:px-2"
                                         )}
+                                        title={isCollapsed ? item.label : ""}
                                     >
-                                        <Icon className="h-5 w-5" />
-                                        {item.label}
+                                        <Icon className="h-5 w-5 shrink-0" />
+                                        {!isCollapsed && <span>{item.label}</span>}
                                     </Link>
                                 )
                             })}
@@ -124,8 +132,8 @@ export function AdminLayout({ children }) {
                     {/* Sidebar Footer */}
                     <div className="p-4 border-t border-border">
                         <Link href="/" className="block">
-                            <Button variant="outline" className="w-full">
-                                View Site
+                            <Button variant="outline" className={cn("w-full transition-all", isCollapsed && "lg:p-2 lg:h-10")}>
+                                {isCollapsed ? <FolderOpen className="h-4 w-4" /> : "View Site"}
                             </Button>
                         </Link>
                     </div>
@@ -146,10 +154,23 @@ export function AdminLayout({ children }) {
             </AnimatePresence>
 
             {/* Main Content */}
-            <main className="lg:ml-64 pt-16 lg:pt-0 min-h-screen">
+            <main className={cn(
+                "pt-16 lg:pt-0 min-h-screen transition-all duration-300",
+                isCollapsed ? "lg:ml-20" : "lg:ml-64"
+            )}>
                 {/* Desktop Top Bar */}
                 <div className="hidden lg:flex h-16 items-center justify-between px-8 border-b border-border bg-card">
-                    <h1 className="text-lg font-bold">Admin Dashboard</h1>
+                    <div className="flex items-center gap-4">
+                        <Button
+                            variant="ghost"
+                            size="icon"
+                            onClick={() => setIsCollapsed(!isCollapsed)}
+                            className="text-muted-foreground hover:text-foreground"
+                        >
+                            {isCollapsed ? <PanelLeftOpen className="h-5 w-5" /> : <PanelLeftClose className="h-5 w-5" />}
+                        </Button>
+                        <h1 className="text-lg font-bold">Admin Dashboard</h1>
+                    </div>
                     <div className="flex items-center gap-4">
                         <Button
                             variant="ghost"

@@ -419,47 +419,69 @@ async function jsonGetUsers() {
 }
 
 async function handleUpload(request) {
-  await ensureDir(UPLOAD_DIR)
-  const form = await request.formData()
+  try {
+    await ensureDir(UPLOAD_DIR).catch(err => {
+      console.warn('Failed to ensure upload directory (likely read-only filesystem in deployment):', err.message)
+    })
 
-  const files = form.getAll('files')
-  const kind = form.get('kind') || 'image'
-  const variant = form.get('variant') || 'desktop'
+    const form = await request.formData()
 
-  if (!files?.length) {
-    return handleCORS(NextResponse.json({ error: 'No files provided (field name: files)' }, { status: 400 }))
-  }
+    const files = form.getAll('files')
+    const kind = form.get('kind') || 'image'
+    const variant = form.get('variant') || 'desktop'
 
-  const saved = []
-  for (const f of files) {
-    const arrayBuffer = await f.arrayBuffer()
-    const buffer = Buffer.from(arrayBuffer)
-    const originalName = f.name || 'upload'
-    const ext = path.extname(originalName) || (kind === 'video' ? '.mp4' : '.jpg')
-
-    const safeBase = originalName.replace(/[^a-zA-Z0-9._-]/g, '_').slice(0, 64)
-    const filename = `${Date.now()}_${uuidv4()}_${variant}_${safeBase}${ext}`
-
-    const diskPath = path.join(UPLOAD_DIR, filename)
-    await fs.writeFile(diskPath, buffer)
-
-    const mediaId = uuidv4()
-    const mimeType = kind === 'video' ? 'video/mp4' : (ext === '.png' ? 'image/png' : 'image/jpeg')
-
-    // Insert into DB if PG enabled
-    if (await pgEnabled()) {
-      const pool = getPool()
-      await pool.query(`
-            INSERT INTO media_items (id, url, filename, alt_text, mime_type, size_bytes)
-            VALUES ($1, $2, $3, $4, $5, $6)
-            ON CONFLICT (id) DO NOTHING
-      `, [mediaId, `/uploads/${filename}`, filename, '', mimeType, buffer.length])
+    if (!files?.length) {
+      return handleCORS(NextResponse.json({ error: 'No files provided (field name: files)' }, { status: 400 }))
     }
 
-    saved.push({ id: mediaId, url: `/uploads/${filename}`, originalName, kind, variant, size: buffer.length })
-  }
+    const saved = []
+    for (const f of files) {
+      const arrayBuffer = await f.arrayBuffer()
+      const buffer = Buffer.from(arrayBuffer)
+      const originalName = f.name || 'upload'
+      const ext = path.extname(originalName) || (kind === 'video' ? '.mp4' : '.jpg')
 
-  return handleCORS(NextResponse.json({ uploaded: saved }))
+      const safeBase = originalName.replace(/[^a-zA-Z0-9._-]/g, '_').slice(0, 64)
+      const filename = `${Date.now()}_${uuidv4()}_${variant}_${safeBase}${ext}`
+
+      const diskPath = path.join(UPLOAD_DIR, filename)
+
+      let diskWriteSuccess = false
+      try {
+        await fs.writeFile(diskPath, buffer)
+        diskWriteSuccess = true
+      } catch (err) {
+        console.error('File system write error (Internal Server Error in deployment):', err)
+        // If disk write fails in Vercel/Deployment, we cannot serve from /public/uploads
+        return handleCORS(NextResponse.json({
+          error: 'Filesystem is read-only in this deployment environment. Please use an external storage provider like Cloudinary or S3 for production uploads.',
+          details: err.message
+        }, { status: 500 }))
+      }
+
+      if (diskWriteSuccess) {
+        const mediaId = uuidv4()
+        const mimeType = kind === 'video' ? 'video/mp4' : (ext === '.png' ? 'image/png' : 'image/jpeg')
+
+        // Insert into DB if PG enabled
+        if (await pgEnabled()) {
+          const pool = getPool()
+          await pool.query(`
+                INSERT INTO media_items (id, url, filename, alt_text, mime_type, size_bytes)
+                VALUES ($1, $2, $3, $4, $5, $6)
+                ON CONFLICT (id) DO NOTHING
+          `, [mediaId, `/uploads/${filename}`, filename, '', mimeType, buffer.length])
+        }
+
+        saved.push({ id: mediaId, url: `/uploads/${filename}`, originalName, kind, variant, size: buffer.length })
+      }
+    }
+
+    return handleCORS(NextResponse.json({ uploaded: saved }))
+  } catch (err) {
+    console.error('Unexpected upload handler error:', err)
+    return handleCORS(NextResponse.json({ error: 'Internal server error during upload path processing', details: err.message }, { status: 500 }))
+  }
 }
 
 async function handleRoute(request, { params }) {

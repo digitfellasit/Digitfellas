@@ -1,6 +1,7 @@
 'use client'
 
 import Link from 'next/link'
+import Image from 'next/image'
 import { useEffect, useState } from 'react'
 import { usePathname } from 'next/navigation'
 import { Menu, X, ChevronDown, ChevronRight, Code2, Sun, Moon } from 'lucide-react'
@@ -66,10 +67,10 @@ export function SiteHeader() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, ease: "easeOut" }}
             className={cx(
-                "fixed top-0 left-0 right-0 z-[20051] transition-all duration-300 ease-in-out",
+                "fixed top-0 left-0 right-0 z-[20051] ",
                 isSticky
                     ? "bg-[#0A0A0A]/90 backdrop-blur-md shadow-lg h-[70px] md:h-[70px]"
-                    : "bg-transparent h-[80px] md:h-auto py-6"
+                    : "bg-transparent h-[70px] md:h-[70px]"
             )}
         >
             <div className={cx(
@@ -78,14 +79,16 @@ export function SiteHeader() {
             )}>
                 {/* A. Logo (Left) */}
                 <Link href="/" className="flex items-center gap-3 group relative z-50">
-                    <img
-                        src="/images/digitfellas_logo.png"
-                        alt="DigitFellas Logo"
-                        className={cx(
-                            "transition-all duration-300 object-contain",
-                            isSticky ? "h-20" : "h-24"
-                        )}
-                    />
+                    <div className="transition-all duration-300 relative h-20 w-40">
+                        <Image
+                            src="/images/digitfellas_logo.png"
+                            alt="DigitFellas Logo"
+                            fill
+                            priority
+                            className="object-contain"
+                            sizes="(max-width: 768px) 150px, 200px"
+                        />
+                    </div>
                 </Link>
 
                 {/* B. Main Navigation (Center-ish / Right-ish) */}
@@ -177,10 +180,10 @@ export function SiteHeader() {
                         <Menu className="w-6 h-6" />
                     </Button>
                 </div>
-            </div>
+            </div >
 
             {/* Mobile Nav Overlay */}
-            <AnimatePresence>
+            < AnimatePresence >
                 {open && (
                     <>
                         <motion.div
@@ -241,8 +244,9 @@ export function SiteHeader() {
                             </div>
                         </motion.div>
                     </>
-                )}
-            </AnimatePresence>
-        </motion.header>
+                )
+                }
+            </AnimatePresence >
+        </motion.header >
     )
 }

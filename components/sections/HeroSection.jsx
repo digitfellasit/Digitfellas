@@ -1,6 +1,7 @@
 'use client'
 
 import { motion, AnimatePresence } from 'framer-motion'
+import Image from 'next/image'
 import { useEffect, useState, useMemo } from 'react'
 import Link from 'next/link'
 
@@ -132,12 +133,16 @@ export function HeroSection({ hero }) {
     return (
         <section
             className="relative w-full overflow-hidden bg-[#0A0A0A]"
-            style={{
-                backgroundImage: 'url(/images/hero-bg.svg)',
-                backgroundSize: 'cover',
-                backgroundPosition: 'center'
-            }}
         >
+            {/* Background Image Optimization - Using native img for SVG background to avoid null response errors */}
+            <div className="absolute inset-0 z-0">
+                <img
+                    src="/images/hero-bg.svg"
+                    alt=""
+                    className="w-full h-full object-cover"
+                />
+            </div>
+
             <div className="container relative z-10 max-w-[1248px]">{/* Max row width 1248px */}
                 <div className="flex flex-col lg:flex-row items-center pt-[140px] pb-[120px] md:pt-[110px] md:pb-[60px]">
 
@@ -179,8 +184,6 @@ export function HeroSection({ hero }) {
 
                     {/* RIGHT COLUMN (50%) */}
                     {/* Animation: FadeInRight (1.3s) */}
-                    {/* RIGHT COLUMN (50%) */}
-                    {/* Animation: FadeInRight (1.3s) */}
                     <motion.div
                         initial={{ opacity: 0, x: 100 }}
                         animate={{ opacity: 1, x: 0 }}
@@ -188,10 +191,14 @@ export function HeroSection({ hero }) {
                         className="w-full lg:w-1/2 relative min-h-[500px] lg:h-[600px] flex items-center justify-center pl-[0px] lg:pl-[70px] mt-10 lg:mt-0"
                     >
                         {/* Right Column Background */}
-                        <div
-                            className="absolute inset-0 z-0 opacity-20 bg-cover bg-center rounded-2xl"
-                            style={{ backgroundImage: 'url(https://avada.website/programmer/wp-content/uploads/sites/179/2023/05/background-3.jpg)' }}
-                        />
+                        <div className="absolute inset-0 z-0 opacity-20 bg-cover bg-center rounded-2xl overflow-hidden">
+                            <Image
+                                src="https://avada.website/programmer/wp-content/uploads/sites/179/2023/05/background-3.jpg"
+                                alt=""
+                                fill
+                                className="object-cover"
+                            />
+                        </div>
 
                         <div className="relative w-full h-full flex items-center justify-center">
                             {/* Image Sets Cycle */}
@@ -216,10 +223,13 @@ export function HeroSection({ hero }) {
                                             transition={{ duration: 6, repeat: Infinity, ease: "easeInOut" }}
                                             className="relative overflow-hidden rounded-[1.5rem] border border-white/20 shadow-[-10px_20px_40px_rgba(0,0,0,0.5)] bg-[#0f1419] aspect-[16/10]"
                                         >
-                                            <img
+                                            <Image
                                                 src={currentSet[0]?.url || '/uploads/placeholder-hero.jpg'}
                                                 alt="Main Feature"
-                                                className="w-full h-full object-cover opacity-90"
+                                                fill
+                                                className="object-cover opacity-90"
+                                                sizes="(max-width: 768px) 75vw, 35vw"
+                                                priority
                                             />
                                             <div className="absolute inset-0 bg-gradient-to-t from-[#0f1419] via-transparent to-transparent opacity-60" />
                                         </motion.div>
@@ -235,12 +245,14 @@ export function HeroSection({ hero }) {
                                         <motion.div
                                             animate={{ y: [0, 10, 0] }}
                                             transition={{ duration: 8, repeat: Infinity, ease: "easeInOut", delay: 1 }}
-                                            className="overflow-hidden rounded-xl border border-white/20 shadow-2xl aspect-square bg-[#0f1419]"
+                                            className="relative overflow-hidden rounded-xl border border-white/20 shadow-2xl aspect-square bg-[#0f1419]"
                                         >
-                                            <img
+                                            <Image
                                                 src={currentSet[1]?.url || currentSet[0]?.url || '/uploads/placeholder-hero.jpg'}
                                                 alt="Sub Feature"
-                                                className="w-full h-full object-cover"
+                                                fill
+                                                className="object-cover"
+                                                sizes="(max-width: 768px) 30vw, 15vw"
                                             />
                                         </motion.div>
                                     </motion.div>
@@ -258,8 +270,14 @@ export function HeroSection({ hero }) {
                                             className="group relative"
                                         >
                                             {currentSet[2] ? (
-                                                <div className="overflow-hidden rounded-xl border border-white/20 shadow-2xl aspect-square bg-[#0f1419]">
-                                                    <img src={currentSet[2].url} alt="Sub Feature 2" className="w-full h-full object-cover" />
+                                                <div className="relative overflow-hidden rounded-xl border border-white/20 shadow-2xl aspect-square bg-[#0f1419]">
+                                                    <Image
+                                                        src={currentSet[2].url}
+                                                        alt="Sub Feature 2"
+                                                        fill
+                                                        className="object-cover"
+                                                        sizes="(max-width: 768px) 35vw, 18vw"
+                                                    />
                                                 </div>
                                             ) : (
                                                 <div className="overflow-hidden rounded-xl border border-white/10 bg-[#1e1e1e]/90 backdrop-blur-md shadow-2xl p-5">

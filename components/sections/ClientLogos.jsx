@@ -2,7 +2,8 @@
 
 import { motion } from 'framer-motion'
 import { useClientLogos } from '@/lib/homepage-hooks'
-import { useEffect, useRef } from 'react'
+import { useRef } from 'react'
+import Image from 'next/image'
 
 export function ClientLogosSection() {
     const { data: logos = [], isLoading } = useClientLogos()
@@ -35,7 +36,7 @@ export function ClientLogosSection() {
                         x: {
                             repeat: Infinity,
                             repeatType: "loop",
-                            duration: 20,
+                            duration: 25,
                             ease: "linear",
                         },
                     }}
@@ -43,12 +44,14 @@ export function ClientLogosSection() {
                     {duplicatedLogos.map((logo, index) => (
                         <div
                             key={`${logo.id}-${index}`}
-                            className="flex-shrink-0 grayscale hover:grayscale-0 opacity-60 hover:opacity-100 transition-all duration-300"
+                            className="flex-shrink-0 grayscale hover:grayscale-0 opacity-60 hover:opacity-100 transition-all duration-300 relative h-8 w-32"
                         >
-                            <img
+                            <Image
                                 src={logo.logo_url}
                                 alt={logo.name}
-                                className="h-8 w-auto object-contain"
+                                fill
+                                className="object-contain"
+                                sizes="(max-width: 768px) 100px, 150px"
                             />
                         </div>
                     ))}

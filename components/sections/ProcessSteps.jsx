@@ -1,8 +1,8 @@
 'use client'
 
-import { motion } from 'framer-motion'
 import { useProcessSteps } from '@/lib/homepage-hooks'
 import * as LucideIcons from 'lucide-react'
+import { ScrollReveal } from '@/components/ui/ScrollReveal'
 
 export function ProcessStepsSection() {
     const { data: steps = [], isLoading } = useProcessSteps()
@@ -15,10 +15,8 @@ export function ProcessStepsSection() {
             <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,_var(--tw-gradient-stops))] from-blue-900/10 via-[#050505] to-[#050505]" />
 
             <div className="container relative z-10">
-                <motion.div
-                    initial={{ opacity: 0, y: 20 }}
-                    whileInView={{ opacity: 1, y: 0 }}
-                    viewport={{ once: true }}
+                <ScrollReveal
+                    variant="fade-up"
                     className="text-center mb-20"
                 >
                     <span className="text-[#ffffff] font-semibold tracking-wider uppercase text-sm mb-4 block">Work Process</span>
@@ -28,19 +26,17 @@ export function ProcessStepsSection() {
                     <p className="text-lg text-gray-400 max-w-2xl mx-auto">
                         Our streamlined process ensures transparency and quality at every step of the development lifecycle.
                     </p>
-                </motion.div>
+                </ScrollReveal>
 
                 <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
                     {steps.map((step, index) => {
                         const Icon = LucideIcons[step.icon_name] || LucideIcons.Zap
 
                         return (
-                            <motion.div
+                            <ScrollReveal
                                 key={step.id}
-                                initial={{ opacity: 0, y: 30 }}
-                                whileInView={{ opacity: 1, y: 0 }}
-                                viewport={{ once: true }}
-                                transition={{ delay: index * 0.1 }}
+                                variant="fade-up"
+                                delay={index * 150}
                                 className="relative group h-full"
                             >
                                 <div className="bg-[#0f0f0f] border border-white/5 rounded-3xl p-8 h-full hover:border-[#ffffff]/30 transition-all duration-300 hover:bg-[#121212] relative overflow-hidden flex flex-col items-center text-center group-hover:-translate-y-2">
@@ -59,7 +55,7 @@ export function ProcessStepsSection() {
                                     <h3 className="text-xl font-bold mb-4 text-white font-heading">{step.title}</h3>
                                     <p className="text-gray-400 text-sm leading-relaxed">{step.description}</p>
                                 </div>
-                            </motion.div>
+                            </ScrollReveal>
                         )
                     })}
                 </div>

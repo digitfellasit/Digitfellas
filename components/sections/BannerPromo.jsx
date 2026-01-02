@@ -1,28 +1,28 @@
 'use client'
 
-import { motion } from 'framer-motion'
 import Link from 'next/link'
+import Image from 'next/image'
 import { ArrowRight } from 'lucide-react'
+import { ScrollReveal } from '@/components/ui/ScrollReveal'
 
 export function BannerPromo() {
     return (
-        <section className="relative w-full overflow-hidden">
+        <section className="relative w-full overflow-hidden min-h-[500px]">
             {/* Background Layer with Blend Mode */}
             <div className="absolute inset-0 z-0">
                 <div
                     className="absolute inset-0 z-10"
                     style={{
                         background: 'linear-gradient(180deg, rgba(46, 16, 101, 0.9) 0%, rgba(0, 0, 0, 0.8) 100%)',
-                        mixBlendMode: 'multiply' // Adjust blend mode as needed
+                        mixBlendMode: 'multiply'
                     }}
                 />
-                <img
+                <Image
                     src="https://avada.website/programmer/wp-content/uploads/sites/179/2023/05/banner-1.jpg"
                     alt="Banner Background"
-                    className="w-full h-full object-cover object-right-top grayscale"
-                    style={{
-                        // If specific luminosity blend is needed, we can overlay a color div with mix-blend-mode: luminosity
-                    }}
+                    fill
+                    className="object-cover object-right-top grayscale opacity-50"
+                    sizes="100vw"
                 />
             </div>
 
@@ -31,11 +31,8 @@ export function BannerPromo() {
                 <div className="flex flex-col md:flex-row">
 
                     {/* 2/3 Column */}
-                    <motion.div
-                        initial={{ opacity: 0, y: 50 }}
-                        whileInView={{ opacity: 1, y: 0 }}
-                        viewport={{ once: true }}
-                        transition={{ duration: 1.3, ease: "easeOut" }}
+                    <ScrollReveal
+                        variant="fade-up"
                         className="w-full md:w-2/3"
                     >
                         <span className="text-[#ffffff] font-semibold tracking-wider uppercase text-sm mb-6 block">
@@ -66,7 +63,7 @@ export function BannerPromo() {
                             </Link>
                         </div>
 
-                    </motion.div>
+                    </ScrollReveal>
                 </div>
             </div>
         </section>

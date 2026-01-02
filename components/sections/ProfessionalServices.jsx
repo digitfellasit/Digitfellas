@@ -1,8 +1,9 @@
 'use client'
 
-import { motion } from 'framer-motion'
 import Link from 'next/link'
 import { ArrowRight } from 'lucide-react'
+import Image from 'next/image'
+import { ScrollReveal } from '@/components/ui/ScrollReveal'
 
 export function ProfessionalServices() {
     return (
@@ -13,30 +14,27 @@ export function ProfessionalServices() {
 
                     {/* LEFT COLUMN (40%) */}
                     {/* Animation: FadeInLeft (1.3s) - assuming standard duration/ease from previous sections */}
-                    <motion.div
-                        initial={{ opacity: 0, x: -100 }}
-                        whileInView={{ opacity: 1, x: 0 }}
-                        viewport={{ once: true }}
-                        transition={{ duration: 1.3, ease: "easeOut" }}
+                    <ScrollReveal
+                        variant="fade-left"
                         className="w-full lg:w-[40%] mb-12 lg:mb-0 relative"
                     >
-                        <div className="relative rounded-[5px] overflow-hidden shadow-2xl">
-                            <img
+                        <div className="relative rounded-[5px] overflow-hidden shadow-2xl aspect-[4/3]">
+                            <Image
                                 src="https://avada.website/programmer/wp-content/uploads/sites/179/2023/05/info-2.jpg"
                                 alt="Professional Programming"
-                                className="w-full h-auto object-cover"
+                                fill
+                                className="object-cover"
+                                sizes="(max-width: 1024px) 100vw, 40vw"
                             />
                         </div>
-                    </motion.div>
+                    </ScrollReveal>
 
                     {/* RIGHT COLUMN (60%) */}
                     {/* Left spacing: calc(0.166 * (100% - 80px)) approx 16.6% margin-left relative to remaining space or just padding-left */}
                     <div className="w-full lg:w-[60%] lg:pl-[8%] xl:pl-[10%]">
-                        <motion.div
-                            initial={{ opacity: 0, x: 50 }}
-                            whileInView={{ opacity: 1, x: 0 }}
-                            viewport={{ once: true }}
-                            transition={{ duration: 1.3, ease: "easeOut", delay: 0.2 }}
+                        <ScrollReveal
+                            variant="fade-right"
+                            delay={200}
                         >
                             {/* H2 Title */}
                             <h2 className="text-4xl md:text-[46px] leading-tight font-bold text-white mb-6 font-heading">
@@ -78,7 +76,7 @@ export function ProfessionalServices() {
                                 </div>
                             </div>
 
-                        </motion.div>
+                        </ScrollReveal>
                     </div>
 
                 </div>

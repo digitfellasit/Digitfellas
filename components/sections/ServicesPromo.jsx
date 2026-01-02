@@ -1,8 +1,9 @@
 'use client'
 
-import { motion } from 'framer-motion'
 import { Laptop, ArrowRight } from 'lucide-react'
 import Link from 'next/link'
+import Image from 'next/image'
+import { ScrollReveal } from '@/components/ui/ScrollReveal'
 
 export function ServicesPromo({ services = [] }) {
     // Take the first 3 services to display
@@ -10,26 +11,23 @@ export function ServicesPromo({ services = [] }) {
 
     return (
         <section className="relative w-full bg-black text-white pt-[95px] pb-[160px] md:pt-[90px] md:pb-[90px] overflow-hidden">
-            {/* Background SVG */}
+            {/* Background Image Optimization - Using native img for SVG background to avoid null response errors */}
             <div className="absolute inset-0 z-0 opacity-40">
                 <img
                     src="/images/hero-bg.svg"
-                    alt="Background Pattern"
+                    alt=""
                     className="w-full h-full object-cover opacity-60"
                 />
-                {/* Dark overlay to ensure text readability if SVG is too bright */}
                 <div className="absolute inset-0 bg-black/60" />
             </div>
 
             <div className="container relative z-10 max-w-[1248px] mx-auto px-10">
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
                     {promoServices.map((service, index) => (
-                        <motion.div
+                        <ScrollReveal
                             key={service.id}
-                            initial={{ opacity: 0, y: 60, scale: 0.9 }}
-                            whileInView={{ opacity: 1, y: 0, scale: 1 }}
-                            viewport={{ once: true }}
-                            transition={{ duration: 0.8, delay: index * 0.3 }}
+                            variant="fade-up"
+                            delay={index * 200}
                             className="bg-[#1a1a1a] p-[48px] rounded-[5px] transform transition-all duration-300 hover:scale-[1.03] hover:-translate-y-2 hover:bg-[#222] shadow-2xl group flex flex-col"
                         >
                             {/* Number */}
@@ -38,9 +36,16 @@ export function ServicesPromo({ services = [] }) {
                             </span>
 
                             {/* Icon */}
-                            <div className="w-[82px] h-[82px] rounded-[15%] bg-[#121212] flex items-center justify-center mb-8 group-hover:bg-[#ffffff] transition-colors duration-300 overflow-hidden">
+                            <div className="w-[82px] h-[82px] rounded-[15%] bg-[#121212] flex items-center justify-center mb-8 group-hover:bg-[#ffffff] transition-colors duration-300 overflow-hidden relative">
                                 {service.icon_url ? (
-                                    <img src={service.icon_url} alt="" className="w-10 h-10 object-contain invert group-hover:invert-0 transition-all" />
+                                    <div className="relative w-10 h-10 group-hover:grayscale group-hover:invert transition-all">
+                                        <Image
+                                            src={service.icon_url}
+                                            alt=""
+                                            fill
+                                            className="object-contain"
+                                        />
+                                    </div>
                                 ) : (
                                     <Laptop className="w-10 h-10 text-white group-hover:text-black transition-colors" />
                                 )}
@@ -64,11 +69,11 @@ export function ServicesPromo({ services = [] }) {
                                 View details
                                 <ArrowRight className="w-4 h-4 ml-2" />
                             </Link>
-                        </motion.div>
+                        </ScrollReveal>
                     ))}
 
                     {promoServices.length === 0 && (
-                        <div className="col-span-3 text-center text-gray-500">
+                        <div className="col-span-3 text-center text-gray-400">
                             No services available to display.
                         </div>
                     )}

@@ -2,6 +2,7 @@
 
 import { useParams } from 'next/navigation'
 import Link from 'next/link'
+import Image from 'next/image'
 import { ArrowLeft, Calendar, User, ExternalLink } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Card } from '@/components/ui/card'
@@ -93,11 +94,13 @@ export default function ProjectDetailPage() {
                 )}
 
                 {project.images && project.images.length > 0 && (
-                    <div className="mb-12">
-                        <img
+                    <div className="mb-12 relative h-[500px]">
+                        <Image
                             src={project.images[0].url}
                             alt={project.images[0].alt || project.title}
-                            className="w-full h-[500px] object-cover rounded-3xl shadow-2xl"
+                            fill
+                            className="object-cover rounded-3xl shadow-2xl"
+                            sizes="100vw"
                         />
                     </div>
                 )}

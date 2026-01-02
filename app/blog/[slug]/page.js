@@ -2,6 +2,7 @@
 
 import { useParams } from 'next/navigation'
 import Link from 'next/link'
+import Image from 'next/image'
 import { ArrowLeft, Calendar, User, Clock } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Card } from '@/components/ui/card'
@@ -104,11 +105,13 @@ export default function BlogPostPage() {
 
           {/* Featured Image */}
           {post.featured_image_url && (
-            <div className="mb-12">
-              <img
+            <div className="mb-12 relative h-[500px]">
+              <Image
                 src={post.featured_image_url}
                 alt={post.title}
-                className="w-full h-[500px] object-cover rounded-3xl shadow-2xl"
+                fill
+                className="object-cover rounded-3xl shadow-2xl"
+                sizes="(max-width: 1024px) 100vw, 896px"
               />
             </div>
           )}

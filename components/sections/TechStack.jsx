@@ -1,7 +1,8 @@
 'use client'
 
-import { motion } from 'framer-motion'
+import Image from 'next/image'
 import { useTechStack } from '@/lib/homepage-hooks'
+import { ScrollReveal } from '@/components/ui/ScrollReveal'
 
 export function TechStackSection() {
     const { data: techStack = [], isLoading } = useTechStack()
@@ -19,17 +20,15 @@ export function TechStackSection() {
     return (
         <section className="py-24 bg-background relative overflow-hidden">
             <div className="container relative z-10">
-                <motion.div
-                    initial={{ opacity: 0, y: 20 }}
-                    whileInView={{ opacity: 1, y: 0 }}
-                    viewport={{ once: true }}
+                <ScrollReveal
+                    variant="fade-up"
                     className="text-center mb-16"
                 >
                     <h2 className="text-4xl md:text-5xl font-bold mb-4">Our Tech Stack</h2>
                     <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
                         Cutting-edge technologies we work with
                     </p>
-                </motion.div>
+                </ScrollReveal>
 
                 <div className="space-y-12">
                     {Object.entries(grouped).map(([category, items], catIndex) => (
@@ -39,24 +38,24 @@ export function TechStackSection() {
                             </h3>
                             <div className="grid grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-6">
                                 {items.map((tech, index) => (
-                                    <motion.div
+                                    <ScrollReveal
                                         key={tech.id}
-                                        initial={{ opacity: 0, scale: 0.8 }}
-                                        whileInView={{ opacity: 1, scale: 1 }}
-                                        viewport={{ once: true }}
-                                        transition={{ delay: (catIndex * 0.1) + (index * 0.05) }}
-                                        whileHover={{ scale: 1.1, y: -5 }}
+                                        variant="zoom-in"
+                                        delay={(catIndex * 50) + (index * 30)}
                                         className="group"
                                     >
                                         <div className="bg-card border border-border rounded-xl p-6 flex flex-col items-center justify-center aspect-square hover:border-primary/50 transition-all duration-300 hover:shadow-lg grayscale hover:grayscale-0">
-                                            <img
-                                                src={tech.icon_url}
-                                                alt={tech.name}
-                                                className="w-12 h-12 object-contain mb-3"
-                                            />
+                                            <div className="relative w-12 h-12 mb-3">
+                                                <Image
+                                                    src={tech.icon_url}
+                                                    alt={tech.name}
+                                                    fill
+                                                    className="object-contain"
+                                                />
+                                            </div>
                                             <span className="text-xs font-medium text-center">{tech.name}</span>
                                         </div>
-                                    </motion.div>
+                                    </ScrollReveal>
                                 ))}
                             </div>
                         </div>

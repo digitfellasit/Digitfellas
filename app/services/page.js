@@ -2,12 +2,13 @@
 
 import Link from 'next/link'
 import { ArrowRight, Sparkles } from 'lucide-react'
-import { motion } from 'framer-motion'
+import Image from 'next/image'
 import { Card } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import { useServices, useHero } from '@/lib/api-hooks'
 import { HeroSection } from '@/components/HeroSection'
+import { ScrollReveal } from '@/components/ui/ScrollReveal'
 
 export default function ServicesListingPage() {
   const { services, loading } = useServices()
@@ -35,10 +36,8 @@ export default function ServicesListingPage() {
 
       <section className="container py-16 md:py-24">
         {!hero && (
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6 }}
+          <ScrollReveal
+            variant="fade-up"
           >
             <div className="text-xs font-bold uppercase tracking-[0.2em] text-primary mb-4">Services</div>
             <h1 className="text-4xl md:text-6xl font-extrabold tracking-tight mb-6">
@@ -47,17 +46,15 @@ export default function ServicesListingPage() {
             <p className="text-xl text-muted-foreground max-w-2xl mb-12">
               End-to-end delivery from idea to deployment — optimized for speed and reliability.
             </p>
-          </motion.div>
+          </ScrollReveal>
         )}
 
         <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
           {services.map((service, i) => (
-            <motion.div
+            <ScrollReveal
               key={service.id}
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6, delay: i * 0.1 }}
-              whileHover={{ y: -5 }}
+              variant="fade-up"
+              delay={i * 100}
               className="group h-full"
             >
               <Card className="h-full relative overflow-hidden rounded-3xl border-white/10 p-8 shadow-sm transition-all group-hover:shadow-2xl group-hover:shadow-primary/5">
@@ -65,11 +62,13 @@ export default function ServicesListingPage() {
 
                 <div className="relative h-full flex flex-col">
                   {(service.featured_image?.url || (service.images && service.images.length > 0)) ? (
-                    <div className="mb-6 w-full h-48 rounded-2xl overflow-hidden">
-                      <img
+                    <div className="mb-6 w-full h-48 rounded-2xl overflow-hidden relative">
+                      <Image
                         src={service.featured_image?.url || service.images?.[0]?.url}
                         alt={service.featured_image?.alt || service.images?.[0]?.alt || service.title}
-                        className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
+                        fill
+                        className="object-cover group-hover:scale-110 transition-transform duration-500"
+                        sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
                       />
                     </div>
                   ) : (
@@ -96,7 +95,7 @@ export default function ServicesListingPage() {
                   </Button>
                 </div>
               </Card>
-            </motion.div>
+            </ScrollReveal>
           ))}
         </div>
 

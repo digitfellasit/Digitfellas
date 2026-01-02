@@ -1,8 +1,9 @@
 'use client'
 
-import { motion } from 'framer-motion'
 import Link from 'next/link'
+import Image from 'next/image'
 import { ArrowRight } from 'lucide-react'
+import { ScrollReveal } from '@/components/ui/ScrollReveal'
 
 export function MainServicesProjects({ services = [], projects = [] }) {
     // Ensure we have exactly or at most 6 services for the grid
@@ -12,41 +13,34 @@ export function MainServicesProjects({ services = [], projects = [] }) {
 
     return (
         <section className="relative w-full bg-black text-white pt-[160px] pb-[160px] md:pt-[90px] md:pb-[90px] overflow-hidden">
-
             <div className="container relative z-10 max-w-[1280px] mx-auto px-4 md:px-10">
 
                 {/* INTRO SECTION */}
-                <motion.div
-                    initial={{ opacity: 0, y: 30 }}
-                    whileInView={{ opacity: 1, y: 0 }}
-                    viewport={{ once: true }}
-                    transition={{ duration: 1.3 }}
-                    className="text-center mb-20"
-                >
+                <ScrollReveal variant="fade-up" className="text-center mb-20">
                     <h2 className="text-4xl md:text-[46px] font-bold mb-6 font-heading">Our Services</h2>
                     <p className="text-gray-400 text-[15px] leading-[26px] mx-auto md:max-w-[60%]">
                         We offer a comprehensive range of services to help you achieve your digital goals. From custom software development to stunning design, we have you covered.
                     </p>
-                </motion.div>
+                </ScrollReveal>
 
                 {/* SERVICES GRID (3 Columns, 2 Rows) */}
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-x-8 gap-y-16 mb-32">
                     {displayServices.map((service, index) => (
-                        <motion.div
+                        <ScrollReveal
                             key={service.id}
-                            initial={{ opacity: 0, y: 50 }}
-                            whileInView={{ opacity: 1, y: 0 }}
-                            viewport={{ once: true }}
-                            transition={{ duration: 1.3, delay: 0.3 + (index * 0.1) }}
+                            variant="fade-up"
+                            delay={index * 100}
                             className="flex flex-col items-center text-center group"
                         >
                             {/* Service Image */}
                             <div className="w-full aspect-[100/83] overflow-hidden rounded-[5px] mb-10 relative">
-                                <Link href={`/services/${service.slug}`}>
-                                    <img
+                                <Link href={`/services/${service.slug}`} className="block w-full h-full">
+                                    <Image
                                         src={service.featured_image?.url || service.icon_url || '/images/placeholder-service.jpg'}
                                         alt={service.title}
-                                        className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+                                        fill
+                                        className="object-cover transition-transform duration-500 group-hover:scale-105"
+                                        sizes="(max-width: 768px) 100vw, 33vw"
                                     />
                                 </Link>
                             </div>
@@ -58,26 +52,26 @@ export function MainServicesProjects({ services = [], projects = [] }) {
                             <p className="text-gray-400 text-[15px] leading-[26px]">
                                 {(service.short_description || service.excerpt || "Professional service description goes here.").slice(0, 120) + ((service.short_description || service.excerpt || "").length > 120 ? '...' : '')}
                             </p>
-                        </motion.div>
+                        </ScrollReveal>
                     ))}
                 </div>
 
                 {/* PROJECTS GRID (2 Columns) */}
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-x-[40px] gap-y-[80px]">
                     {displayProjects.map((project, index) => (
-                        <motion.div
+                        <ScrollReveal
                             key={project.id}
-                            initial={{ opacity: 0, scale: 0.95 }}
-                            whileInView={{ opacity: 1, scale: 1 }}
-                            viewport={{ once: true }}
-                            transition={{ duration: 0.8 }}
+                            variant="fade-up"
+                            delay={index * 200}
                             className="relative group w-full aspect-[4/3] md:aspect-[3/2] rounded-[5px] overflow-hidden transform transition-transform duration-300 hover:scale-[1.02]"
                         >
-                            {/* Background Image */}
-                            <img
+                            {/* Background Image Project */}
+                            <Image
                                 src={project.featured_image?.url || '/images/placeholder-project.jpg'}
                                 alt={project.title}
-                                className="absolute inset-0 w-full h-full object-cover"
+                                fill
+                                className="absolute inset-0 object-cover"
+                                sizes="(max-width: 768px) 100vw, 50vw"
                             />
 
                             {/* Dark Overlay */}
@@ -107,7 +101,7 @@ export function MainServicesProjects({ services = [], projects = [] }) {
                                     <ArrowRight className="w-5 h-5 transform group-hover/btn:translate-x-1 transition-transform" />
                                 </Link>
                             </div>
-                        </motion.div>
+                        </ScrollReveal>
                     ))}
                 </div>
 
