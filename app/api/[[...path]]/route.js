@@ -452,21 +452,38 @@ async function handleUpload(request) {
         await fs.writeFile(diskPath, buffer)
         diskWriteSuccess = true
       } catch (err) {
-        console.error('File system write error:', err)
-        return handleCORS(NextResponse.json({
-          error: 'Failed to write file to storage.',
-          details: err.message,
-          code: err.code,
-          path: diskPath,
-          cwd: process.cwd()
-        }, { status: 500 }))
+        // Don't return error, just proceed to DB fallback
+        console.warn('Disk write failed, attempting DB fallback:', err.message)
+      }
+
+      const mediaId = uuidv4()
+      const mimeType = kind === 'video' ? 'video/mp4' : (ext === '.png' ? 'image/png' : 'image/jpeg')
+
+      let finalUrl = `/uploads/${filename}`
+
+      // If disk write failed, use DB storage (Data URI)
+      if (!diskWriteSuccess) {
+        console.warn('Falling back to database storage for:', filename)
+        const base64 = buffer.toString('base64')
+        const dataUri = `data:${mimeType};base64,${base64}`
+        finalUrl = dataUri
+
+        // Insert into DB with data content
+        if (await pgEnabled()) {
+          const pool = getPool()
+          await pool.query(`
+                INSERT INTO media_items (id, url, filename, alt_text, mime_type, size_bytes, data)
+                VALUES ($1, $2, $3, $4, $5, $6, $7)
+                ON CONFLICT (id) DO NOTHING
+             `, [mediaId, finalUrl, filename, '', mimeType, buffer.length, finalUrl]) // Using finalUrl (Data URI) for both url and data columns
+        }
+
+        saved.push({ id: mediaId, url: finalUrl, originalName, kind, variant, size: buffer.length })
+        continue; // Skip the disk-success block
       }
 
       if (diskWriteSuccess) {
-        const mediaId = uuidv4()
-        const mimeType = kind === 'video' ? 'video/mp4' : (ext === '.png' ? 'image/png' : 'image/jpeg')
-
-        // Insert into DB if PG enabled
+        // Insert into DB for disk-based files
         if (await pgEnabled()) {
           const pool = getPool()
           await pool.query(`
