@@ -130,7 +130,7 @@ export function HeroSection({ hero }) {
                         {/* Kicker Removed from Top */}
 
                         {/* Main Heading H1 */}
-                        <h1 className="text-3xl md:text-4xl lg:text-[46px] md:leading-[53px] font-bold text-foreground mb-4 md:mb-6 font-heading">
+                        <h1 className="text-4xl md:text-5xl lg:text-[58px] md:leading-[1.1] font-bold text-foreground mb-6 md:mb-8 font-heading tracking-tight">
                             {parsedTitle.prefix}
                             {parsedTitle.typing.length > 0 && <br className="hidden md:block" />}
                             {parsedTitle.typing.length > 0 && <TypingText words={parsedTitle.typing} />}
@@ -139,13 +139,13 @@ export function HeroSection({ hero }) {
                         </h1>
 
                         {/* Description Paragraph */}
-                        <p className="text-muted-foreground text-[15px] leading-[22px] mb-[40px] lg:mr-[15%]">
+                        <p className="text-muted-foreground text-lg md:text-xl leading-relaxed mb-[40px] lg:mr-[10%] max-w-2xl">
                             {subtitle || 'We build digital products that help businesses grow. From simple websites to complex web applications, we deliver quality code provided by the best experts in the field.'}
                         </p>
 
                         {/* Kicker: Moved Below Content, Smaller Text */}
                         <div className="mb-[40px] relative inline-block">
-                            <span className="text-muted-foreground font-medium tracking-wide text-sm border-b border-border pb-0.5">
+                            <span className="text-muted-foreground font-semibold tracking-widest text-xs uppercase border-b border-border pb-1">
                                 {kicker || 'Avada Programmer'}
                             </span>
                         </div>
@@ -167,9 +167,9 @@ export function HeroSection({ hero }) {
                     >
                         {/* Right Column Background - Removed per user request */}
 
-                        <div className="relative w-full h-full flex items-center justify-center">
+                        <div className="relative w-full h-full flex items-center justify-center lg:justify-end">
                             <motion.div
-                                className="relative w-[85%] md:w-[85%] z-20 aspect-[16/10]"
+                                className="relative w-full md:w-[95%] lg:w-[110%] z-20 aspect-[16/10] lg:-mr-[10%]"
                                 initial={{ y: 20, opacity: 0 }}
                                 animate={{ y: 0, opacity: 1 }}
                                 transition={{ duration: 0.6 }}
@@ -177,14 +177,14 @@ export function HeroSection({ hero }) {
                                 <motion.div
                                     animate={{ y: [0, -10, 0] }}
                                     transition={{ duration: 6, repeat: Infinity, ease: "easeInOut" }}
-                                    className="relative overflow-hidden rounded-[1.5rem] border border-border/20 shadow-2xl bg-card w-full h-full"
+                                    className="relative overflow-hidden rounded-[1rem] lg:rounded-[1.5rem] border border-border/20 shadow-2xl bg-card w-full h-full"
                                 >
                                     <Image
                                         src={media[0]?.url || '/uploads/placeholder-hero.jpg'}
                                         alt="Main Feature"
                                         fill
                                         className="object-cover"
-                                        sizes="(max-width: 768px) 90vw, 45vw"
+                                        sizes="(max-width: 768px) 100vw, 55vw"
                                         priority
                                     />
                                 </motion.div>

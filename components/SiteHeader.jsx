@@ -98,12 +98,12 @@ export function SiteHeader() {
             )}>
                 {/* A. Logo (Left) */}
                 <Link href="/" className="flex items-center gap-3 group relative z-50">
-                    <div className="transition-all duration-300 relative h-[40px] w-auto">
+                    <div className="transition-all duration-300 relative h-[50px] w-auto">
                         <Image
                             src="/images/digitfellas_logo.png"
                             alt="DigitFellas Logo"
-                            width={180}
-                            height={40}
+                            width={220}
+                            height={60}
                             priority
                             className="object-contain h-full w-auto dark:invert-0 invert"
                         />
