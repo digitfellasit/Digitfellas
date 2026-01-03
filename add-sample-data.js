@@ -14,7 +14,7 @@ async function addSampleData() {
 
   try {
     // 1. Add Categories
-    console.log('📁 Adding categories...');
+    console.log('📁 Adding categories....');
     const webDevCatId = uuidv4();
     const mobileCatId = uuidv4();
     const aiCatId = uuidv4();
