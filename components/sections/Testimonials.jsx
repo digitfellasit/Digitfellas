@@ -12,24 +12,24 @@ export function TestimonialsSection() {
     if (isLoading || testimonials.length === 0) return null
 
     return (
-        <section className="py-32 bg-[#050505] relative overflow-hidden">
+        <section className="py-16 md:py-24 lg:py-32 bg-[#050505] relative overflow-hidden">
             {/* Background Decoration */}
             <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-purple-900/10 rounded-full blur-[100px] pointer-events-none" />
             <div className="absolute bottom-0 left-0 w-[500px] h-[500px] bg-blue-900/10 rounded-full blur-[100px] pointer-events-none" />
 
-            <div className="container relative z-10">
+            <div className="container relative z-10 px-4 md:px-6">
                 <ScrollReveal
                     variant="fade-up"
                     className="text-center mb-20"
                 >
                     <span className="text-primary font-semibold tracking-wider uppercase text-sm mb-4 block">Testimonials</span>
-                    <h2 className="text-4xl md:text-5xl font-bold mb-6 text-white">What Clients Say</h2>
+                    <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold mb-4 md:mb-6 text-white">What Clients Say</h2>
                     <p className="text-lg text-gray-400 max-w-2xl mx-auto">
                         Trusted by businesses worldwide
                     </p>
                 </ScrollReveal>
 
-                <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
                     {testimonials.slice(0, 6).map((testimonial, index) => (
                         <ScrollReveal
                             key={testimonial.id}

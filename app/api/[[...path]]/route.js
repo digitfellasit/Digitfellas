@@ -451,10 +451,9 @@ async function handleUpload(request) {
         await fs.writeFile(diskPath, buffer)
         diskWriteSuccess = true
       } catch (err) {
-        console.error('File system write error (Internal Server Error in deployment):', err)
-        // If disk write fails in Vercel/Deployment, we cannot serve from /public/uploads
+        console.error('File system write error:', err)
         return handleCORS(NextResponse.json({
-          error: 'Filesystem is read-only in this deployment environment. Please use an external storage provider like Cloudinary or S3 for production uploads.',
+          error: 'Failed to write file to storage.',
           details: err.message
         }, { status: 500 }))
       }
@@ -676,7 +675,7 @@ async function handleRoute(request, { params }) {
           LEFT JOIN media_items mi ON si.media_id = mi.id
           WHERE s.deleted_at IS NULL AND s.is_published = true
           GROUP BY s.id, c.name
-          ORDER BY s.sort_order, s.created_at DESC
+          ORDER BY s.sort_order ASC, s.created_at DESC
         `)
         return handleCORS(NextResponse.json(result.rows))
       } else {
@@ -790,7 +789,7 @@ async function handleRoute(request, { params }) {
           LEFT JOIN tags t ON pt.tag_id = t.id
           WHERE p.deleted_at IS NULL AND p.is_published = true
           GROUP BY p.id, c.name
-          ORDER BY p.sort_order, p.created_at DESC
+          ORDER BY p.sort_order ASC, p.created_at DESC
         `)
         return handleCORS(NextResponse.json(result.rows))
       } else {
@@ -1002,7 +1001,7 @@ async function handleRoute(request, { params }) {
         const result = await pool.query(`
           SELECT * FROM cms_pages
           WHERE deleted_at IS NULL AND is_published = true
-          ORDER BY sort_order, created_at DESC
+          ORDER BY sort_order ASC, created_at DESC
         `)
         return handleCORS(NextResponse.json(result.rows))
       }
@@ -1076,7 +1075,7 @@ async function handleRoute(request, { params }) {
         const result = await pool.query(`
           SELECT * FROM navigation_items
           WHERE is_active = true
-          ORDER BY sort_order, created_at
+          ORDER BY sort_order ASC, created_at ASC
         `)
         return handleCORS(NextResponse.json(result.rows))
       } else {

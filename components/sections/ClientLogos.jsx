@@ -15,8 +15,8 @@ export function ClientLogosSection() {
     if (isLoading || logos.length === 0) return null
 
     return (
-        <section className="py-12 bg-muted/30 overflow-hidden">
-            <div className="container mb-6">
+        <section className="py-8 md:py-12 bg-muted/30 overflow-hidden">
+            <div className="container mb-4 md:mb-6 px-4 md:px-6">
                 <p className="text-center text-sm font-semibold uppercase tracking-wider text-muted-foreground">
                     Trusted by Leading Companies
                 </p>

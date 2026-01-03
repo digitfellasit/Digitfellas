@@ -89,10 +89,8 @@ export function RichEditor({ value = '', onChange, label = 'Content', minHeight 
     const [fontOpen, setFontOpen] = useState(false)
     const fonts = [
         { name: 'Default', value: '' },
-        { name: 'Poppins', value: 'Poppins, sans-serif' },
+        { name: 'Manrope', value: 'Manrope, sans-serif' },
         { name: 'Inter', value: 'Inter, sans-serif' },
-        { name: 'Roboto', value: 'Roboto, sans-serif' },
-        { name: 'Open Sans', value: '"Open Sans", sans-serif' },
     ]
 
     const applyFont = (fontValue) => {

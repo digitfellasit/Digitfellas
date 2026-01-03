@@ -10,8 +10,8 @@ export function BlogSection({ posts = [] }) {
     const displayPosts = posts.slice(0, 3)
 
     return (
-        <section className="relative w-full bg-white text-black pt-[160px] pb-[160px] md:pt-[90px] md:pb-[90px] overflow-hidden">
-            <div className="container relative z-10 max-w-[1248px] mx-auto px-10">
+        <section className="relative w-full bg-white text-black pt-[80px] pb-[80px] md:pt-[120px] md:pb-[120px] lg:pt-[160px] lg:pb-[160px] overflow-hidden">
+            <div className="container relative z-10 max-w-[1248px] mx-auto px-4 md:px-6 lg:px-10">
 
                 {/* HEADER */}
                 <ScrollReveal variant="fade-up" className="flex flex-col md:flex-row justify-between items-end mb-[60px]">
@@ -19,7 +19,7 @@ export function BlogSection({ posts = [] }) {
                         <span className="text-[#000000] font-semibold tracking-wider uppercase text-sm mb-4 block">
                             Our News
                         </span>
-                        <h3 className="text-4xl md:text-[46px] font-bold font-heading leading-tight text-black">
+                        <h3 className="text-3xl md:text-4xl lg:text-[46px] font-bold font-heading leading-tight text-black">
                             From the Blog
                         </h3>
                     </div>
@@ -33,7 +33,7 @@ export function BlogSection({ posts = [] }) {
                 </ScrollReveal>
 
                 {/* BLOG GRID */}
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-[40px]">
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8 lg:gap-[40px]">
                     {displayPosts.map((post, index) => (
                         <ScrollReveal
                             key={post.id}

@@ -8,8 +8,8 @@ import { ScrollReveal } from '@/components/ui/ScrollReveal'
 
 export function AboutSection() {
     return (
-        <section className="relative w-full bg-black text-white pt-[160px] pb-[160px] md:pt-[90px] md:pb-[90px] overflow-hidden">
-            <div className="container relative z-10 max-w-[1248px] mx-auto px-10">
+        <section className="relative w-full bg-black text-white pt-[80px] pb-[80px] md:pt-[120px] md:pb-[120px] lg:pt-[160px] lg:pb-[160px] overflow-hidden">
+            <div className="container relative z-10 max-w-[1248px] mx-auto px-4 md:px-6 lg:px-10">
                 <div className="flex flex-col md:flex-row items-center gap-[50px] md:gap-[4%]">
 
                     {/* LEFT COLUMN (Text) - 50% */}
@@ -18,7 +18,7 @@ export function AboutSection() {
                             Digifellas
                         </span>
 
-                        <h2 className="text-4xl md:text-[52px] leading-[1.1] font-bold text-white mb-8 font-heading">
+                        <h2 className="text-3xl md:text-4xl lg:text-[52px] leading-[1.1] font-bold text-white mb-6 md:mb-8 font-heading">
                             Hello! We are a digital agency that helps your business to grow.
                         </h2>
 
