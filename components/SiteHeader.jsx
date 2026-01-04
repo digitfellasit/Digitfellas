@@ -121,7 +121,7 @@ export function SiteHeader() {
                                 href={item.url}
                                 className={cx(
                                     "text-sm font-bold transition-colors relative py-4 flex items-center gap-1",
-                                    "text-muted-foreground hover:text-foreground"
+                                    "text-foreground/80 hover:text-foreground" // Ensure strict black/white contrast
                                 )}
                             >
                                 {item.label}
@@ -211,71 +211,101 @@ export function SiteHeader() {
                 </div>
             </div >
 
-            {/* Mobile Nav Overlay */}
+            {/* Mobile Nav Overlay - FULL SCREEN */}
             < AnimatePresence >
                 {open && (
-                    <>
-                        <motion.div
-                            initial={{ opacity: 0 }}
-                            animate={{ opacity: 1 }}
-                            exit={{ opacity: 0 }}
-                            onClick={() => setOpen(false)}
-                            className="fixed inset-0 z-[20052] bg-background/80 backdrop-blur-sm lg:hidden"
-                        />
-                        <motion.div
-                            initial={{ x: '100%' }}
-                            animate={{ x: 0 }}
-                            exit={{ x: '100%' }}
-                            transition={{ type: 'spring', damping: 25, stiffness: 200 }}
-                            className="fixed inset-y-0 right-0 z-[20053] w-[300px] bg-background border-l border-border shadow-2xl lg:hidden flex flex-col"
-                        >
-                            <div className="p-6 flex items-center justify-between border-b border-border h-[80px]">
-                                <span className="text-lg font-bold text-foreground">Menu</span>
-                                <Button variant="ghost" size="icon" className="text-foreground" onClick={() => setOpen(false)}>
-                                    <X className="w-6 h-6" />
-                                </Button>
-                            </div>
+                    <motion.div
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        exit={{ opacity: 0 }}
+                        transition={{ duration: 0.3 }}
+                        className="fixed inset-0 z-[20053] bg-background flex flex-col lg:hidden"
+                    >
+                        {/* Header within Mobile Menu */}
+                        <div className="flex items-center justify-between px-[30px] h-[80px] border-b border-border">
+                            <Link href="/" onClick={() => setOpen(false)} className="flex items-center gap-3">
+                                <div className="relative h-[40px] w-auto">
+                                    <Image
+                                        src="/images/digitfellas_logo.png"
+                                        alt="DigitFellas Logo"
+                                        width={180}
+                                        height={40}
+                                        priority
+                                        className="object-contain h-full w-auto dark:invert-0 invert"
+                                    />
+                                </div>
+                            </Link>
+                            <Button variant="ghost" size="icon" className="text-foreground -mr-2" onClick={() => setOpen(false)}>
+                                <X className="w-8 h-8" />
+                            </Button>
+                        </div>
 
-                            <div className="flex-1 overflow-y-auto py-6 px-6 flex flex-col gap-6">
-                                {items.map((item) => (
-                                    <div key={item.id}>
+                        <div className="flex-1 overflow-y-auto py-8 px-[30px] flex flex-col gap-8">
+                            {items.map((item) => (
+                                <div key={item.id} className="border-b border-border/50 pb-6 last:border-0">
+                                    <div className="flex items-center justify-between group cursor-pointer" onClick={() => item.type === 'dropdown' ? setFocusedItem(focusedItem === item.id ? null : item.id) : setOpen(false)}>
                                         <Link
                                             href={item.url}
-                                            onClick={() => setOpen(false)}
-                                            className="text-2xl font-bold text-muted-foreground hover:text-foreground transition-colors block"
+                                            className="text-3xl font-bold text-foreground hover:text-muted-foreground transition-colors flex-1"
+                                            onClick={(e) => {
+                                                if (item.type === 'dropdown') {
+                                                    e.preventDefault();
+                                                    setFocusedItem(focusedItem === item.id ? null : item.id);
+                                                }
+                                            }}
                                         >
                                             {item.label}
                                         </Link>
-                                        {/* Mobile Submenu for Dropdowns */}
                                         {item.type === 'dropdown' && (
-                                            <div className="pl-4 mt-4 flex flex-col gap-3 border-l-2 border-border">
-                                                {(item.id === 'capabilities' ? services : resourcesData).map(s => (
-                                                    <Link
-                                                        key={s.id}
-                                                        href={item.id === 'capabilities' ? `/services/${s.slug}` : s.url}
-                                                        onClick={() => setOpen(false)}
-                                                        className="text-base text-muted-foreground hover:text-foreground transition-colors"
-                                                    >
-                                                        {item.id === 'capabilities' ? s.title : s.title}
-                                                    </Link>
-                                                ))}
-                                            </div>
+                                            <ChevronDown
+                                                className={cx(
+                                                    "w-6 h-6 text-muted-foreground transition-transform duration-300",
+                                                    focusedItem === item.id ? "rotate-180" : ""
+                                                )}
+                                            />
                                         )}
                                     </div>
-                                ))}
-                            </div>
 
-                            <div className="p-6 border-t border-border">
-                                <Link href="/contact" onClick={() => setOpen(false)}>
-                                    <Button className="w-full h-12 rounded-full bg-foreground text-background font-bold hover:opacity-90">
-                                        Start a conversation
-                                    </Button>
-                                </Link>
-                            </div>
-                        </motion.div>
-                    </>
-                )
-                }
+                                    {/* Mobile Submenu - Indented & Collapsible */}
+                                    <AnimatePresence>
+                                        {item.type === 'dropdown' && focusedItem === item.id && (
+                                            <motion.div
+                                                initial={{ height: 0, opacity: 0 }}
+                                                animate={{ height: 'auto', opacity: 1 }}
+                                                exit={{ height: 0, opacity: 0 }}
+                                                className="overflow-hidden"
+                                            >
+                                                <div className="pl-4 pt-4 flex flex-col gap-4 border-l-2 border-primary/20 mt-2">
+                                                    {(item.id === 'capabilities' ? services : resourcesData).map(s => (
+                                                        <Link
+                                                            key={s.id}
+                                                            href={item.id === 'capabilities' ? `/services/${s.slug}` : s.url}
+                                                            onClick={() => setOpen(false)}
+                                                            className="flex items-center gap-3 group/mob-item"
+                                                        >
+                                                            <span className="w-1.5 h-1.5 rounded-full bg-border group-hover/mob-item:bg-primary transition-colors"></span>
+                                                            <span className="text-lg text-muted-foreground group-hover/mob-item:text-foreground transition-colors">
+                                                                {s.title || s.label}
+                                                            </span>
+                                                        </Link>
+                                                    ))}
+                                                </div>
+                                            </motion.div>
+                                        )}
+                                    </AnimatePresence>
+                                </div>
+                            ))}
+                        </div>
+
+                        <div className="p-[30px] border-t border-border">
+                            <Link href="/contact" onClick={() => setOpen(false)}>
+                                <Button className="w-full h-14 rounded-full bg-foreground text-background text-lg font-bold hover:opacity-90">
+                                    Start a conversation
+                                </Button>
+                            </Link>
+                        </div>
+                    </motion.div>
+                )}
             </AnimatePresence >
         </motion.header >
     )
