@@ -94,7 +94,7 @@ export function SiteHeader() {
         >
             <div className={cx(
                 "w-full h-full flex items-center justify-between transition-all duration-300 relative",
-                "px-[30px] md:px-[60px]"
+                "px-6 md:px-[60px]"
             )}>
                 {/* A. Logo (Left) */}
                 <Link href="/" className="flex items-center gap-3 group relative z-50">

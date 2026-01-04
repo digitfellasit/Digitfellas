@@ -2,7 +2,7 @@ import dynamic from 'next/dynamic'
 import { SiteHeader } from '@/components/SiteHeader'
 import { SiteFooter } from '@/components/SiteFooter'
 import { HeroSection } from '@/components/sections/HeroSection'
-import { SponsorsSection } from '@/components/sections/SponsorsSection'
+
 import { ProfessionalServices } from '@/components/sections/ProfessionalServices'
 import Link from 'next/link'
 import { ArrowRight } from 'lucide-react'
@@ -55,8 +55,7 @@ export default async function Home() {
         <SelectedWorkSection />
         <PartnershipsSection />
         <InsightsSection posts={posts} />
-        <ServicesPromo services={services} />
-        <BannerPromo />
+
 
         {/* CTA Section */}
         {/* CTA Section (Closing Section) */}
@@ -83,7 +82,7 @@ export default async function Home() {
           </div>
         </section>
 
-        <SponsorsSection />
+
       </main>
     </>
   )

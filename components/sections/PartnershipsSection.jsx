@@ -1,39 +1,35 @@
 'use client'
 
-import React, { useState, useEffect } from 'react'
+import React from 'react'
+import Image from 'next/image'
 import { ScrollReveal } from '@/components/ui/ScrollReveal'
+import { useClientLogos } from '@/lib/homepage-hooks'
 
 export function PartnershipsSection() {
+    const { data: clientLogos = [] } = useClientLogos()
+
+    // Static Partners Data
     const partners = [
-        { name: 'Shopify', label: 'Partner' },
-        { name: 'Salesforce', label: 'Partner' },
-        { name: 'AWS', label: 'Cloud' }
+        { name: 'Shopify', label: 'Partner', type: 'text' },
+        { name: 'Salesforce', label: 'Partner', type: 'text' },
+        { name: 'AWS', label: 'Cloud', type: 'text' }
     ]
 
-    const [currentIndex, setCurrentIndex] = useState(1) // Start with middle logo
+    // Combine for Marquee
+    // We want a mix of text-based partner logos and image-based client logos
+    const marqueeItems = [
+        ...partners,
+        ...clientLogos.map(logo => ({ ...logo, type: 'image' }))
+    ]
 
-    useEffect(() => {
-        const interval = setInterval(() => {
-            setCurrentIndex((prev) => (prev + 1) % partners.length)
-        }, 3000) // Rotate every 3 seconds
-
-        return () => clearInterval(interval)
-    }, [partners.length])
-
-    const getLogoPosition = (index) => {
-        const diff = (index - currentIndex + partners.length) % partners.length
-
-        if (diff === 0) return 'center' // Current/center logo
-        if (diff === 1 || diff === -(partners.length - 1)) return 'right' // Next logo (coming from right)
-        return 'left' // Previous logo (going to left)
-    }
+    // Duplicate for seamless loop if we have items
+    const duplicatedItems = marqueeItems.length > 0 ? [...marqueeItems, ...marqueeItems, ...marqueeItems] : [...partners, ...partners, ...partners, ...partners]
 
     return (
         <section className="relative w-full bg-background py-24 border-t border-border overflow-hidden transition-colors duration-300">
             <div className="container max-w-7xl mx-auto px-6">
 
-                <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-12">
-
+                <div className="flex flex-col md:flex-row items-center justify-between gap-12 mb-16">
                     {/* Header & Content */}
                     <div className="max-w-xl">
                         <ScrollReveal variant="fade-right">
@@ -48,40 +44,65 @@ export function PartnershipsSection() {
                             </p>
                         </ScrollReveal>
                     </div>
-
-                    {/* Rotating Logos with Fade Animation */}
-                    <div className="relative w-full md:w-auto h-20 flex items-center justify-center md:justify-end">
-                        <div className="relative w-64 h-full">
-                            {partners.map((partner, index) => {
-                                const position = getLogoPosition(index)
-
-                                return (
-                                    <div
-                                        key={partner.name}
-                                        className={`absolute inset-0 flex items-center justify-center transition-all duration-1000 ease-in-out ${position === 'center'
-                                            ? 'opacity-100 translate-x-0 scale-100 z-10'
-                                            : position === 'right'
-                                                ? 'opacity-0 translate-x-12 scale-90 z-0'
-                                                : 'opacity-0 -translate-x-12 scale-90 z-0'
-                                            }`}
-                                    >
-                                        <div className="flex items-center gap-3">
-                                            <span className={`text-2xl font-bold text-foreground tracking-tight ${partner.name === 'Salesforce' ? 'italic' : ''
-                                                }`}>
-                                                {partner.name.toLowerCase()}
-                                            </span>
-                                            <span className="text-xs font-mono text-muted-foreground uppercase border border-border rounded px-2 py-1">
-                                                {partner.label}
-                                            </span>
-                                        </div>
-                                    </div>
-                                )
-                            })}
-                        </div>
-                    </div>
-
                 </div>
+
+                {/* Marquee Container */}
+                <div className="relative w-full overflow-hidden">
+                    {/* Fade overlays on edges */}
+                    <div className="absolute left-0 top-0 bottom-0 w-24 bg-gradient-to-r from-background to-transparent z-10 pointer-events-none" />
+                    <div className="absolute right-0 top-0 bottom-0 w-24 bg-gradient-to-l from-background to-transparent z-10 pointer-events-none" />
+
+                    <div className="flex animate-marquee hover:pause-marquee items-center">
+                        {duplicatedItems.map((item, index) => (
+                            <div
+                                key={`${item.name || item.id}-${index}`}
+                                className="flex-shrink-0 mx-8 md:mx-12"
+                            >
+                                {item.type === 'image' ? (
+                                    <div className="relative gray-0 opacity-80 hover:opacity-100 transition-all duration-500 dark:invert-0 invert flex items-center justify-center h-[50px] w-auto">
+                                        <Image
+                                            src={item.logo_url}
+                                            alt={item.name}
+                                            width={140}
+                                            height={60}
+                                            className="max-w-[120px] md:max-w-[140px] h-full object-contain"
+                                        />
+                                    </div>
+                                ) : (
+                                    <div className="flex items-center gap-3 opacity-60 hover:opacity-100 transition-opacity">
+                                        <span className={`text-3xl font-bold text-foreground tracking-tight whitespace-nowrap ${item.name === 'Salesforce' ? 'italic' : ''}`}>
+                                            {item.name}
+                                        </span>
+                                        <span className="text-xs font-mono text-muted-foreground uppercase border border-border rounded px-2 py-1 whitespace-nowrap">
+                                            {item.label}
+                                        </span>
+                                    </div>
+                                )}
+                            </div>
+                        ))}
+                    </div>
+                </div>
+
             </div>
+
+            <style jsx>{`
+                @keyframes marquee {
+                    0% {
+                        transform: translateX(0);
+                    }
+                    100% {
+                        transform: translateX(-50%);
+                    }
+                }
+
+                .animate-marquee {
+                    animation: marquee 40s linear infinite;
+                }
+
+                .pause-marquee:hover {
+                    animation-play-state: paused;
+                }
+            `}</style>
         </section>
     )
 }

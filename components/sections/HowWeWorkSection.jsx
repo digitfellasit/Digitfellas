@@ -33,8 +33,8 @@ export function HowWeWorkSection() {
                 <div className="absolute inset-0 bg-background/60" />
             </div>
 
-            <div className="container relative z-10 max-w-[1248px] mx-auto px-10">
-                <ScrollReveal variant="fade-up" className="text-center mb-16">
+            <div className="container relative z-10 max-w-[1248px] mx-auto px-6">
+                <ScrollReveal variant="fade-up" className="mb-16 text-left">
                     {/* Swapped Hierarchy as requested */}
                     <h3 className="text-3xl md:text-5xl font-bold text-foreground leading-tight font-heading mb-6">
                         How We Work
