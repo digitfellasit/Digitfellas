@@ -6,8 +6,8 @@ export function ProfessionalServices({ services = [] }) {
     // Auto-scroll logic removed for vertical stack layout
 
     return (
-        <section className="relative w-full bg-background pt-0 pb-24 transition-colors duration-300">
-            <div className="container max-w-7xl mx-auto px-6">
+        <section className="relative w-full bg-background pt-16 md:pt-20 pb-24 transition-colors duration-300">
+            <div className="container max-w-[1248px] mx-auto px-6">
 
                 {/* Section Header */}
                 <div className="max-w-3xl mx-auto mb-16 text-center">

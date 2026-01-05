@@ -59,7 +59,7 @@ export function SiteFooter() {
                             />
                         </Link>
                         <p className="text-muted-foreground text-lg leading-relaxed max-w-sm mb-8">
-                            Digit Fellas is a software engineering firm focused on building reliable digital systems for long-term business value.
+                            Digitfellas is a software engineering firm focused on building reliable digital systems for long-term business value.
                         </p>
 
                         {/* Social Links */}
@@ -103,7 +103,7 @@ export function SiteFooter() {
                 </div>
 
                 <div className="border-t border-border pt-8 flex flex-col md:flex-row items-center justify-between gap-6 text-muted-foreground text-sm font-medium">
-                    <p>© {new Date().getFullYear()} Digit Fellas. All rights reserved.</p>
+                    <p>© {new Date().getFullYear()} Digitfellas. All rights reserved.</p>
                     <div className="flex items-center gap-8">
                         <Link href="/terms" className="hover:text-[#1a73e8] transition-colors">
                             Terms & Conditions

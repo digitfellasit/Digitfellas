@@ -20,12 +20,12 @@ export function AboutSection({ data }) {
     } = data || {}
 
     return (
-        <section className="relative w-full bg-background py-24 transition-colors duration-300">
-            <div className="container max-w-7xl mx-auto px-6">
-                <div className="flex flex-col-reverse lg:flex-row items-center gap-16">
+        <section id="about" className="py-20 md:py-32 bg-background transition-colors duration-300">
+            <div className="container px-6 mx-auto">
+                <div className="flex flex-col-reverse lg:flex-row lg:items-stretch gap-16">
 
                     {/* Left Column: Text Content */}
-                    <div className="w-full lg:w-1/2">
+                    <div className="w-full lg:w-1/2 flex flex-col justify-center">
                         <ScrollReveal variant="fade-right">
                             <h3 className="text-3xl md:text-3xl font-bold text-foreground leading-tight mb-8 text-left">
                                 {title}
@@ -51,10 +51,10 @@ export function AboutSection({ data }) {
                     </div>
 
                     {/* Right Column: Visual/Stats or Image */}
-                    <div className="w-full lg:w-1/2 relative min-h-[500px] flex items-center justify-center">
+                    <div className="w-full lg:w-1/2 relative">
                         <ScrollReveal variant="fade-left" className="relative w-full h-full">
                             {image_url ? (
-                                <div className="relative w-full aspect-[3/4] rounded-3xl overflow-hidden shadow-2xl">
+                                <div className="relative w-full aspect-square lg:aspect-auto lg:h-full rounded-3xl overflow-hidden shadow-none dark:shadow-2xl [mask-image:linear-gradient(to_bottom,transparent,black_10%,black_90%,transparent)] [-webkit-mask-image:linear-gradient(to_bottom,transparent,black_10%,black_90%,transparent)]">
                                     <Image
                                         src={image_url}
                                         alt="Experience"

@@ -112,9 +112,27 @@ export function HeroSection({ hero }) {
         <section
             className="relative w-full overflow-hidden bg-background"
         >
-            {/* Background Image Optimization - Using native img for SVG background to avoid null response errors */}
-            {/* REMOVED SVG BACKGROUND as per redesign */}
-            <div className="absolute inset-0 z-0 bg-background" />
+            {/* Background Layer (Restored from previous style / copied from How We Work) */}
+            <div className="absolute inset-0 z-0">
+                <div
+                    className="absolute inset-0 z-10"
+                    style={{
+                        background: 'linear-gradient(180deg, rgba(46, 16, 101, 0.9) 0%, rgba(0, 0, 0, 0.8) 100%)',
+                        mixBlendMode: 'multiply'
+                    }}
+                />
+                <Image
+                    src="/images/Hero_Background.webp"
+                    alt="Hero Background"
+                    fill
+                    className="object-cover object-right-top grayscale opacity-50"
+                    sizes="100vw"
+                    priority
+                />
+
+                {/* Fade to Next Section */}
+                <div className="absolute bottom-0 left-0 right-0 h-24 bg-gradient-to-t from-background to-transparent z-20 pointer-events-none" />
+            </div>
 
             <div className="container relative z-10 max-w-[1248px] px-6 lg:px-10">{/* Max row width 1248px */}
                 <div className="flex flex-col lg:flex-row items-center pt-[140px] pb-[60px] md:pt-[110px] md:pb-[40px]">
@@ -130,7 +148,7 @@ export function HeroSection({ hero }) {
                         {/* Kicker Removed from Top */}
 
                         {/* Main Heading H1 */}
-                        <h1 className="text-3xl md:text-3xl lg:text-5xl font-extrabold text-foreground mb-6 md:mb-8 font-heading tracking-tight leading-tight">
+                        <h1 className="text-3xl md:text-3xl lg:text-5xl font-extrabold text-white mb-6 md:mb-8 font-heading tracking-tight leading-tight">
                             {parsedTitle.prefix}
                             {parsedTitle.typing.length > 0 && <br className="hidden md:block" />}
                             {parsedTitle.typing.length > 0 && <TypingText words={parsedTitle.typing} />}
@@ -139,13 +157,13 @@ export function HeroSection({ hero }) {
                         </h1>
 
                         {/* Description Paragraph */}
-                        <p className="text-muted-foreground text-base leading-relaxed mb-[40px] lg:mr-[10%] max-w-2xl">
+                        <p className="text-white/80 text-base leading-relaxed mb-[40px] lg:mr-[10%] max-w-2xl">
                             {subtitle || 'We build digital products that help businesses grow. From simple websites to complex web applications, we deliver quality code provided by the best experts in the field.'}
                         </p>
 
                         {/* Kicker: Moved Below Content, Smaller Text */}
                         <div className="mb-[40px] relative inline-block">
-                            <span className="text-muted-foreground font-semibold tracking-widest text-xs uppercase border-b border-border pb-1">
+                            <span className="text-white/60 font-semibold tracking-widest text-xs uppercase border-b border-white/20 pb-1">
                                 {kicker || 'Digitfellas'}
                             </span>
                         </div>
@@ -177,7 +195,7 @@ export function HeroSection({ hero }) {
                                 <motion.div
                                     animate={{ y: [0, -10, 0] }}
                                     transition={{ duration: 6, repeat: Infinity, ease: "easeInOut" }}
-                                    className="relative overflow-hidden rounded-[1rem] lg:rounded-[1.5rem] border border-border/20 shadow-2xl bg-card w-full h-full"
+                                    className="relative overflow-hidden rounded-[1rem] lg:rounded-[1.5rem] shadow-2xl bg-card w-full h-full"
                                 >
                                     <Image
                                         src={media[0]?.url || '/uploads/placeholder-hero.jpg'}

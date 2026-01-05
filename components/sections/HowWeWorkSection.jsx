@@ -29,8 +29,8 @@ export function HowWeWorkSection({ data }) {
     } = data || {}
 
     return (
-        <section className="relative w-full overflow-hidden py-24 md:py-32">
-            {/* Background Layer with Blend Mode - matching BannerPromo */}
+        <section id="how-we-work" className="py-24 md:py-32 bg-background transition-colors duration-300 relative overflow-hidden">
+            {/* Background Layer (Re-added per user request with specific image) */}
             <div className="absolute inset-0 z-0">
                 <div
                     className="absolute inset-0 z-10"
@@ -40,18 +40,20 @@ export function HowWeWorkSection({ data }) {
                     }}
                 />
                 <Image
-                    src="https://avada.website/programmer/wp-content/uploads/sites/179/2023/05/banner-1.jpg"
-                    alt="Banner Background"
+                    src="/images/banner-1.jpg"
+                    alt="Work Banner"
                     fill
                     className="object-cover object-right-top grayscale opacity-50"
                     sizes="100vw"
                     priority
                 />
+
+                {/* Fade to Next Section */}
+                <div className="absolute bottom-0 left-0 right-0 h-32 bg-gradient-to-t from-background to-transparent z-20 pointer-events-none" />
             </div>
 
             <div className="container relative z-10 max-w-[1248px] mx-auto px-6">
                 <ScrollReveal variant="fade-up" className="mb-16 text-center">
-                    {/* Swapped Hierarchy as requested */}
                     <h3 className="text-3xl md:text-3xl font-bold text-white leading-tight font-heading mb-6">
                         {title}
                     </h3>
@@ -66,15 +68,13 @@ export function HowWeWorkSection({ data }) {
                             key={index}
                             variant="fade-up"
                             delay={index * 200}
-                            // Semi-transparent cards on dark purple background
-                            className="bg-white/5 backdrop-blur-sm p-[48px] rounded-[5px] transform transition-all duration-300 hover:scale-[1.03] hover:-translate-y-2 hover:bg-[#1a73e8] shadow-lg border border-white/10 group flex flex-col h-full"
+                            // Restored Glassmorphism Card Style
+                            className="bg-white/5 backdrop-blur-sm p-[48px] rounded-xl transform transition-all duration-300 hover:scale-[1.03] hover:-translate-y-2 hover:bg-[#1a73e8] shadow-lg border border-white/10 group flex flex-col h-full"
                         >
                             {/* Number */}
                             <span className="text-white/40 text-5xl font-bold font-heading mb-6 block group-hover:opacity-100 group-hover:text-white transition-all">
                                 {String(index + 1).padStart(2, '0')}
                             </span>
-
-                            {/* No Icon as requested */}
 
                             {/* Title */}
                             <h3 className="text-2xl font-bold mb-4 font-heading text-white transition-colors">

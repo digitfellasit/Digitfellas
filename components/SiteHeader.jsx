@@ -3,6 +3,7 @@
 import Link from 'next/link'
 import Image from 'next/image'
 import { useEffect, useState } from 'react'
+import { createPortal } from 'react-dom'
 import { usePathname } from 'next/navigation'
 import {
     Menu, X, ChevronDown, ChevronRight, Code2, Sun, Moon,
@@ -36,9 +37,9 @@ export function SiteHeader() {
 
     // New Nav Structure
     const items = [
-        { id: 'about', label: 'About', url: '/about' },
+        { id: 'about', label: 'About', url: '/#about' },
         { id: 'capabilities', label: 'Capabilities', url: '/services', type: 'dropdown', data: services },
-        { id: 'how-we-work', label: 'How We Work', url: '/how-we-work' },
+        { id: 'how-we-work', label: 'How We Work', url: '/#how-we-work' },
         { id: 'resources', label: 'Resources', url: '/resources', type: 'dropdown', data: [] },
         { id: 'contact', label: 'Contact', url: '/contact' },
     ]
@@ -143,20 +144,12 @@ export function SiteHeader() {
                 <Link href="/" className="flex items-center gap-3 group relative z-50">
                     <div className="transition-all duration-300 relative h-[50px] w-auto">
                         <Image
-                            src="/images/digitfellas-Black_logo-final.png"
+                            src={isSticky && theme === 'light' ? "/images/digitfellas-Black_logo-final.png" : "/images/digitfellas_logo.png"}
                             alt="DigitFellas Logo"
                             width={220}
                             height={60}
                             priority
-                            className="object-contain h-full w-auto dark:hidden scale-[1.2] origin-left"
-                        />
-                        <Image
-                            src="/images/digitfellas_logo.png"
-                            alt="DigitFellas Logo"
-                            width={220}
-                            height={60}
-                            priority
-                            className="object-contain h-full w-auto hidden dark:block"
+                            className="object-contain h-full w-auto"
                         />
                     </div>
                 </Link>
@@ -195,6 +188,16 @@ export function SiteHeader() {
                                                     <div className="grid grid-cols-4 gap-8">
                                                         {(item.id === 'capabilities' ? services : resourcesData).map((subItem) => {
                                                             const Icon = item.id === 'capabilities' ? getServiceIcon(subItem.title) : (subItem.icon || Code2)
+
+                                                            // Fallback descriptions map
+                                                            const descriptions = {
+                                                                "Digital Product Engineering": "Web and mobile systems built to scale.",
+                                                                "Commerce & Platform Engineering": "Scalable commerce and enterprise platforms.",
+                                                                "AI & Automation Engineering": "Intelligent automation for real business workflows.",
+                                                                "Security & Assurance": "Software security, audits, and risk assurance."
+                                                            }
+                                                            const displayDesc = subItem.short_description || descriptions[subItem.title] || subItem.description || 'Professional digital services'
+
                                                             return (
                                                                 <Link
                                                                     key={subItem.id}
@@ -209,7 +212,7 @@ export function SiteHeader() {
                                                                             {subItem.title || subItem.label}
                                                                         </h4>
                                                                         <p className="text-xs text-muted-foreground leading-relaxed group-hover/item:text-white dark:group-hover/item:text-foreground/80 transition-colors">
-                                                                            {item.id === 'capabilities' ? subItem.short_description || 'Professional digital services' : subItem.description}
+                                                                            {displayDesc}
                                                                         </p>
                                                                     </div>
                                                                 </Link>
@@ -265,118 +268,113 @@ export function SiteHeader() {
                 </div>
             </div >
 
-            {/* Mobile Nav Overlay - FULL SCREEN */}
-            < AnimatePresence >
-                {open && (
-                    <motion.div
-                        initial={{ opacity: 0 }}
-                        animate={{ opacity: 1 }}
-                        exit={{ opacity: 0 }}
-                        transition={{ duration: 0.3 }}
-                        className="fixed top-0 left-0 right-0 bottom-0 z-[99999] bg-background flex flex-col lg:hidden"
-                    >
-                        {/* Header within Mobile Menu */}
-                        <div className="flex items-center justify-between px-[30px] h-[80px] border-b border-border">
-                            <Link href="/" onClick={() => setOpen(false)} className="flex items-center gap-3">
-                                <div className="relative h-[40px] w-auto">
-                                    <Image
-                                        src="/images/digitfellas-Black_logo-final.png"
-                                        alt="DigitFellas Logo"
-                                        width={180}
-                                        height={40}
-                                        priority
-                                        className="object-contain h-full w-auto dark:hidden scale-[1.2] origin-left"
-                                    />
-                                    <Image
-                                        src="/images/digitfellas_logo.png"
-                                        alt="DigitFellas Logo"
-                                        width={180}
-                                        height={40}
-                                        priority
-                                        className="object-contain h-full w-auto hidden dark:block"
-                                    />
-                                </div>
-                            </Link>
-                            <Button variant="ghost" size="icon" className="text-[#83868a] dark:text-foreground -mr-2" onClick={() => setOpen(false)}>
-                                <X className="w-8 h-8" />
-                            </Button>
-                        </div>
-
-                        <div className="flex-1 overflow-y-auto py-8 px-[30px] flex flex-col gap-8">
-                            {items.map((item) => (
-                                <div key={item.id} className="border-b border-border/50 pb-6 last:border-0">
-                                    <div className="flex items-center justify-between group">
-                                        <div className="flex items-center gap-4 flex-1">
-                                            <Link
-                                                href={item.url}
-                                                className="text-3xl font-bold text-[#83868a] hover:text-[#1a73e8] dark:text-foreground dark:hover:text-muted-foreground transition-colors flex-1"
-                                                onClick={(e) => {
-                                                    if (item.type === 'dropdown') {
-                                                        e.preventDefault();
-                                                        setFocusedItem(focusedItem === item.id ? null : item.id);
-                                                    } else {
-                                                        setOpen(false);
-                                                    }
-                                                }}
-                                            >
-                                                {item.label}
-                                            </Link>
-                                        </div>
-                                        {item.type === 'dropdown' && (
-                                            <ChevronDown
-                                                className={cx(
-                                                    "w-6 h-6 text-[#83868a] dark:text-muted-foreground transition-transform duration-300 cursor-pointer",
-                                                    focusedItem === item.id ? "rotate-180" : ""
-                                                )}
-                                                onClick={() => setFocusedItem(focusedItem === item.id ? null : item.id)}
-                                            />
-                                        )}
+            {/* Mobile Nav Overlay - FULL SCREEN (Portalled to body) */}
+            {mounted && typeof document !== 'undefined' && createPortal(
+                <AnimatePresence>
+                    {open && (
+                        <motion.div
+                            initial={{ opacity: 0 }}
+                            animate={{ opacity: 1 }}
+                            exit={{ opacity: 0 }}
+                            transition={{ duration: 0.3 }}
+                            className="fixed top-0 left-0 right-0 bottom-0 z-[99999] bg-background flex flex-col lg:hidden"
+                        >
+                            {/* Header within Mobile Menu */}
+                            <div className="flex items-center justify-between px-6 md:px-[60px] h-[80px] md:h-[90px] border-b border-border">
+                                <Link href="/" onClick={() => setOpen(false)} className="flex items-center gap-3">
+                                    <div className="relative h-[50px] w-auto">
+                                        <Image
+                                            src="/images/digitfellas_logo.png"
+                                            alt="DigitFellas Logo"
+                                            width={220}
+                                            height={60}
+                                            priority
+                                            className="object-contain h-full w-auto"
+                                        />
                                     </div>
-
-                                    {/* Mobile Submenu - Indented & Collapsible */}
-                                    <AnimatePresence>
-                                        {item.type === 'dropdown' && focusedItem === item.id && (
-                                            <motion.div
-                                                initial={{ height: 0, opacity: 0 }}
-                                                animate={{ height: 'auto', opacity: 1 }}
-                                                exit={{ height: 0, opacity: 0 }}
-                                                className="overflow-hidden"
-                                            >
-                                                <div className="pl-4 pt-4 flex flex-col gap-4 border-l-2 border-primary/20 mt-2">
-                                                    {(item.id === 'capabilities' ? services : resourcesData).map(s => (
-                                                        <Link
-                                                            key={s.id}
-                                                            href={item.id === 'capabilities' ? `/services/${s.slug}` : s.url}
-                                                            onClick={() => setOpen(false)}
-                                                            className="flex items-center gap-3 group/mob-item"
-                                                        >
-                                                            {(() => {
-                                                                const Icon = item.id === 'capabilities' ? getServiceIcon(s.title) : (s.icon || Code2)
-                                                                return <Icon className="w-5 h-5 text-[#83868a] group-hover/mob-item:text-[#1a73e8] transition-colors" />
-                                                            })()}
-                                                            <span className="text-lg text-muted-foreground group-hover/mob-item:text-[#1a73e8] dark:group-hover/mob-item:text-foreground transition-colors">
-                                                                {s.title || s.label}
-                                                            </span>
-                                                        </Link>
-                                                    ))}
-                                                </div>
-                                            </motion.div>
-                                        )}
-                                    </AnimatePresence>
-                                </div>
-                            ))}
-                        </div>
-
-                        <div className="p-[30px] border-t border-border">
-                            <Link href="/contact" onClick={() => setOpen(false)}>
-                                <Button className="w-full h-14 rounded-full border-2 border-[#83868a] bg-background text-[#1a73e8] text-lg font-bold hover:bg-[#1a73e8] hover:text-white transition-all">
-                                    Start a conversation
+                                </Link>
+                                <Button variant="ghost" size="icon" className="text-[#83868a] dark:text-foreground -mr-2" onClick={() => setOpen(false)}>
+                                    <X className="w-8 h-8" />
                                 </Button>
-                            </Link>
-                        </div>
-                    </motion.div>
-                )}
-            </AnimatePresence >
+                            </div>
+
+                            <div className="flex-1 overflow-y-auto py-8 px-[30px] flex flex-col gap-8">
+                                {items.map((item) => (
+                                    <div key={item.id} className="border-b border-border/50 pb-6 last:border-0">
+                                        <div className="flex items-center justify-between group">
+                                            <div className="flex items-center gap-4 flex-1">
+                                                <Link
+                                                    href={item.url}
+                                                    className="text-3xl font-bold text-[#83868a] hover:text-[#1a73e8] dark:text-foreground dark:hover:text-muted-foreground transition-colors flex-1"
+                                                    onClick={(e) => {
+                                                        if (item.type === 'dropdown') {
+                                                            e.preventDefault();
+                                                            setFocusedItem(focusedItem === item.id ? null : item.id);
+                                                        } else {
+                                                            setOpen(false);
+                                                        }
+                                                    }}
+                                                >
+                                                    {item.label}
+                                                </Link>
+                                            </div>
+                                            {item.type === 'dropdown' && (
+                                                <ChevronDown
+                                                    className={cx(
+                                                        "w-6 h-6 text-[#83868a] dark:text-muted-foreground transition-transform duration-300 cursor-pointer",
+                                                        focusedItem === item.id ? "rotate-180" : ""
+                                                    )}
+                                                    onClick={() => setFocusedItem(focusedItem === item.id ? null : item.id)}
+                                                />
+                                            )}
+                                        </div>
+
+                                        {/* Mobile Submenu - Indented & Collapsible */}
+                                        <AnimatePresence>
+                                            {item.type === 'dropdown' && focusedItem === item.id && (
+                                                <motion.div
+                                                    initial={{ height: 0, opacity: 0 }}
+                                                    animate={{ height: 'auto', opacity: 1 }}
+                                                    exit={{ height: 0, opacity: 0 }}
+                                                    className="overflow-hidden"
+                                                >
+                                                    <div className="pl-4 pt-4 flex flex-col gap-4 border-l-2 border-primary/20 mt-2">
+                                                        {(item.id === 'capabilities' ? services : resourcesData).map(s => (
+                                                            <Link
+                                                                key={s.id}
+                                                                href={item.id === 'capabilities' ? `/services/${s.slug}` : s.url}
+                                                                onClick={() => setOpen(false)}
+                                                                className="flex items-center gap-3 group/mob-item"
+                                                            >
+                                                                {(() => {
+                                                                    const Icon = item.id === 'capabilities' ? getServiceIcon(s.title) : (s.icon || Code2)
+                                                                    return <Icon className="w-5 h-5 text-[#83868a] group-hover/mob-item:text-[#1a73e8] transition-colors" />
+                                                                })()}
+                                                                <span className="text-lg text-muted-foreground group-hover/mob-item:text-[#1a73e8] dark:group-hover/mob-item:text-foreground transition-colors">
+                                                                    {s.title || s.label}
+                                                                </span>
+                                                            </Link>
+                                                        ))}
+                                                    </div>
+                                                </motion.div>
+                                            )}
+                                        </AnimatePresence>
+                                    </div>
+                                ))}
+                            </div>
+
+                            <div className="p-[30px] border-t border-border">
+                                <Link href="/contact" onClick={() => setOpen(false)}>
+                                    <Button className="w-full h-14 rounded-full border-2 border-[#83868a] bg-background text-[#1a73e8] text-lg font-bold hover:bg-[#1a73e8] hover:text-white transition-all">
+                                        Start a conversation
+                                    </Button>
+                                </Link>
+                            </div>
+                        </motion.div>
+                    )}
+                </AnimatePresence>,
+                document.body
+            )}
         </motion.header >
     )
 
