@@ -31,7 +31,7 @@ export function PartnershipsSection({ data }) {
     const duplicatedItems = marqueeItems.length > 0 ? [...marqueeItems, ...marqueeItems, ...marqueeItems] : [...partners, ...partners, ...partners, ...partners]
 
     return (
-        <section className="relative w-full bg-background py-24 border-t border-border overflow-hidden transition-colors duration-300">
+        <section className="relative w-full bg-[#01010e] py-24 border-t border-border overflow-hidden transition-colors duration-300">
             <div className="container max-w-7xl mx-auto px-6">
 
                 <div className="flex flex-col md:flex-row items-center justify-center mb-16">
@@ -54,8 +54,8 @@ export function PartnershipsSection({ data }) {
                 {/* Marquee Container */}
                 <div className="relative w-full overflow-hidden">
                     {/* Fade overlays on edges */}
-                    <div className="absolute left-0 top-0 bottom-0 w-24 bg-gradient-to-r from-background to-transparent z-10 pointer-events-none" />
-                    <div className="absolute right-0 top-0 bottom-0 w-24 bg-gradient-to-l from-background to-transparent z-10 pointer-events-none" />
+                    <div className="absolute left-0 top-0 bottom-0 w-24 bg-gradient-to-r from-[#01010e] to-transparent z-10 pointer-events-none" />
+                    <div className="absolute right-0 top-0 bottom-0 w-24 bg-gradient-to-l from-[#01010e] to-transparent z-10 pointer-events-none" />
 
                     <div className="flex animate-marquee hover:pause-marquee items-center">
                         {duplicatedItems.map((item, index) => (

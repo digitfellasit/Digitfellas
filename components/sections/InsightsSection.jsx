@@ -9,7 +9,7 @@ export function InsightsSection({ posts = [] }) {
     const displayPosts = posts.slice(0, 4)
 
     return (
-        <section className="relative w-full bg-background py-24 md:py-32 border-t border-border transition-colors duration-300">
+        <section className="relative w-full bg-[#01010e] py-24 md:py-32 border-t border-border transition-colors duration-300">
             <div className="container max-w-7xl mx-auto px-6">
 
                 {/* Header */}
@@ -27,7 +27,7 @@ export function InsightsSection({ posts = [] }) {
                     <ScrollReveal variant="fade-left" delay={200} className="hidden md:block">
                         <Link
                             href="/blog"
-                            className="inline-flex items-center gap-2 text-[#1a73e8] hover:text-[#1967d2] dark:text-foreground dark:hover:text-primary font-bold transition-colors group border-b border-[#1a73e8] dark:border-foreground pb-1"
+                            className="inline-flex items-center gap-2 text-foreground hover:text-primary font-bold transition-colors group border-b border-foreground pb-1"
                         >
                             Explore insights
                             <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
@@ -42,22 +42,22 @@ export function InsightsSection({ posts = [] }) {
                             key={post.id || index}
                             variant="fade-up"
                             delay={index * 100}
-                            className="group h-full flex flex-col justify-between border-t border-border pt-8 hover:border-transparent px-6 -mx-6 rounded-xl hover:bg-[#1a73e8] dark:hover:bg-transparent dark:hover:border-foreground/40 transition-all duration-300 cursor-pointer"
+                            className="group h-full flex flex-col justify-between border-t border-border pt-8 hover:border-transparent px-6 -mx-6 rounded-xl hover:bg-[#331676] transition-all duration-300 cursor-pointer"
                         >
                             <Link href={`/blog/${post.slug}`} className="block h-full">
                                 <div>
                                     <div className="flex items-center justify-between mb-6">
-                                        <span className="text-xs font-bold text-[#1a73e8] dark:text-primary group-hover:text-white dark:group-hover:text-primary uppercase tracking-widest transition-colors">
+                                        <span className="text-xs font-bold text-primary group-hover:text-white uppercase tracking-widest transition-colors">
                                             {post.category || 'Perspective'}
                                         </span>
-                                        <ArrowUpRight className="w-5 h-5 text-[#1a73e8] dark:text-muted-foreground group-hover:text-white dark:group-hover:text-foreground group-hover:-translate-y-1 group-hover:translate-x-1 transition-all duration-300" />
+                                        <ArrowUpRight className="w-5 h-5 text-primary group-hover:text-white group-hover:-translate-y-1 group-hover:translate-x-1 transition-all duration-300" />
                                     </div>
 
-                                    <h4 className="text-2xl font-bold text-foreground leading-tight mb-4 group-hover:text-white dark:group-hover:text-foreground group-hover:underline dark:group-hover:decoration-muted-foreground decoration-white/30 underline-offset-4 transition-colors">
+                                    <h4 className="text-2xl font-bold text-foreground leading-tight mb-4 group-hover:text-white group-hover:underline decoration-white/30 underline-offset-4 transition-colors">
                                         {post.title}
                                     </h4>
 
-                                    <p className="text-muted-foreground leading-relaxed text-sm line-clamp-3 group-hover:text-white dark:group-hover:text-muted-foreground transition-colors">
+                                    <p className="text-muted-foreground leading-relaxed text-sm line-clamp-3 group-hover:text-white/80 transition-colors">
                                         {post.excerpt || "Read more about our perspective on this topic..."}
                                     </p>
                                 </div>
@@ -70,7 +70,7 @@ export function InsightsSection({ posts = [] }) {
                 <div className="mt-16 md:hidden">
                     <Link
                         href="/blog"
-                        className="inline-flex items-center gap-2 text-[#1a73e8] hover:text-[#1967d2] dark:text-foreground dark:hover:text-primary font-bold transition-colors group border-b border-[#1a73e8] dark:border-foreground pb-1"
+                        className="inline-flex items-center gap-2 text-foreground hover:text-primary font-bold transition-colors group border-b border-foreground pb-1"
                     >
                         Explore insights
                         <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />

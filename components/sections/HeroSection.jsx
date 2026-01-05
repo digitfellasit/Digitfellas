@@ -117,21 +117,19 @@ export function HeroSection({ hero }) {
                 <div
                     className="absolute inset-0 z-10"
                     style={{
-                        background: 'linear-gradient(180deg, rgba(46, 16, 101, 0.9) 0%, rgba(0, 0, 0, 0.8) 100%)',
-                        mixBlendMode: 'multiply'
+                        background: 'rgba(0, 0, 0, 0.4)'
                     }}
                 />
                 <Image
                     src="/images/Hero_Background.webp"
                     alt="Hero Background"
                     fill
-                    className="object-cover object-right-top grayscale opacity-50"
-                    sizes="100vw"
+                    className="object-cover object-right-top  opacity-80"
+                    sizes="120vw"
                     priority
                 />
 
-                {/* Fade to Next Section */}
-                <div className="absolute bottom-0 left-0 right-0 h-24 bg-gradient-to-t from-background to-transparent z-20 pointer-events-none" />
+
             </div>
 
             <div className="container relative z-10 max-w-[1248px] px-6 lg:px-10">{/* Max row width 1248px */}
@@ -148,7 +146,7 @@ export function HeroSection({ hero }) {
                         {/* Kicker Removed from Top */}
 
                         {/* Main Heading H1 */}
-                        <h1 className="text-3xl md:text-3xl lg:text-5xl font-extrabold text-white mb-6 md:mb-8 font-heading tracking-tight leading-tight">
+                        <h1 className="text-3xl md:text-3xl lg:text-5xl font-extrabold text-white mb-6 md:mb-8 font-heading tracking-tight lg:tracking-wider leading-[1.2] lg:leading-[1.1]">
                             {parsedTitle.prefix}
                             {parsedTitle.typing.length > 0 && <br className="hidden md:block" />}
                             {parsedTitle.typing.length > 0 && <TypingText words={parsedTitle.typing} />}
@@ -163,7 +161,7 @@ export function HeroSection({ hero }) {
 
                         {/* Kicker: Moved Below Content, Smaller Text */}
                         <div className="mb-[40px] relative inline-block">
-                            <span className="text-white/60 font-semibold tracking-widest text-xs uppercase border-b border-white/20 pb-1">
+                            <span className="text-white/60 font-semibold tracking-widest text-xs uppercase">
                                 {kicker || 'Digitfellas'}
                             </span>
                         </div>
@@ -187,7 +185,7 @@ export function HeroSection({ hero }) {
 
                         <div className="relative w-full h-full flex items-center justify-center lg:justify-end">
                             <motion.div
-                                className="relative w-full z-20 aspect-[16/10]"
+                                className="relative w-full z-20 aspect-[16/16]"
                                 initial={{ y: 20, opacity: 0 }}
                                 animate={{ y: 0, opacity: 1 }}
                                 transition={{ duration: 0.6 }}
@@ -195,7 +193,7 @@ export function HeroSection({ hero }) {
                                 <motion.div
                                     animate={{ y: [0, -10, 0] }}
                                     transition={{ duration: 6, repeat: Infinity, ease: "easeInOut" }}
-                                    className="relative overflow-hidden rounded-[1rem] lg:rounded-[1.5rem] shadow-2xl bg-card w-full h-full"
+                                    className="relative overflow-hidden rounded-[1rem] lg:rounded-[2rem] shadow-2xl bg-card w-full h-full"
                                 >
                                     <Image
                                         src={media[0]?.url || '/uploads/placeholder-hero.jpg'}

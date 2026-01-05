@@ -6,13 +6,13 @@ export function ProfessionalServices({ services = [] }) {
     // Auto-scroll logic removed for vertical stack layout
 
     return (
-        <section className="relative w-full bg-background pt-16 md:pt-20 pb-24 transition-colors duration-300">
-            <div className="container max-w-[1248px] mx-auto px-6">
+        <section className="relative w-full bg-[#01010e] pt-16 md:pt-20 pb-24 transition-colors duration-300">
+            <div className="container max-w-[1240px] mx-auto px-6">
 
                 {/* Section Header */}
                 <div className="max-w-3xl mx-auto mb-16 text-center">
                     <ScrollReveal variant="fade-up">
-                        <h3 className="text-2xl md:text-2xl font-bold text-foreground leading-tight mb-6">
+                        <h3 className="text-3xl md:text-2xl font-bold text-foreground leading-tight mb-6">
                             What We Build and Support
                         </h3>
                         <p className="text-base text-muted-foreground leading-relaxed max-w-2xl mx-auto">
@@ -33,7 +33,7 @@ export function ProfessionalServices({ services = [] }) {
                             delay={index * 100}
                             className="h-full"
                         >
-                            <div className="group h-full p-8 rounded-3xl bg-card border border-border hover:border-primary/30 hover:bg-[#1a73e8] dark:hover:bg-secondary transition-all duration-500 relative overflow-hidden text-left shadow-sm">
+                            <div className="group h-full p-8 rounded-3xl bg-card border border-border hover:border-[#331676]/30 hover:bg-[#331676] transition-all duration-500 relative overflow-hidden text-left shadow-sm">
                                 {/* Subtle Gradient Hover Effect */}
                                 <div className="absolute inset-0 bg-gradient-to-br from-primary/0 via-primary/0 to-primary/0 dark:group-hover:from-primary/5 dark:group-hover:to-primary/5 transition-all duration-500" />
 

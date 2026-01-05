@@ -33,7 +33,7 @@ export default function RootLayout({ children }) {
   return (
     <html lang="en" suppressHydrationWarning className={`${inter.variable} ${manrope.variable}`}>
       <body className="min-h-screen bg-background font-sans text-foreground antialiased">
-        <ThemeProvider attribute="class" defaultTheme="system" enableSystem disableTransitionOnChange={false}>
+        <ThemeProvider attribute="class" forcedTheme="dark" disableTransitionOnChange={false}>
           <QueryProvider>
             <SiteHeader />
             {children}

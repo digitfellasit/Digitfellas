@@ -2,7 +2,7 @@
 
 import Link from 'next/link'
 import Image from 'next/image'
-import { Facebook, Twitter, Linkedin, Instagram, Github } from 'lucide-react'
+import { Facebook, Twitter, Linkedin, Instagram, MessageCircle } from 'lucide-react'
 import { useSite } from '@/lib/api-hooks'
 
 const navigation = {
@@ -23,42 +23,46 @@ const getSocialIcon = (label) => {
         case 'twitter': return Twitter
         case 'linkedin': return Linkedin
         case 'instagram': return Instagram
-        case 'github': return Github
+        case 'whatsapp': return MessageCircle
         default: return null
     }
 }
 
 export function SiteFooter() {
     const { site } = useSite()
-    const socials = site?.footer?.socials || []
+    let socials = site?.footer?.socials || []
+
+    // Ensure common socials are present even if not in DB
+    const hasFB = socials.some(s => s.label.toLowerCase() === 'facebook')
+    const hasWA = socials.some(s => s.label.toLowerCase() === 'whatsapp')
+
+    if (!hasFB) socials.push({ id: 'fb-fallback', label: 'Facebook', href: 'https://facebook.com' })
+    if (!hasWA) socials.push({ id: 'wa-fallback', label: 'WhatsApp', href: 'https://wa.me/1234567890' })
+
+    // Sort to keep LinkedIn first if possible
+    socials = socials.sort((a, b) => {
+        if (a.label.toLowerCase() === 'linkedin') return -1
+        if (b.label.toLowerCase() === 'linkedin') return 1
+        return 0
+    })
 
     return (
-        <footer className="bg-background text-foreground border-t border-border pt-24 pb-12 transition-colors duration-300">
+        <footer className="bg-[#01010e] text-foreground border-t border-border pt-24 pb-12 transition-colors duration-300">
             <div className="container max-w-7xl mx-auto px-6">
 
                 <div className="grid grid-cols-1 md:grid-cols-12 gap-12 mb-24">
 
                     {/* Brand & Statement */}
                     <div className="md:col-span-5">
-                        <Link href="/" className="inline-block mb-8">
-                            <Image
-                                src="/images/digitfellas-Black_logo-final.png"
-                                alt="DigitFellas"
-                                width={180}
-                                height={40}
-                                className="h-[40px] w-auto object-contain dark:hidden scale-[1.2] origin-left"
-                                priority
-                            />
-                            <Image
-                                src="/images/digitfellas_logo.png"
-                                alt="DigitFellas"
-                                width={180}
-                                height={40}
-                                className="h-[40px] w-auto object-contain hidden dark:block"
-                                priority
-                            />
-                        </Link>
-                        <p className="text-muted-foreground text-lg leading-relaxed max-w-sm mb-8">
+                        <Image
+                            src="/images/digitfellas_logo.png"
+                            alt="DigitFellas"
+                            width={180}
+                            height={40}
+                            className="h-[40px] w-auto object-contain"
+                            priority
+                        />
+                        <p className="text-muted-foreground text leading-relaxed max-w-sm mb-8 mt-10">
                             Digitfellas is a software engineering firm focused on building reliable digital systems for long-term business value.
                         </p>
 
@@ -74,7 +78,7 @@ export function SiteFooter() {
                                             href={social.href}
                                             target="_blank"
                                             rel="noopener noreferrer"
-                                            className="text-[#83868a] hover:text-[#1a73e8] transition-colors p-2 -ml-2"
+                                            className="text-[#83868a] hover:text-[#331676] transition-colors p-2 -ml-2"
                                             aria-label={social.label}
                                         >
                                             <Icon className="w-5 h-5" />
@@ -92,7 +96,7 @@ export function SiteFooter() {
                                 <Link
                                     key={item.name}
                                     href={item.href}
-                                    className="text-sm font-bold transition-colors py-2 text-[#83868a] hover:text-[#1a73e8] dark:text-foreground/80 dark:hover:text-foreground"
+                                    className="text-sm font-bold transition-colors py-2 text-[#83868a] hover:text-[#331676] dark:text-foreground/80 dark:hover:text-primary"
                                 >
                                     {item.name}
                                 </Link>
@@ -105,10 +109,10 @@ export function SiteFooter() {
                 <div className="border-t border-border pt-8 flex flex-col md:flex-row items-center justify-between gap-6 text-muted-foreground text-sm font-medium">
                     <p>© {new Date().getFullYear()} Digitfellas. All rights reserved.</p>
                     <div className="flex items-center gap-8">
-                        <Link href="/terms" className="hover:text-[#1a73e8] transition-colors">
+                        <Link href="/terms" className="hover:text-[#331676] transition-colors">
                             Terms & Conditions
                         </Link>
-                        <Link href="/privacy" className="hover:text-[#1a73e8] transition-colors">
+                        <Link href="/privacy" className="hover:text-[#331676] transition-colors">
                             Privacy Policy
                         </Link>
                     </div>

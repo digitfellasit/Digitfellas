@@ -20,8 +20,33 @@ export function AboutSection({ data }) {
     } = data || {}
 
     return (
-        <section id="about" className="py-20 md:py-32 bg-background transition-colors duration-300">
-            <div className="container px-6 mx-auto">
+        <section id="about" className="py-20 md:py-32 bg-[#01010e] transition-colors duration-300 relative overflow-hidden">
+            {/* Background Layer */}
+            <div className="absolute inset-0 z-0">
+                <div
+                    className="absolute inset-0 z-10"
+                    style={{
+                        background: 'rgba(0, 0, 0, 0.4)'
+                    }}
+                />
+
+                {/* Top Fade */}
+                <div className="absolute top-0 left-0 right-0 h-32 bg-gradient-to-b from-[#01010e] to-transparent z-20" />
+
+                {/* Bottom Fade */}
+                <div className="absolute bottom-0 left-0 right-0 h-40 bg-gradient-to-t from-[#01010e] to-transparent z-20" />
+
+                <Image
+                    src="/images/Hero_Background.webp"
+                    alt="About Background"
+                    fill
+                    className="object-cover opacity-60 grayscale"
+                    sizes="100vw"
+                    priority
+                />
+            </div>
+
+            <div className="container relative z-10 px-6 mx-auto">
                 <div className="flex flex-col-reverse lg:flex-row lg:items-stretch gap-16">
 
                     {/* Left Column: Text Content */}
@@ -54,7 +79,7 @@ export function AboutSection({ data }) {
                     <div className="w-full lg:w-1/2 relative">
                         <ScrollReveal variant="fade-left" className="relative w-full h-full">
                             {image_url ? (
-                                <div className="relative w-full aspect-square lg:aspect-auto lg:h-full rounded-3xl overflow-hidden shadow-none dark:shadow-2xl [mask-image:linear-gradient(to_bottom,transparent,black_10%,black_90%,transparent)] [-webkit-mask-image:linear-gradient(to_bottom,transparent,black_10%,black_90%,transparent)]">
+                                <div className="relative w-full aspect-square lg:aspect-auto lg:h-full overflow-hidden">
                                     <Image
                                         src={image_url}
                                         alt="Experience"

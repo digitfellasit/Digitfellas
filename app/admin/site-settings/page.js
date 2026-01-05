@@ -27,7 +27,7 @@ export default function SiteSettingsPage() {
         social_twitter: '',
         social_linkedin: '',
         social_instagram: '',
-        social_github: '',
+        social_whatsapp: '',
         footer_text: '',
         seo_default_title: '',
         seo_default_description: '',
@@ -51,7 +51,7 @@ export default function SiteSettingsPage() {
                 social_twitter: site?.footer?.socials?.find(s => s.label === 'Twitter')?.href || '',
                 social_linkedin: site?.footer?.socials?.find(s => s.label === 'LinkedIn')?.href || '',
                 social_instagram: site?.footer?.socials?.find(s => s.label === 'Instagram')?.href || '',
-                social_github: site?.footer?.socials?.find(s => s.label === 'GitHub')?.href || '',
+                social_whatsapp: site?.footer?.socials?.find(s => s.label === 'WhatsApp')?.href || '',
                 footer_text: site?.footer?.copyright || '',
                 seo_default_title: site?.brand?.name || '',
                 seo_default_description: site?.footer?.tagline || '',
@@ -94,7 +94,7 @@ export default function SiteSettingsPage() {
                         { id: 'tw', label: 'Twitter', href: settings.social_twitter },
                         { id: 'li', label: 'LinkedIn', href: settings.social_linkedin },
                         { id: 'ig', label: 'Instagram', href: settings.social_instagram },
-                        { id: 'gh', label: 'GitHub', href: settings.social_github },
+                        { id: 'wa', label: 'WhatsApp', href: settings.social_whatsapp },
                     ].filter(s => s.href) // Only include socials with URLs
                 },
                 analytics_id: settings.analytics_id
@@ -208,8 +208,8 @@ export default function SiteSettingsPage() {
                                     <Input value={settings.social_instagram} onChange={(e) => setSettings({ ...settings, social_instagram: e.target.value })} placeholder="https://instagram.com/yourhandle" />
                                 </div>
                                 <div>
-                                    <Label>GitHub</Label>
-                                    <Input value={settings.social_github} onChange={(e) => setSettings({ ...settings, social_github: e.target.value })} placeholder="https://github.com/yourorg" />
+                                    <Label>WhatsApp</Label>
+                                    <Input value={settings.social_whatsapp} onChange={(e) => setSettings({ ...settings, social_whatsapp: e.target.value })} placeholder="https://wa.me/yournumber" />
                                 </div>
                             </div>
                         </Card>

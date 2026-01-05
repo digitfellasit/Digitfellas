@@ -84,7 +84,6 @@ export function SiteHeader() {
     }, [open])
 
     const toggleTheme = () => {
-        setTheme(theme === 'dark' ? 'light' : 'dark')
     }
 
     // Text Slide Up Animation for Button
@@ -132,8 +131,8 @@ export function SiteHeader() {
             className={cx(
                 "fixed top-0 left-0 right-0 z-[20051] transition-all duration-300",
                 isSticky
-                    ? "bg-background/80 backdrop-blur-md shadow-sm border-b border-border/10 h-[80px] md:h-[90px]"
-                    : "bg-transparent h-[80px] md:h-[90px]"
+                    ? "bg-[#01010e] border-b border-white/5 h-[90px]"
+                    : "bg-transparent h-[90px]"
             )}
         >
             <div className={cx(
@@ -144,7 +143,7 @@ export function SiteHeader() {
                 <Link href="/" className="flex items-center gap-3 group relative z-50">
                     <div className="transition-all duration-300 relative h-[50px] w-auto">
                         <Image
-                            src={isSticky && theme === 'light' ? "/images/digitfellas-Black_logo-final.png" : "/images/digitfellas_logo.png"}
+                            src="/images/digitfellas_logo.png"
                             alt="DigitFellas Logo"
                             width={220}
                             height={60}
@@ -164,8 +163,8 @@ export function SiteHeader() {
                             <Link
                                 href={item.url}
                                 className={cx(
-                                    "text-sm font-bold transition-colors relative py-4 flex items-center gap-2",
-                                    "text-[#83868a] hover:text-[#1a73e8] dark:text-foreground/80 dark:hover:text-foreground" // Corporate Gray default
+                                    "text-sm font transition-colors relative py-4 flex items-center gap-2",
+                                    "text-[#83868a] hover:text-[#331676] dark:text-foreground/80 dark:hover:text-primary" // Corporate Gray default
                                 )}
                             >
                                 {item.label}
@@ -183,7 +182,7 @@ export function SiteHeader() {
                                             transition={{ duration: 0.2 }}
                                             className="fixed left-0 right-0 top-[80px] md:top-[90px] w-full z-50 border-t border-border"
                                         >
-                                            <div className="bg-background/95 backdrop-blur-xl border-b border-border shadow-2xl py-12 w-full">
+                                            <div className="bg-[#01010e]/95 backdrop-blur-xl border-b border-border shadow-2xl py-12 w-full">
                                                 <div className="container mx-auto max-w-7xl px-6 md:px-12">
                                                     <div className="grid grid-cols-4 gap-8">
                                                         {(item.id === 'capabilities' ? services : resourcesData).map((subItem) => {
@@ -202,16 +201,16 @@ export function SiteHeader() {
                                                                 <Link
                                                                     key={subItem.id}
                                                                     href={item.id === 'capabilities' ? `/services/${subItem.slug}` : subItem.url}
-                                                                    className="flex items-start gap-4 p-4 rounded-xl hover:bg-[#1a73e8] dark:hover:bg-accent/50 transition-all group/item border border-transparent hover:border-border/50"
+                                                                    className="flex items-start gap-4 p-4 rounded-xl hover:bg-[#331676] dark:hover:bg-[#331676]/50 transition-all group/item border border-transparent hover:border-border/50"
                                                                 >
                                                                     <div className="w-10 h-10 rounded-lg bg-secondary flex items-center justify-center flex-shrink-0 group-hover/item:scale-110 transition-transform shadow-sm">
                                                                         <Icon className="w-5 h-5 text-[#1a73e8] dark:text-foreground dark:group-hover/item:text-foreground" />
                                                                     </div>
                                                                     <div>
-                                                                        <h4 className="text-base font-bold text-foreground mb-1 group-hover/item:text-white dark:group-hover/item:text-primary transition-colors">
+                                                                        <h4 className="text-base font-bold text-foreground mb-1 group-hover/item:text-white dark:group-hover/item:text-white transition-colors">
                                                                             {subItem.title || subItem.label}
                                                                         </h4>
-                                                                        <p className="text-xs text-muted-foreground leading-relaxed group-hover/item:text-white dark:group-hover/item:text-foreground/80 transition-colors">
+                                                                        <p className="text-xs text-muted-foreground leading-relaxed group-hover/item:text-white/80 dark:group-hover/item:text-white/80 transition-colors">
                                                                             {displayDesc}
                                                                         </p>
                                                                     </div>
@@ -231,15 +230,11 @@ export function SiteHeader() {
 
                 {/* C. CTA Button (Right) */}
                 <div className="hidden lg:flex items-center gap-6">
-                    {mounted && (
-                        <button onClick={toggleTheme} className="text-muted-foreground hover:text-foreground transition-colors p-2 rounded-full hover:bg-accent">
-                            {theme === 'dark' ? <Sun className="w-5 h-5" /> : <Moon className="w-5 h-5" />}
-                        </button>
-                    )}
+
 
                     <Link href="/contact">
                         <motion.div
-                            className="relative overflow-hidden border-2 border-[#83868a] text-[#1a73e8] hover:text-white dark:border-foreground dark:text-foreground dark:hover:text-background hover:bg-[#1a73e8] dark:hover:bg-foreground transition-colors rounded-full px-[35px] py-[12px] font-bold text-sm uppercase tracking-wide cursor-pointer h-[52px] flex items-center justify-center min-w-[260px]"
+                            className="relative overflow-hidden border-2 border-[#83868a] text-foreground hover:text-white hover:bg-[#331676] transition-colors rounded-full px-[35px] py-[12px] font-bold text-sm uppercase tracking-wide cursor-pointer h-[52px] flex items-center justify-center min-w-[260px]"
                             initial="initial"
                             whileHover="hover"
                         >
@@ -257,11 +252,7 @@ export function SiteHeader() {
 
                 {/* Mobile Menu Toggle */}
                 <div className="lg:hidden flex items-center gap-4">
-                    {mounted && (
-                        <button onClick={toggleTheme} className="text-muted-foreground hover:text-foreground transition-colors">
-                            {theme === 'dark' ? <Sun className="w-5 h-5" /> : <Moon className="w-5 h-5" />}
-                        </button>
-                    )}
+
                     <Button variant="ghost" size="icon" className="text-[#83868a] dark:text-foreground hover:bg-accent" onClick={() => setOpen(true)}>
                         <Menu className="w-6 h-6" />
                     </Button>
@@ -277,7 +268,7 @@ export function SiteHeader() {
                             animate={{ opacity: 1 }}
                             exit={{ opacity: 0 }}
                             transition={{ duration: 0.3 }}
-                            className="fixed top-0 left-0 right-0 bottom-0 z-[99999] bg-background flex flex-col lg:hidden"
+                            className="fixed top-0 left-0 right-0 bottom-0 z-[99999] bg-[#01010e] flex flex-col lg:hidden"
                         >
                             {/* Header within Mobile Menu */}
                             <div className="flex items-center justify-between px-6 md:px-[60px] h-[80px] md:h-[90px] border-b border-border">
@@ -305,7 +296,7 @@ export function SiteHeader() {
                                             <div className="flex items-center gap-4 flex-1">
                                                 <Link
                                                     href={item.url}
-                                                    className="text-3xl font-bold text-[#83868a] hover:text-[#1a73e8] dark:text-foreground dark:hover:text-muted-foreground transition-colors flex-1"
+                                                    className="text-3xl font-bold text-[#83868a] hover:text-[#331676] dark:text-foreground dark:hover:text-primary transition-colors flex-1"
                                                     onClick={(e) => {
                                                         if (item.type === 'dropdown') {
                                                             e.preventDefault();
@@ -350,7 +341,7 @@ export function SiteHeader() {
                                                                     const Icon = item.id === 'capabilities' ? getServiceIcon(s.title) : (s.icon || Code2)
                                                                     return <Icon className="w-5 h-5 text-[#83868a] group-hover/mob-item:text-[#1a73e8] transition-colors" />
                                                                 })()}
-                                                                <span className="text-lg text-muted-foreground group-hover/mob-item:text-[#1a73e8] dark:group-hover/mob-item:text-foreground transition-colors">
+                                                                <span className="text-lg text-muted-foreground group-hover/mob-item:text-[#331676] dark:group-hover/mob-item:text-white transition-colors">
                                                                     {s.title || s.label}
                                                                 </span>
                                                             </Link>
@@ -365,7 +356,7 @@ export function SiteHeader() {
 
                             <div className="p-[30px] border-t border-border">
                                 <Link href="/contact" onClick={() => setOpen(false)}>
-                                    <Button className="w-full h-14 rounded-full border-2 border-[#83868a] bg-background text-[#1a73e8] text-lg font-bold hover:bg-[#1a73e8] hover:text-white transition-all">
+                                    <Button className="w-full h-14 rounded-full border-2 border-[#83868a] bg-transparent text-foreground text-lg font-bold hover:bg-[#331676] hover:text-white transition-all">
                                         Start a conversation
                                     </Button>
                                 </Link>

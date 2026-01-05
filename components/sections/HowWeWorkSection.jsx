@@ -5,6 +5,7 @@ import Link from 'next/link'
 import Image from 'next/image'
 import { ArrowRight } from 'lucide-react'
 import { ScrollReveal } from '@/components/ui/ScrollReveal'
+import { GridPattern } from '@/components/ui/Patterns'
 
 export function HowWeWorkSection({ data }) {
     const {
@@ -16,7 +17,7 @@ export function HowWeWorkSection({ data }) {
                 description: "We begin by understanding business context, existing systems, constraints, and risks before proposing solutions."
             },
             {
-                title: "Structured Delivery",
+                title: "Structured Delivery\nZero noise",
                 description: "Clear milestones, documented decisions, and predictable execution — without unnecessary process overhead."
             },
             {
@@ -29,27 +30,32 @@ export function HowWeWorkSection({ data }) {
     } = data || {}
 
     return (
-        <section id="how-we-work" className="py-24 md:py-32 bg-background transition-colors duration-300 relative overflow-hidden">
+        <section id="how-we-work" className="py-24 md:py-32 bg-[#01010e] transition-colors duration-300 relative overflow-hidden">
             {/* Background Layer (Re-added per user request with specific image) */}
             <div className="absolute inset-0 z-0">
                 <div
                     className="absolute inset-0 z-10"
                     style={{
-                        background: 'linear-gradient(180deg, rgba(46, 16, 101, 0.9) 0%, rgba(0, 0, 0, 0.8) 100%)',
-                        mixBlendMode: 'multiply'
+                        background: 'rgba(0, 0, 0, 0.4)'
                     }}
                 />
+
+                {/* Top Fade */}
+                <div className="absolute top-0 left-0 right-0 h-32 bg-gradient-to-b from-[#01010e] to-transparent z-20" />
+
+                {/* Bottom Fade */}
+                <div className="absolute bottom-0 left-0 right-0 h-40 bg-gradient-to-t from-[#01010e] to-transparent z-20" />
+
                 <Image
                     src="/images/banner-1.jpg"
                     alt="Work Banner"
                     fill
-                    className="object-cover object-right-top grayscale opacity-50"
+                    className="object-cover object-right-top grayscale opacity-70"
                     sizes="100vw"
                     priority
                 />
 
-                {/* Fade to Next Section */}
-                <div className="absolute bottom-0 left-0 right-0 h-32 bg-gradient-to-t from-background to-transparent z-20 pointer-events-none" />
+                <GridPattern className="text-[#0c053e]/30" />
             </div>
 
             <div className="container relative z-10 max-w-[1248px] mx-auto px-6">
@@ -69,7 +75,7 @@ export function HowWeWorkSection({ data }) {
                             variant="fade-up"
                             delay={index * 200}
                             // Restored Glassmorphism Card Style
-                            className="bg-white/5 backdrop-blur-sm p-[48px] rounded-xl transform transition-all duration-300 hover:scale-[1.03] hover:-translate-y-2 hover:bg-[#1a73e8] shadow-lg border border-white/10 group flex flex-col h-full"
+                            className="bg-white/5 backdrop-blur-sm p-[48px] rounded-xl transform transition-all duration-300 hover:scale-[1.03] hover:-translate-y-2 hover:bg-[#0c053e] shadow-lg border border-white/10 group flex flex-col h-full"
                         >
                             {/* Number */}
                             <span className="text-white/40 text-5xl font-bold font-heading mb-6 block group-hover:opacity-100 group-hover:text-white transition-all">
@@ -77,7 +83,7 @@ export function HowWeWorkSection({ data }) {
                             </span>
 
                             {/* Title */}
-                            <h3 className="text-2xl font-bold mb-4 font-heading text-white transition-colors">
+                            <h3 className="text-2xl font-bold mb-4 font-heading text-white transition-colors whitespace-pre-line">
                                 {pillar.title}
                             </h3>
 

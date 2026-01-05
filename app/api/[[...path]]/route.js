@@ -227,7 +227,8 @@ function defaultSite() {
       },
       socials: [
         { id: uuidv4(), label: 'LinkedIn', href: 'https://linkedin.com' },
-        { id: uuidv4(), label: 'GitHub', href: 'https://github.com' },
+        { id: uuidv4(), label: 'Facebook', href: 'https://facebook.com' },
+        { id: uuidv4(), label: 'WhatsApp', href: 'https://wa.me/1234567890' },
       ],
     },
     _meta: { updatedAt: new Date().toISOString() },
@@ -620,7 +621,7 @@ async function handleRoute(request, { params }) {
         social_twitter: site?.footer?.socials?.find(s => s.label === 'Twitter')?.href || '',
         social_linkedin: site?.footer?.socials?.find(s => s.label === 'LinkedIn')?.href || '',
         social_instagram: site?.footer?.socials?.find(s => s.label === 'Instagram')?.href || '',
-        social_github: site?.footer?.socials?.find(s => s.label === 'GitHub')?.href || '',
+        social_whatsapp: site?.footer?.socials?.find(s => s.label === 'WhatsApp')?.href || '',
         footer_text: site?.footer?.copyright || '',
         seo_default_title: site?.brand?.name || '',
         seo_default_description: site?.footer?.tagline || '',
@@ -657,7 +658,7 @@ async function handleRoute(request, { params }) {
             { id: 'tw', label: 'Twitter', href: settings.social_twitter },
             { id: 'li', label: 'LinkedIn', href: settings.social_linkedin },
             { id: 'ig', label: 'Instagram', href: settings.social_instagram },
-            { id: 'gh', label: 'GitHub', href: settings.social_github },
+            { id: 'wa', label: 'WhatsApp', href: settings.social_whatsapp },
           ].filter(s => s.href)
         },
         analytics_id: settings.analytics_id
