@@ -6,8 +6,20 @@ export function ProfessionalServices({ services = [] }) {
     // Auto-scroll logic removed for vertical stack layout
 
     return (
-        <section className="relative w-full bg-[#01010e] pt-16 md:pt-20 pb-24 transition-colors duration-300">
-            <div className="container max-w-[1240px] mx-auto px-6">
+        <section className="relative w-full bg-[#01010e] pt-16 md:pt-20 pb-24 transition-colors duration-300 overflow-hidden">
+            {/* Background Layer */}
+            <div className="absolute inset-0 z-0">
+                {/* Top Fade */}
+                <div className="absolute top-0 left-0 right-0 h-32 bg-gradient-to-b from-[#01010e] to-transparent z-10" />
+
+                {/* Bottom Fade */}
+                <div className="absolute bottom-0 left-0 right-0 h-40 bg-gradient-to-t from-[#01010e] to-transparent z-10" />
+
+                {/* Subtle Grid Pattern */}
+                <div className="absolute inset-0 bg-[linear-gradient(to_right,#80808008_1px,transparent_1px),linear-gradient(to_bottom,#80808008_1px,transparent_1px)] bg-[size:32px_32px] opacity-20" />
+            </div>
+
+            <div className="container relative z-10 max-w-[1240px] mx-auto px-6">
 
                 {/* Section Header */}
                 <div className="max-w-3xl mx-auto mb-16 text-center">

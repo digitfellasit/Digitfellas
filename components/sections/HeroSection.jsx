@@ -128,8 +128,8 @@ export function HeroSection({ hero }) {
                     sizes="120vw"
                     priority
                 />
-
-
+                {/* Bottom Fade */}
+                <div className="absolute bottom-0 left-0 right-0 h-40 bg-gradient-to-t from-[#01010e] to-transparent z-20" />
             </div>
 
             <div className="container relative z-10 max-w-[1248px] px-6 lg:px-10">{/* Max row width 1248px */}
