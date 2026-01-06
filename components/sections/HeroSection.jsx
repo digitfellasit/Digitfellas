@@ -146,7 +146,7 @@ export function HeroSection({ hero }) {
                         {/* Kicker Removed from Top */}
 
                         {/* Main Heading H1 */}
-                        <h1 className="text-3xl md:text-3xl lg:text-5xl font-extrabold text-white mb-6 md:mb-8 font-heading leading-[1.2] lg:leading-[1.1]">
+                        <h1 className="text-3xl md:text-3xl lg:text-5xl  text-white mb-6 md:mb-8 font-heading leading-[1.2] lg:leading-[1.1]">
                             {parsedTitle.prefix}
                             {parsedTitle.typing.length > 0 && <br className="hidden md:block" />}
                             {parsedTitle.typing.length > 0 && <TypingText words={parsedTitle.typing} />}
