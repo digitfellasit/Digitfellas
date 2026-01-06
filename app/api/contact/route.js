@@ -21,7 +21,13 @@ export async function POST(request) {
         const recaptchaData = await recaptchaRes.json()
 
         if (!recaptchaData.success && process.env.NODE_ENV === 'production') {
+            console.error('❌ reCAPTCHA verification failed:', recaptchaData['error-codes'])
             return NextResponse.json({ error: 'reCAPTCHA verification failed' }, { status: 400 })
+        }
+
+        if (!process.env.RECAPTCHA_SECRET_KEY && process.env.NODE_ENV === 'production') {
+            console.error('❌ RECAPTCHA_SECRET_KEY is missing.')
+            return NextResponse.json({ error: 'Server configuration error' }, { status: 500 })
         }
 
         // Configure SMTP transporter
@@ -67,14 +73,13 @@ ${message}
       `,
         }
 
-        // If credentials are not set, mock the send (for development without crashing)
+        // If credentials are not set, return error (important for production)
         if (!process.env.SMTP_USER || !process.env.SMTP_PASS) {
-            console.log('⚠️ SMTP credentials missing. Mocking email send:', mailOptions)
-            // Simulate delay
-            await new Promise(resolve => setTimeout(resolve, 1000))
-        } else {
-            await transporter.sendMail(mailOptions)
+            console.error('❌ SMTP credentials missing in environment.')
+            return NextResponse.json({ error: 'Server configuration error' }, { status: 500 })
         }
+
+        await transporter.sendMail(mailOptions)
 
         return NextResponse.json({ success: true, message: 'Message sent successfully' })
 

@@ -23,7 +23,7 @@ export const metadata = {
   title: 'Digitfellas IT Solutions LLP',
   description: 'Digitfellas — Professional IT Solutions, Products, and Digital Experiences',
   icons: {
-    icon: '/images/df_favicon.png',
+    icon: '/images/favico.png',
   },
 }
 
