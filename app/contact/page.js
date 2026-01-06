@@ -121,7 +121,7 @@ export default function Page() {
           </div>
 
           {/* Right Column: Form */}
-          <div className="bg-[#0c053e] p-6 md:p-10 rounded-[2rem] border border-white/10 shadow-2xl relative overflow-hidden">
+          <div className="bg-[#02000f] p-6 md:p-10 rounded-[2rem] border border-white/10 shadow-2xl relative overflow-hidden">
             <div className="absolute top-0 right-0 w-64 h-64 bg-white/5 rounded-full blur-3xl -mr-32 -mt-32" />
 
             <ScrollReveal variant="fade-left" delay={200}>

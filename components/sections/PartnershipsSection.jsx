@@ -13,22 +13,11 @@ export function PartnershipsSection({ data }) {
         description = "We work with leading technologies to deliver scalable solutions."
     } = data || {}
 
-    // Static Partners Data
-    const partners = [
-        { name: 'Shopify', label: 'Partner', type: 'text' },
-        { name: 'Salesforce', label: 'Partner', type: 'text' },
-        { name: 'AWS', label: 'Cloud', type: 'text' }
-    ]
+    // Use only DB logos
+    const marqueeItems = clientLogos.map(logo => ({ ...logo, type: 'image' }))
 
-    // Combine for Marquee
-    // We want a mix of text-based partner logos and image-based client logos
-    const marqueeItems = [
-        ...partners,
-        ...clientLogos.map(logo => ({ ...logo, type: 'image' }))
-    ]
-
-    // Duplicate for seamless loop if we have items
-    const duplicatedItems = marqueeItems.length > 0 ? [...marqueeItems, ...marqueeItems, ...marqueeItems] : [...partners, ...partners, ...partners, ...partners]
+    // Duplicate for seamless loop - triple to ensure container is filled on large screens
+    const duplicatedItems = [...marqueeItems, ...marqueeItems, ...marqueeItems, ...marqueeItems]
 
     return (
         <section className="relative w-full bg-[#01010e] py-24 border-t border-border overflow-hidden transition-colors duration-300">
@@ -37,15 +26,12 @@ export function PartnershipsSection({ data }) {
                 <div className="flex flex-col md:flex-row items-center justify-center mb-16">
                     {/* Header & Content */}
                     <div className="max-w-xl text-center">
-                        <ScrollReveal variant="fade-right">
+                        <ScrollReveal variant="fade-up">
                             <h3 className="text-2xl font-bold text-foreground leading-tight font-heading mb-6">
                                 {title}
                             </h3>
-                            <p className="text-muted-foreground text-base font-body leading-relaxed mb-6">
+                            <p className="text-muted-foreground text-base font-body leading-relaxed max-w-lg mx-auto">
                                 {description}
-                            </p>
-                            <p className="text-muted-foreground text-sm font-bold">
-                                Modern Web, Cloud, and Automation Technologies
                             </p>
                         </ScrollReveal>
                     </div>
@@ -57,32 +43,21 @@ export function PartnershipsSection({ data }) {
                     <div className="absolute left-0 top-0 bottom-0 w-24 bg-gradient-to-r from-[#01010e] to-transparent z-10 pointer-events-none" />
                     <div className="absolute right-0 top-0 bottom-0 w-24 bg-gradient-to-l from-[#01010e] to-transparent z-10 pointer-events-none" />
 
-                    <div className="flex animate-marquee hover:pause-marquee items-center">
+                    <div className="flex animate-marquee items-center whitespace-nowrap">
                         {duplicatedItems.map((item, index) => (
                             <div
-                                key={`${item.name || item.id}-${index}`}
-                                className="flex-shrink-0 mx-8 md:mx-12"
+                                key={`${item.id}-${index}`}
+                                className="flex-shrink-0 mx-10 md:mx-16"
                             >
-                                {item.type === 'image' ? (
-                                    <div className="relative gray-0 opacity-80 hover:opacity-100 transition-all duration-500 dark:invert-0 invert flex items-center justify-center h-[50px] w-auto">
-                                        <Image
-                                            src={item.logo_url}
-                                            alt={item.name}
-                                            width={140}
-                                            height={60}
-                                            className="max-w-[120px] md:max-w-[140px] h-full object-contain"
-                                        />
-                                    </div>
-                                ) : (
-                                    <div className="flex items-center gap-3 opacity-60 hover:opacity-100 transition-opacity">
-                                        <span className={`text-3xl font-bold text-foreground tracking-tight whitespace-nowrap ${item.name === 'Salesforce' ? 'italic' : ''}`}>
-                                            {item.name}
-                                        </span>
-                                        <span className="text-xs font-mono text-muted-foreground uppercase border border-border rounded px-2 py-1 whitespace-nowrap">
-                                            {item.label}
-                                        </span>
-                                    </div>
-                                )}
+                                <div className="relative opacity-60 hover:opacity-100 transition-all duration-300 grayscale hover:grayscale-0 flex items-center justify-center h-[40px] md:h-[50px] w-auto">
+                                    <Image
+                                        src={item.logo_url}
+                                        alt={item.name}
+                                        width={140}
+                                        height={60}
+                                        className="h-full w-auto object-contain"
+                                    />
+                                </div>
                             </div>
                         ))}
                     </div>
@@ -101,10 +76,12 @@ export function PartnershipsSection({ data }) {
                 }
 
                 .animate-marquee {
+                    display: flex;
+                    width: max-content;
                     animation: marquee 40s linear infinite;
                 }
 
-                .pause-marquee:hover {
+                .animate-marquee:hover {
                     animation-play-state: paused;
                 }
             `}</style>
