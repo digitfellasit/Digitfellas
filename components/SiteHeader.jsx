@@ -203,7 +203,7 @@ export function SiteHeader() {
                                                                     href={item.id === 'capabilities' ? `/services/${subItem.slug}` : subItem.url}
                                                                     className="flex items-start gap-4 p-4 rounded-xl hover:bg-[#331676] dark:hover:bg-[#331676]/50 transition-all group/item border border-transparent hover:border-border/50"
                                                                 >
-                                                                    <div className="w-10 h-10 rounded-lg bg-secondary flex items-center justify-center flex-shrink-0 group-hover/item:scale-110 transition-transform shadow-sm">
+                                                                    <div className="w-10 h-10 rounded-lg bg-[#0c053e] flex items-center justify-center flex-shrink-0 group-hover/item:scale-110 transition-transform shadow-sm">
                                                                         <Icon className="w-5 h-5 text-[#1a73e8] dark:text-foreground dark:group-hover/item:text-foreground" />
                                                                     </div>
                                                                     <div>

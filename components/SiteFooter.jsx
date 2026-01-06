@@ -34,10 +34,10 @@ export function SiteFooter() {
 
     // Ensure common socials are present even if not in DB
     const hasFB = socials.some(s => s.label.toLowerCase() === 'facebook')
-    const hasWA = socials.some(s => s.label.toLowerCase() === 'whatsapp')
+    const hasIG = socials.some(s => s.label.toLowerCase() === 'instagram')
 
-    if (!hasFB) socials.push({ id: 'fb-fallback', label: 'Facebook', href: 'https://facebook.com' })
-    if (!hasWA) socials.push({ id: 'wa-fallback', label: 'WhatsApp', href: 'https://wa.me/1234567890' })
+    if (!hasFB) socials.push({ id: 'fb-fallback', label: 'Facebook', href: 'https://facebook.com/digitfellas' })
+    if (!hasIG) socials.push({ id: 'ig-fallback', label: 'Instagram', href: 'https://instagram.com/digitfellas' })
 
     // Sort to keep LinkedIn first if possible
     socials = socials.sort((a, b) => {
@@ -62,7 +62,7 @@ export function SiteFooter() {
                             className="h-[40px] w-auto object-contain"
                             priority
                         />
-                        <p className="text-muted-foreground text leading-relaxed max-w-sm mb-8 mt-10">
+                        <p className="text-muted-foreground text-sm leading-relaxed max-w-sm mb-8 mt-10">
                             Digitfellas is a software engineering firm focused on building reliable digital systems for long-term business value.
                         </p>
 
@@ -109,10 +109,10 @@ export function SiteFooter() {
                 <div className="border-t border-border pt-8 flex flex-col md:flex-row items-center justify-between gap-6 text-muted-foreground text-sm font-medium">
                     <p>© {new Date().getFullYear()} Digitfellas. All rights reserved.</p>
                     <div className="flex items-center gap-8">
-                        <Link href="/terms" className="hover:text-[#331676] transition-colors">
+                        <Link href="/terms" className="hover:text-white transition-colors">
                             Terms & Conditions
                         </Link>
-                        <Link href="/privacy" className="hover:text-[#331676] transition-colors">
+                        <Link href="/privacy" className="hover:text-white transition-colors">
                             Privacy Policy
                         </Link>
                     </div>
