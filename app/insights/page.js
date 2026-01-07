@@ -76,10 +76,11 @@ export default function InsightsListingPage() {
                   <div className="relative aspect-[4/3] overflow-hidden">
                     <Image
                       alt={post.title}
-                      src={post.featured_image?.url || post.featured_image_url || '/uploads/placeholder-blog.jpg'}
+                      src={post.featured_image?.url || '/uploads/placeholder-blog.jpg'}
                       fill
                       className="object-cover transition-transform duration-700 group-hover:scale-110"
                       sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                      unoptimized
                     />
                     <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
                   </div>
