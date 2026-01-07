@@ -12,7 +12,7 @@ const navigation = {
         { name: 'Capabilities', href: '/services' },
         { name: 'How We Work', href: '/how-we-work' },
         { name: 'Case Studies', href: '/projects' },
-        { name: 'Insights', href: '/blog' },
+        { name: 'Insights', href: '/insights' },
         { name: 'Partnerships', href: '#partnerships' },
         { name: 'Contact', href: '/contact' },
     ]

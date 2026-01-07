@@ -44,7 +44,7 @@ export function InsightsSection({ posts = [] }) {
                             delay={index * 100}
                             className="group h-full flex flex-col justify-between border-t border-border pt-8 hover:border-transparent px-6 -mx-6 rounded-xl hover:bg-[#331676] transition-all duration-300 cursor-pointer"
                         >
-                            <Link href={`/blog/${post.slug}`} className="block h-full">
+                            <Link href={`/insights/${post.slug}`} className="block h-full">
                                 <div>
                                     <div className="flex items-center justify-between mb-6">
                                         <span className="text-xs font-bold text-primary group-hover:text-white uppercase tracking-widest transition-colors">

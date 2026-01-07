@@ -50,7 +50,7 @@ export function SiteHeader() {
             id: 'insights',
             title: 'Insights',
             description: 'Latest trends, thoughts, and industry updates.',
-            url: '/blog',
+            url: '/insights',
             icon: Newspaper
         },
         {

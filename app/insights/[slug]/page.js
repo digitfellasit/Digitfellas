@@ -109,21 +109,6 @@ export default async function InsightPage({ params }) {
             </p>
           )}
 
-          {/* Featured Image */}
-          {post.featured_image?.url && (
-            <div className="relative aspect-[21/9] w-full overflow-hidden rounded-3xl mb-12 border border-white/5 shadow-2xl">
-              <Image
-                src={post.featured_image.url}
-                alt={post.featured_image.alt || post.title}
-                fill
-                className="object-cover"
-                priority
-              />
-            </div>
-          )}
-
-
-
           {/* Content */}
           {post.content && (
             <div
