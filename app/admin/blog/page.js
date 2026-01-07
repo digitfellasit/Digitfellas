@@ -6,6 +6,7 @@ import { AdminLayout } from '@/components/admin/AdminLayout'
 import { DataTable, StatusBadge } from '@/components/admin/DataTable'
 import { RichEditor } from '@/components/admin/RichEditor'
 import { MediaGallery } from '@/components/admin/MediaGallery'
+import { SeoPreviewEditor } from '@/components/admin/SeoPreviewEditor'
 import { Button } from '@/components/ui/button'
 import { Card } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
@@ -115,18 +116,18 @@ export default function BlogPage() {
         <AdminLayout>
             <div className="space-y-6">
                 <div className="flex items-center justify-between">
-                    <div><h1 className="text-3xl font-bold">Blog Posts</h1><p className="text-muted-foreground mt-1">Manage your blog content</p></div>
-                    <Button onClick={handleCreate}><Plus className="h-4 w-4 mr-2" />New Post</Button>
+                    <div><h1 className="text-3xl font-bold">Insights</h1><p className="text-muted-foreground mt-1">Manage your insights and articles</p></div>
+                    <Button onClick={handleCreate}><Plus className="h-4 w-4 mr-2" />New Insight</Button>
                 </div>
                 <Card className="p-6">
                     {loading ? <div className="text-center py-12 text-muted-foreground">Loading...</div> :
-                        <DataTable data={posts} columns={columns} onEdit={handleEdit} onDelete={handleDelete} searchPlaceholder="Search posts..." emptyMessage="No blog posts yet" />}
+                        <DataTable data={posts} columns={columns} onEdit={handleEdit} onDelete={handleDelete} searchPlaceholder="Search insights..." emptyMessage="No insights yet" />}
                 </Card>
             </div>
 
             <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
                 <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
-                    <DialogHeader><DialogTitle>{editing ? 'Edit Post' : 'Create Post'}</DialogTitle></DialogHeader>
+                    <DialogHeader><DialogTitle>{editing ? 'Edit Insight' : 'Create Insight'}</DialogTitle></DialogHeader>
                     <div className="py-4">
                         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                             {/* Main Content */}
@@ -175,17 +176,21 @@ export default function BlogPage() {
                                     />
                                 </Card>
 
-                                <Card className="p-4 space-y-4">
-                                    <h3 className="font-medium border-b pb-2">SEO Settings</h3>
-                                    <div><Label>Meta Title</Label><Input value={formData.meta_title} onChange={(e) => setFormData({ ...formData, meta_title: e.target.value })} placeholder="SEO Title" /></div>
-                                    <div><Label>Meta Description</Label><Textarea value={formData.meta_description} onChange={(e) => setFormData({ ...formData, meta_description: e.target.value })} rows={4} placeholder="SEO Description" /></div>
-                                </Card>
+                                <SeoPreviewEditor
+                                    title={formData.title}
+                                    slug={formData.slug}
+                                    metaTitle={formData.meta_title}
+                                    metaDescription={formData.meta_description}
+                                    onMetaTitleChange={(value) => setFormData({ ...formData, meta_title: value })}
+                                    onMetaDescriptionChange={(value) => setFormData({ ...formData, meta_description: value })}
+                                    pathPrefix="/insights"
+                                />
                             </div>
                         </div>
 
                         <div className="flex justify-end gap-2 pt-6 mt-6 border-t">
                             <Button variant="outline" onClick={() => setDialogOpen(false)}>Cancel</Button>
-                            <Button onClick={handleSave} className="min-w-[120px]"><Save className="h-4 w-4 mr-2" />Save Post</Button>
+                            <Button onClick={handleSave} className="min-w-[120px]"><Save className="h-4 w-4 mr-2" />Save Insight</Button>
                         </div>
                     </div>
                 </DialogContent>

@@ -6,6 +6,7 @@ import { AdminLayout } from '@/components/admin/AdminLayout'
 import { DataTable, StatusBadge } from '@/components/admin/DataTable'
 import { RichEditor } from '@/components/admin/RichEditor'
 import { MediaGallery } from '@/components/admin/MediaGallery'
+import { SeoPreviewEditor } from '@/components/admin/SeoPreviewEditor'
 import { Button } from '@/components/ui/button'
 import { Card } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
@@ -171,11 +172,15 @@ export default function PagesPage() {
                                     />
                                 </Card>
 
-                                <Card className="p-4 space-y-4">
-                                    <h3 className="font-medium border-b pb-2">SEO Settings</h3>
-                                    <div><Label>Meta Title</Label><Input value={formData.meta_title} onChange={(e) => setFormData({ ...formData, meta_title: e.target.value })} placeholder="SEO Title" /></div>
-                                    <div><Label>Meta Description</Label><Textarea value={formData.meta_description} onChange={(e) => setFormData({ ...formData, meta_description: e.target.value })} rows={4} placeholder="SEO Description" /></div>
-                                </Card>
+                                <SeoPreviewEditor
+                                    title={formData.title}
+                                    slug={formData.slug}
+                                    metaTitle={formData.meta_title}
+                                    metaDescription={formData.meta_description}
+                                    onMetaTitleChange={(value) => setFormData({ ...formData, meta_title: value })}
+                                    onMetaDescriptionChange={(value) => setFormData({ ...formData, meta_description: value })}
+                                    pathPrefix=""
+                                />
                             </div>
                         </div>
 

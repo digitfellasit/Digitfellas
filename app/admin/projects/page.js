@@ -6,6 +6,7 @@ import { AdminLayout } from '@/components/admin/AdminLayout'
 import { DataTable, StatusBadge } from '@/components/admin/DataTable'
 import { RichEditor } from '@/components/admin/RichEditor'
 import { MediaGallery } from '@/components/admin/MediaGallery'
+import { SeoPreviewEditor } from '@/components/admin/SeoPreviewEditor'
 import { Button } from '@/components/ui/button'
 import { Card } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
@@ -118,18 +119,18 @@ export default function ProjectsPage() {
         <AdminLayout>
             <div className="space-y-6">
                 <div className="flex items-center justify-between">
-                    <div><h1 className="text-3xl font-bold">Projects</h1><p className="text-muted-foreground mt-1">Manage your portfolio projects</p></div>
-                    <Button onClick={handleCreate}><Plus className="h-4 w-4 mr-2" />Add Project</Button>
+                    <div><h1 className="text-3xl font-bold">Case Studies</h1><p className="text-muted-foreground mt-1">Manage your portfolio case studies</p></div>
+                    <Button onClick={handleCreate}><Plus className="h-4 w-4 mr-2" />Add Case Study</Button>
                 </div>
                 <Card className="p-6">
                     {loading ? <div className="text-center py-12 text-muted-foreground">Loading...</div> :
-                        <DataTable data={projects} columns={columns} onEdit={handleEdit} onDelete={handleDelete} searchPlaceholder="Search projects..." emptyMessage="No projects yet" />}
+                        <DataTable data={projects} columns={columns} onEdit={handleEdit} onDelete={handleDelete} searchPlaceholder="Search case studies..." emptyMessage="No case studies yet" />}
                 </Card>
             </div>
 
             <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
                 <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
-                    <DialogHeader><DialogTitle>{editing ? 'Edit Project' : 'Create Project'}</DialogTitle></DialogHeader>
+                    <DialogHeader><DialogTitle>{editing ? 'Edit Case Study' : 'Create Case Study'}</DialogTitle></DialogHeader>
                     <div className="space-y-6 py-4">
                         <div className="grid gap-4">
                             <div><Label>Title *</Label><Input value={formData.title} onChange={(e) => setFormData({ ...formData, title: e.target.value, slug: formData.slug || generateSlug(e.target.value) })} /></div>
@@ -195,6 +196,16 @@ export default function ProjectsPage() {
                                 <Label>Published</Label>
                                 <Switch checked={formData.is_published} onCheckedChange={(checked) => setFormData({ ...formData, is_published: checked })} />
                             </div>
+
+                            <SeoPreviewEditor
+                                title={formData.title}
+                                slug={formData.slug}
+                                metaTitle={formData.meta_title}
+                                metaDescription={formData.meta_description}
+                                onMetaTitleChange={(value) => setFormData({ ...formData, meta_title: value })}
+                                onMetaDescriptionChange={(value) => setFormData({ ...formData, meta_description: value })}
+                                pathPrefix="/projects"
+                            />
                         </div>
                         <div className="flex justify-end gap-2 pt-4 border-t">
                             <Button variant="outline" onClick={() => setDialogOpen(false)}>Cancel</Button>

@@ -1,5 +1,6 @@
 'use client'
 
+import Head from 'next/head'
 import Link from 'next/link'
 import { ArrowRight, Calendar } from 'lucide-react'
 import Image from 'next/image'
@@ -10,13 +11,17 @@ import { useBlog, useHero } from '@/lib/api-hooks'
 import { HeroSection } from '@/components/HeroSection'
 import { ScrollReveal } from '@/components/ui/ScrollReveal'
 
-export default function BlogListingPage() {
+export default function InsightsListingPage() {
   const { posts, loading } = useBlog()
-  const { hero } = useHero('blog')
+  const { hero } = useHero('insights')
 
   if (loading) {
     return (
       <div className="min-h-screen bg-[#01010e]">
+        <Head>
+          <title>Insights - Digitfellas</title>
+          <meta name="description" content="Practical engineering notes, product thinking, and delivery lessons." />
+        </Head>
         <div className="container py-24">
           <div className="h-12 w-48 rounded-full bg-muted animate-pulse mb-4" />
           <div className="h-8 w-64 rounded-full bg-muted animate-pulse mb-12" />
@@ -32,6 +37,16 @@ export default function BlogListingPage() {
 
   return (
     <div className="min-h-screen bg-[#01010e]">
+      <Head>
+        <title>Insights - Articles & Updates | Digitfellas</title>
+        <meta name="description" content="Practical engineering notes, product thinking, and delivery lessons from Digitfellas." />
+        <meta property="og:title" content="Insights - Articles & Updates | Digitfellas" />
+        <meta property="og:description" content="Practical engineering notes, product thinking, and delivery lessons from Digitfellas." />
+        <meta property="og:type" content="website" />
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta name="twitter:title" content="Insights - Articles & Updates | Digitfellas" />
+        <meta name="twitter:description" content="Practical engineering notes, product thinking, and delivery lessons from Digitfellas." />
+      </Head>
       {hero && <HeroSection hero={hero} />}
 
       <section className="container py-16 md:py-24">
@@ -39,7 +54,7 @@ export default function BlogListingPage() {
           <ScrollReveal
             variant="fade-up"
           >
-            <div className="text-xs font-bold uppercase tracking-[0.2em] text-primary mb-4">Blog</div>
+            <div className="text-xs font-bold uppercase tracking-[0.2em] text-primary mb-4">Insights</div>
             <h1 className="text-4xl md:text-6xl font-extrabold tracking-tight mb-6">
               Articles & Updates
             </h1>
@@ -56,7 +71,7 @@ export default function BlogListingPage() {
               variant="fade-up"
               delay={i * 100}
             >
-              <Link href={`/blog/${post.slug}`} className="group block h-full">
+              <Link href={`/insights/${post.slug}`} className="group block h-full">
                 <Card className="h-full overflow-hidden rounded-3xl border-border hover:shadow-2xl transition-shadow">
                   <div className="relative aspect-[4/3] overflow-hidden">
                     <Image
@@ -108,7 +123,7 @@ export default function BlogListingPage() {
 
         {posts.length === 0 && (
           <Card className="p-12 text-center rounded-3xl">
-            <p className="text-muted-foreground">No blog posts yet. Check back soon!</p>
+            <p className="text-muted-foreground">No insights available. Check back soon!</p>
           </Card>
         )}
       </section>

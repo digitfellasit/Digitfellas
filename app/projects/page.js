@@ -1,5 +1,6 @@
 'use client'
 
+import Head from 'next/head'
 import Link from 'next/link'
 import { ArrowRight } from 'lucide-react'
 import Image from 'next/image'
@@ -17,6 +18,10 @@ export default function ProjectsListingPage() {
   if (loading) {
     return (
       <div className="min-h-screen bg-background">
+        <Head>
+          <title>Case Studies - Digitfellas</title>
+          <meta name="description" content="Selected case studies and builds across web, automation, and product engineering." />
+        </Head>
         <div className="container py-24">
           <div className="h-12 w-48 rounded-full bg-muted animate-pulse mb-4" />
           <div className="h-8 w-64 rounded-full bg-muted animate-pulse mb-12" />
@@ -32,6 +37,16 @@ export default function ProjectsListingPage() {
 
   return (
     <div className="min-h-screen bg-background">
+      <Head>
+        <title>Case Studies - Our Work | Digitfellas</title>
+        <meta name="description" content="Selected case studies and builds across web, automation, and product engineering from Digitfellas." />
+        <meta property="og:title" content="Case Studies - Our Work | Digitfellas" />
+        <meta property="og:description" content="Selected case studies and builds across web, automation, and product engineering from Digitfellas." />
+        <meta property="og:type" content="website" />
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta name="twitter:title" content="Case Studies - Our Work | Digitfellas" />
+        <meta name="twitter:description" content="Selected case studies and builds across web, automation, and product engineering from Digitfellas." />
+      </Head>
       {hero && <HeroSection hero={hero} />}
 
       <section className="container py-16 md:py-24">

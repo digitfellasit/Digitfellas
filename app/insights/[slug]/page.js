@@ -8,17 +8,42 @@ import { renderMarkdown } from '@/lib/render-markdown'
 import { getBlogPostBySlug, getAllBlogSlugs } from '@/lib/blog-service'
 import { notFound } from 'next/navigation'
 
-// ISR: Revalidate every hour
+// Force dynamic rendering to avoid build-time database connection issues
+export const dynamic = 'force-dynamic'
 export const revalidate = 3600
 
-export async function generateStaticParams() {
-  const slugs = await getAllBlogSlugs()
-  return slugs.map((slug) => ({
-    slug,
-  }))
+export async function generateMetadata({ params }) {
+  const slug = params?.slug
+  const post = await getBlogPostBySlug(slug)
+
+  if (!post) {
+    return {
+      title: 'Insight Not Found',
+      description: 'The requested insight could not be found.'
+    }
+  }
+
+  return {
+    title: post.meta_title || post.title,
+    description: post.meta_description || post.excerpt || post.short_description,
+    openGraph: {
+      title: post.meta_title || post.title,
+      description: post.meta_description || post.excerpt,
+      type: 'article',
+      publishedTime: post.published_at,
+      authors: post.author_name ? [post.author_name] : undefined,
+      images: post.featured_image?.url ? [{ url: post.featured_image.url, alt: post.featured_image.alt || post.title }] : undefined,
+    },
+    twitter: {
+      card: 'summary_large_image',
+      title: post.meta_title || post.title,
+      description: post.meta_description || post.excerpt,
+      images: post.featured_image?.url ? [post.featured_image.url] : undefined,
+    }
+  }
 }
 
-export default async function BlogPostPage({ params }) {
+export default async function InsightPage({ params }) {
   const slug = params?.slug
   const post = await getBlogPostBySlug(slug)
 
@@ -29,9 +54,9 @@ export default async function BlogPostPage({ params }) {
   return (
     <div className="min-h-screen bg-[#01010e]">
       <article className="container py-16 md:py-24">
-        <Link href="/blog" className="inline-flex items-center text-sm text-muted-foreground hover:text-foreground mb-8">
+        <Link href="/insights" className="inline-flex items-center text-sm text-muted-foreground hover:text-foreground mb-8">
           <ArrowLeft className="h-4 w-4 mr-2" />
-          Back to Blog
+          Back to Insights
         </Link>
 
         <div className="max-w-4xl mx-auto">
@@ -111,13 +136,13 @@ export default async function BlogPostPage({ params }) {
           <Card className="p-8 md:p-12 bg-gradient-to-br from-primary/10 to-primary/5 mt-16 border-white/5">
             <h2 className="text-2xl font-bold mb-4">Enjoyed this article?</h2>
             <p className="text-muted-foreground mb-6">
-              Check out more of our articles or get in touch to discuss your project.
+              Check out more of our insights or get in touch to discuss your project.
             </p>
             <div className="flex flex-col sm:flex-row gap-4">
               <Button asChild size="lg" className="rounded-full">
-                <Link href="/blog">
+                <Link href="/insights">
                   <ArrowLeft className="mr-2 h-4 w-4" />
-                  More Articles
+                  More Insights
                 </Link>
               </Button>
               <Button asChild size="lg" variant="outline" className="rounded-full">

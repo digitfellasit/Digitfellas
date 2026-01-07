@@ -1,5 +1,6 @@
 'use client'
 
+import Head from 'next/head'
 import { useParams } from 'next/navigation'
 import Link from 'next/link'
 import Image from 'next/image'
@@ -48,6 +49,20 @@ export default function ProjectDetailPage() {
 
     return (
         <div className="min-h-screen bg-background">
+            <Head>
+                <title>{project.meta_title || project.title} | Digitfellas</title>
+                <meta name="description" content={project.meta_description || project.excerpt || project.description} />
+                <meta property="og:title" content={project.meta_title || project.title} />
+                <meta property="og:description" content={project.meta_description || project.excerpt || project.description} />
+                <meta property="og:type" content="article" />
+                {project.featured_image?.url && <meta property="og:image" content={project.featured_image.url} />}
+                {project.images?.[0]?.url && !project.featured_image?.url && <meta property="og:image" content={project.images[0].url} />}
+                <meta name="twitter:card" content="summary_large_image" />
+                <meta name="twitter:title" content={project.meta_title || project.title} />
+                <meta name="twitter:description" content={project.meta_description || project.excerpt || project.description} />
+                {project.featured_image?.url && <meta name="twitter:image" content={project.featured_image.url} />}
+                {project.images?.[0]?.url && !project.featured_image?.url && <meta name="twitter:image" content={project.images[0].url} />}
+            </Head>
             {project.hero && <HeroSection hero={project.hero} />}
             <div className="container py-16 md:py-24">
                 <Link href="/projects" className="inline-flex items-center text-sm text-muted-foreground hover:text-foreground mb-8">

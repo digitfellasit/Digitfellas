@@ -1,3 +1,6 @@
+import { put } from '@vercel/blob'
+import { revalidatePath } from 'next/cache'
+
 import { NextResponse } from 'next/server'
 import { promises as fs } from 'fs'
 import path from 'path'
@@ -421,11 +424,6 @@ async function jsonGetUsers() {
 
 async function handleUpload(request) {
   try {
-    await ensureDir(UPLOAD_DIR).catch(err => {
-      console.warn('Failed to ensure upload directory:', err.message)
-      throw new Error(`Ensure dir failed: ${err.message} (${UPLOAD_DIR})`)
-    })
-
     const form = await request.formData()
 
     const files = form.getAll('files')
@@ -436,66 +434,66 @@ async function handleUpload(request) {
       return handleCORS(NextResponse.json({ error: 'No files provided (field name: files)' }, { status: 400 }))
     }
 
+    // Check if we're in production (Vercel) or development
+    const isProduction = process.env.VERCEL === '1'
+    const hasBlob = !!process.env.BLOB_READ_WRITE_TOKEN
+
     const saved = []
     for (const f of files) {
-      const arrayBuffer = await f.arrayBuffer()
-      const buffer = Buffer.from(arrayBuffer)
       const originalName = f.name || 'upload'
       const ext = path.extname(originalName) || (kind === 'video' ? '.mp4' : '.jpg')
-
       const safeBase = originalName.replace(/[^a-zA-Z0-9._-]/g, '_').slice(0, 64)
       const filename = `${Date.now()}_${uuidv4()}_${variant}_${safeBase}${ext}`
 
-      const diskPath = path.join(UPLOAD_DIR, filename)
+      let finalUrl = ''
+      let sizeBytes = 0
 
-      let diskWriteSuccess = false
-      try {
-        await fs.writeFile(diskPath, buffer)
-        diskWriteSuccess = true
-      } catch (err) {
-        // Don't return error, just proceed to DB fallback
-        console.warn('Disk write failed, attempting DB fallback:', err.message)
+      // Use Vercel Blob in production if token is available
+      if (isProduction && hasBlob) {
+        try {
+          const blob = await put(`uploads/${filename}`, f, {
+            access: 'public',
+          })
+          finalUrl = blob.url
+          sizeBytes = f.size || 0
+        } catch (blobError) {
+          console.error('Blob upload failed:', blobError)
+          throw new Error(`Blob upload failed: ${blobError.message}`)
+        }
+      } else {
+        // Use local file system in development
+        await ensureDir(UPLOAD_DIR).catch(err => {
+          console.warn('Failed to ensure upload directory:', err.message)
+        })
+
+        const arrayBuffer = await f.arrayBuffer()
+        const buffer = Buffer.from(arrayBuffer)
+        const diskPath = path.join(UPLOAD_DIR, filename)
+
+        try {
+          await fs.writeFile(diskPath, buffer)
+          finalUrl = `/uploads/${filename}`
+          sizeBytes = buffer.length
+        } catch (err) {
+          console.error('Disk write failed:', err.message)
+          throw new Error(`Failed to save file: ${err.message}`)
+        }
       }
 
       const mediaId = uuidv4()
       const mimeType = kind === 'video' ? 'video/mp4' : (ext === '.png' ? 'image/png' : 'image/jpeg')
 
-      let finalUrl = `/uploads/${filename}`
-
-      // If disk write failed, use DB storage (Data URI)
-      if (!diskWriteSuccess) {
-        console.warn('Falling back to database storage for:', filename)
-        const base64 = buffer.toString('base64')
-        const dataUri = `data:${mimeType};base64,${base64}`
-        finalUrl = dataUri
-
-        // Insert into DB with data content
-        if (await pgEnabled()) {
-          const pool = getPool()
-          await pool.query(`
-                INSERT INTO media_items (id, url, filename, alt_text, mime_type, size_bytes, data)
-                VALUES ($1, $2, $3, $4, $5, $6, $7)
-                ON CONFLICT (id) DO NOTHING
-             `, [mediaId, finalUrl, filename, '', mimeType, buffer.length, finalUrl]) // Using finalUrl (Data URI) for both url and data columns
-        }
-
-        saved.push({ id: mediaId, url: finalUrl, originalName, kind, variant, size: buffer.length })
-        continue; // Skip the disk-success block
+      // Insert into DB
+      if (await pgEnabled()) {
+        const pool = getPool()
+        await pool.query(`
+              INSERT INTO media_items (id, url, filename, alt_text, mime_type, size_bytes)
+              VALUES ($1, $2, $3, $4, $5, $6)
+              ON CONFLICT (id) DO NOTHING
+        `, [mediaId, finalUrl, filename, '', mimeType, sizeBytes])
       }
 
-      if (diskWriteSuccess) {
-        // Insert into DB for disk-based files
-        if (await pgEnabled()) {
-          const pool = getPool()
-          await pool.query(`
-                INSERT INTO media_items (id, url, filename, alt_text, mime_type, size_bytes)
-                VALUES ($1, $2, $3, $4, $5, $6)
-                ON CONFLICT (id) DO NOTHING
-          `, [mediaId, `/uploads/${filename}`, filename, '', mimeType, buffer.length])
-        }
-
-        saved.push({ id: mediaId, url: `/uploads/${filename}`, originalName, kind, variant, size: buffer.length })
-      }
+      saved.push({ id: mediaId, url: finalUrl, originalName, kind, variant, size: sizeBytes })
     }
 
     return handleCORS(NextResponse.json({ uploaded: saved }))
@@ -665,6 +663,7 @@ async function handleRoute(request, { params }) {
       }
 
       const saved = (await pgEnabled()) ? await pgSetSite(updatedSite) : await jsonSetSite(updatedSite)
+      revalidatePath('/', 'layout')
       return handleCORS(NextResponse.json({ ok: true }))
     }
 
@@ -766,6 +765,8 @@ async function handleRoute(request, { params }) {
       `, [body.title, body.slug, body.description, body.short_description, body.content, body.excerpt, body.icon_url, body.category_id, body.meta_title, body.meta_description, body.is_featured, body.is_published, body.sort_order, id, body.featured_image_id, JSON.stringify(body.hero_data || {}), body.intro_content || '', JSON.stringify(body.features || []), JSON.stringify(body.details_sections || [])])
 
       if (!result.rows[0]) return handleCORS(NextResponse.json({ error: 'Service not found' }, { status: 404 }))
+      revalidatePath('/services')
+      if (result.rows[0]?.slug) revalidatePath(`/services/${result.rows[0].slug}`)
       return handleCORS(NextResponse.json(result.rows[0]))
     }
 
@@ -776,6 +777,7 @@ async function handleRoute(request, { params }) {
       const id = parts[1]
       const pool = getPool()
       await pool.query('UPDATE services SET deleted_at = NOW() WHERE id = $1', [id])
+      revalidatePath('/services')
       return handleCORS(NextResponse.json({ ok: true }))
     }
 
@@ -872,6 +874,7 @@ async function handleRoute(request, { params }) {
         RETURNING *
       `, [id, body.title, body.slug, body.description, body.short_description, body.content, body.excerpt, body.client_name, body.project_url, body.service_id, body.category_id, body.meta_title, body.meta_description, body.is_featured || false, body.is_published !== false, body.completed_at, body.sort_order || 0, heroSectionId, body.featured_image_id || null])
 
+      revalidatePath('/projects')
       return handleCORS(NextResponse.json(result.rows[0]))
     }
 
@@ -899,6 +902,8 @@ async function handleRoute(request, { params }) {
       `, [body.title, body.slug, body.description, body.short_description, body.content, body.excerpt, body.client_name, body.project_url, body.service_id, body.category_id, body.meta_title, body.meta_description, body.is_featured, body.is_published, body.completed_at, body.sort_order, id, heroSectionId, body.featured_image_id])
 
       if (!result.rows[0]) return handleCORS(NextResponse.json({ error: 'Project not found' }, { status: 404 }))
+      revalidatePath('/projects')
+      if (result.rows[0]?.slug) revalidatePath(`/projects/${result.rows[0].slug}`)
       return handleCORS(NextResponse.json(result.rows[0]))
     }
 
@@ -909,6 +914,7 @@ async function handleRoute(request, { params }) {
       const id = parts[1]
       const pool = getPool()
       await pool.query('UPDATE projects SET deleted_at = NOW() WHERE id = $1', [id])
+      revalidatePath('/projects')
       return handleCORS(NextResponse.json({ ok: true }))
     }
 
@@ -984,6 +990,7 @@ async function handleRoute(request, { params }) {
         RETURNING *
       `, [id, body.title, body.slug, body.excerpt, body.short_description, body.content, body.category_id, session.userId, body.meta_title, body.meta_description, body.is_featured || false, body.is_published || false, body.is_published ? new Date() : null, body.reading_time_minutes || 5, body.featured_image_id || null])
 
+      revalidatePath('/blog')
       return handleCORS(NextResponse.json(result.rows[0]))
     }
 
@@ -1004,6 +1011,8 @@ async function handleRoute(request, { params }) {
       `, [body.title, body.slug, body.excerpt, body.short_description, body.content, body.category_id, body.meta_title, body.meta_description, body.is_featured, body.is_published, body.is_published && !body.published_at ? new Date() : body.published_at, body.reading_time_minutes, id, body.featured_image_id])
 
       if (!result.rows[0]) return handleCORS(NextResponse.json({ error: 'Blog post not found' }, { status: 404 }))
+      revalidatePath('/blog')
+      if (result.rows[0]?.slug) revalidatePath(`/blog/${result.rows[0].slug}`)
       return handleCORS(NextResponse.json(result.rows[0]))
     }
 
@@ -1014,6 +1023,7 @@ async function handleRoute(request, { params }) {
       const id = parts[1]
       const pool = getPool()
       await pool.query('UPDATE blog_posts SET deleted_at = NOW() WHERE id = $1', [id])
+      revalidatePath('/blog')
       return handleCORS(NextResponse.json({ ok: true }))
     }
 
@@ -1070,6 +1080,7 @@ async function handleRoute(request, { params }) {
         RETURNING *
       `, [id, body.title, body.slug, body.content, body.template || 'default', body.meta_title, body.meta_description, body.is_published !== false, body.show_in_menu || false, body.parent_id, body.sort_order || 0, body.featured_image_id || null])
 
+      revalidatePath('/', 'layout')
       return handleCORS(NextResponse.json(result.rows[0]))
     }
 
@@ -1090,6 +1101,7 @@ async function handleRoute(request, { params }) {
       `, [body.title, body.slug, body.content, body.template, body.meta_title, body.meta_description, body.is_published, body.show_in_menu, body.parent_id, body.sort_order, id, body.featured_image_id])
 
       if (!result.rows[0]) return handleCORS(NextResponse.json({ error: 'Page not found' }, { status: 404 }))
+      revalidatePath('/', 'layout')
       return handleCORS(NextResponse.json(result.rows[0]))
     }
 
@@ -1100,6 +1112,7 @@ async function handleRoute(request, { params }) {
       const id = parts[1]
       const pool = getPool()
       await pool.query('UPDATE cms_pages SET deleted_at = NOW() WHERE id = $1', [id])
+      revalidatePath('/', 'layout') // Since pages can be anywhere
       return handleCORS(NextResponse.json({ ok: true }))
     }
 
@@ -1135,6 +1148,7 @@ async function handleRoute(request, { params }) {
         RETURNING *
       `, [id, body.label, body.url, body.parent_id, body.icon, body.target || '_self', body.is_active !== false, body.sort_order || 0])
 
+      revalidatePath('/', 'layout')
       return handleCORS(NextResponse.json(result.rows[0]))
     }
 
@@ -1154,6 +1168,7 @@ async function handleRoute(request, { params }) {
       `, [body.label, body.url, body.parent_id, body.icon, body.target, body.is_active, body.sort_order, id])
 
       if (!result.rows[0]) return handleCORS(NextResponse.json({ error: 'Navigation item not found' }, { status: 404 }))
+      revalidatePath('/', 'layout')
       return handleCORS(NextResponse.json(result.rows[0]))
     }
 
@@ -1164,6 +1179,7 @@ async function handleRoute(request, { params }) {
       const id = parts[1]
       const pool = getPool()
       await pool.query('DELETE FROM navigation_items WHERE id = $1', [id])
+      revalidatePath('/', 'layout')
       return handleCORS(NextResponse.json({ ok: true }))
     }
 
@@ -1458,6 +1474,9 @@ async function upsertHero(pool, hero, pageKey, existingHeroId) {
     }
   }
 
+  // Revalidate homepage or relevant page
+  revalidatePath('/')
+  revalidatePath(`/${pageKey}`)
   return heroId
 }
 
