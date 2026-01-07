@@ -71,12 +71,12 @@ function TypingText({ words = [] }) {
 export function HeroSection({ hero }) {
     // 1. Content Parsing
     const {
-        title,
-        subtitle,
+        title = hero?.heading,
+        subtitle = hero?.subheading,
         kicker,
         media = [],
-        primary_cta_label,
-        primary_cta_url
+        primary_cta_label = hero?.cta_text,
+        primary_cta_url = hero?.cta_url
     } = hero || {}
 
     const parsedTitle = useMemo(() => {
@@ -106,7 +106,7 @@ export function HeroSection({ hero }) {
     const allMedia = hero?.media || []
 
     // We only use the first image now as per redesign
-    const image1 = media[0]?.url
+    const image1 = media[0]?.url || '/images/Hero_Background.webp'
 
     return (
         <section
@@ -196,7 +196,7 @@ export function HeroSection({ hero }) {
                                     className="relative overflow-hidden rounded-[1rem] lg:rounded-[2rem] shadow-2xl bg-card w-full h-full"
                                 >
                                     <Image
-                                        src={media[0]?.url || '/uploads/placeholder-hero.jpg'}
+                                        src={image1}
                                         alt="Main Feature"
                                         fill
                                         className="object-cover"

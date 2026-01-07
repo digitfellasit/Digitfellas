@@ -41,6 +41,8 @@ export const revalidate = 60
 
 export default async function Home() {
   const { hero, services, projects, posts, experience, howWeWork, partnerships, clientLogos } = await getHomeData()
+  console.log('DEBUG: Hero Data:', JSON.stringify(hero, null, 2))
+  console.log('DEBUG: Services Data:', JSON.stringify(services, null, 2))
 
   return (
     <>
