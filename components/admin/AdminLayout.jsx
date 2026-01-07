@@ -167,6 +167,7 @@ export function AdminLayout({ children }) {
                                         { href: '/admin/site-settings', label: 'Site Settings', icon: Settings },
                                         { href: '/admin/services', label: 'Services', icon: Briefcase },
                                         { href: '/admin/projects', label: 'Projects', icon: FolderOpen },
+                                        { href: '/admin/case-studies', label: 'Case Studies', icon: Briefcase },
                                         { href: '/admin/blog', label: 'Blog Posts', icon: FileText },
                                         { href: '/admin/pages', label: 'CMS Pages', icon: FileText },
                                         { href: '/admin/media', label: 'Media Library', icon: ImageIcon },

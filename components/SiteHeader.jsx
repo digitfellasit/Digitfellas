@@ -57,7 +57,7 @@ export function SiteHeader() {
             id: 'case-studies',
             title: 'Case Studies',
             description: 'Real-world examples of our success stories.',
-            url: '/projects',
+            url: '/case-studies',
             icon: Briefcase
         },
     ]

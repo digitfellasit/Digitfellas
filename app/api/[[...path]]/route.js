@@ -1028,6 +1028,100 @@ async function handleRoute(request, { params }) {
     }
 
     // ============================================
+    // CASE STUDIES CRUD
+    // ============================================
+    if (route === '/case-studies' && method === 'GET') {
+      if (await pgEnabled()) {
+        const pool = getPool()
+        const result = await pool.query(`
+          SELECT cs.*,
+                 (
+                   SELECT json_build_object('id', fmi.id, 'url', fmi.url, 'alt', fmi.alt_text)
+                   FROM media_items fmi WHERE fmi.id = cs.featured_image_id
+                 ) as featured_image
+          FROM case_studies cs
+          WHERE cs.deleted_at IS NULL AND cs.is_published = true
+          ORDER BY cs.published_at DESC, cs.created_at DESC
+        `)
+        return handleCORS(NextResponse.json(result.rows))
+      }
+      return handleCORS(NextResponse.json([]))
+    }
+
+    if (route.match(/^\/case-studies\/[^/]+$/) && method === 'GET') {
+      const slug = parts[1]
+      if (await pgEnabled()) {
+        const pool = getPool()
+        const result = await pool.query(`
+          SELECT cs.*,
+                 (
+                   SELECT json_build_object('id', fmi.id, 'url', fmi.url, 'alt', fmi.alt_text)
+                   FROM media_items fmi WHERE fmi.id = cs.featured_image_id
+                 ) as featured_image
+          FROM case_studies cs
+          WHERE cs.slug = $1 AND cs.deleted_at IS NULL
+        `, [slug])
+        if (!result.rows[0]) return handleCORS(NextResponse.json({ error: 'Case study not found' }, { status: 404 }))
+
+        // Increment view count
+        await pool.query('UPDATE case_studies SET view_count = view_count + 1 WHERE id = $1', [result.rows[0].id])
+
+        return handleCORS(NextResponse.json(result.rows[0]))
+      }
+      return handleCORS(NextResponse.json({ error: 'Not found' }, { status: 404 }))
+    }
+
+    if (route === '/case-studies' && method === 'POST') {
+      const session = requireAdmin(request)
+      if (!session) return handleCORS(NextResponse.json({ error: 'Unauthorized' }, { status: 401 }))
+
+      const body = await request.json()
+      const pool = getPool()
+      const id = uuidv4()
+
+      const result = await pool.query(`
+        INSERT INTO case_studies (id, title, slug, content, excerpt, short_description, client_name, industry, project_url, meta_title, meta_description, featured_image_id, is_featured, is_published, published_at, completed_at, sort_order)
+        VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17)
+        RETURNING *
+      `, [id, body.title, body.slug, body.content, body.excerpt, body.short_description, body.client_name, body.industry, body.project_url, body.meta_title, body.meta_description, body.featured_image_id || null, body.is_featured || false, body.is_published !== false, body.published_at || new Date().toISOString(), body.completed_at, body.sort_order || 0])
+
+      revalidatePath('/case-studies')
+      return handleCORS(NextResponse.json(result.rows[0]))
+    }
+
+    if (route.match(/^\/case-studies\/[^/]+$/) && method === 'PUT') {
+      const session = requireAdmin(request)
+      if (!session) return handleCORS(NextResponse.json({ error: 'Unauthorized' }, { status: 401 }))
+
+      const id = parts[1]
+      const body = await request.json()
+      const pool = getPool()
+
+      const result = await pool.query(`
+        UPDATE case_studies 
+        SET title = $1, slug = $2, content = $3, excerpt = $4, short_description = $5, client_name = $6, industry = $7, project_url = $8, meta_title = $9, meta_description = $10, featured_image_id = $11, is_featured = $12, is_published = $13, published_at = $14, completed_at = $15, sort_order = $16, updated_at = NOW()
+        WHERE id = $17 AND deleted_at IS NULL
+        RETURNING *
+      `, [body.title, body.slug, body.content, body.excerpt, body.short_description, body.client_name, body.industry, body.project_url, body.meta_title, body.meta_description, body.featured_image_id || null, body.is_featured || false, body.is_published !== false, body.published_at, body.completed_at, body.sort_order || 0, id])
+
+      if (!result.rows[0]) return handleCORS(NextResponse.json({ error: 'Case study not found' }, { status: 404 }))
+      revalidatePath('/case-studies')
+      if (result.rows[0]?.slug) revalidatePath(`/case-studies/${result.rows[0].slug}`)
+      return handleCORS(NextResponse.json(result.rows[0]))
+    }
+
+    if (route.match(/^\/case-studies\/[^/]+$/) && method === 'DELETE') {
+      const session = requireAdmin(request)
+      if (!session) return handleCORS(NextResponse.json({ error: 'Unauthorized' }, { status: 401 }))
+
+      const id = parts[1]
+      const pool = getPool()
+      await pool.query('UPDATE case_studies SET deleted_at = NOW() WHERE id = $1', [id])
+      revalidatePath('/case-studies')
+      return handleCORS(NextResponse.json({ ok: true }))
+    }
+
+    // ============================================
     // CMS PAGES CRUD
     // ============================================
     if (route === '/pages' && method === 'GET') {

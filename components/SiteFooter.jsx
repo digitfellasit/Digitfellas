@@ -11,7 +11,7 @@ const navigation = {
         { name: 'About', href: '/about' },
         { name: 'Capabilities', href: '/services' },
         { name: 'How We Work', href: '/how-we-work' },
-        { name: 'Case Studies', href: '/projects' },
+        { name: 'Case Studies', href: '/case-studies' },
         { name: 'Insights', href: '/insights' },
         { name: 'Partnerships', href: '#partnerships' },
         { name: 'Contact', href: '/contact' },

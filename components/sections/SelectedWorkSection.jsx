@@ -42,7 +42,7 @@ export function SelectedWorkSection() {
 
                     <ScrollReveal variant="fade-left" delay={200} className="hidden md:block">
                         <Link
-                            href="/projects"
+                            href="/case-studies"
                             className="inline-flex items-center gap-2 text-foreground hover:text-primary font-bold transition-colors group border-b border-foreground pb-1"
                         >
                             View case studies
@@ -60,7 +60,7 @@ export function SelectedWorkSection() {
                             delay={index * 100}
                             className="group"
                         >
-                            <Link href="/projects" className="block">
+                            <Link href="/case-studies" className="block">
                                 <div className="grid grid-cols-1 md:grid-cols-12 gap-8 py-12 border-b border-border hover:bg-[#331676] transition-all duration-300 px-6 -mx-6 rounded-xl">
 
                                     {/* Column 1: Number & Category (Meta) */}
@@ -92,7 +92,7 @@ export function SelectedWorkSection() {
                 {/* Mobile Bottom CTA */}
                 <div className="mt-12 md:hidden">
                     <Link
-                        href="/projects"
+                        href="/case-studies"
                         className="inline-flex items-center gap-2 text-foreground hover:text-primary font-bold transition-colors group border-b border-foreground pb-1"
                     >
                         View case studies
