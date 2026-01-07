@@ -5,9 +5,11 @@ import { Plus, Save } from 'lucide-react'
 import { AdminLayout } from '@/components/admin/AdminLayout'
 import { DataTable, StatusBadge } from '@/components/admin/DataTable'
 import { RichEditor } from '@/components/admin/RichEditor'
+import { MediaGallery } from '@/components/admin/MediaGallery'
 import { Button } from '@/components/ui/button'
 import { Card } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
+import { Textarea } from '@/components/ui/textarea'
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog'
 import { Label } from '@/components/ui/label'
 import { Switch } from '@/components/ui/switch'
@@ -29,7 +31,8 @@ export default function PagesPage() {
     const [editing, setEditing] = useState(null)
     const [formData, setFormData] = useState({
         title: '', slug: '', content: '', template: 'default', meta_title: '', meta_description: '',
-        is_published: true, show_in_menu: false, sort_order: 0
+        is_published: true, show_in_menu: false, sort_order: 0,
+        featured_image: []
     })
 
     const loadPages = async () => {
@@ -48,7 +51,7 @@ export default function PagesPage() {
 
     const handleCreate = () => {
         setEditing(null)
-        setFormData({ title: '', slug: '', content: '', template: 'default', meta_title: '', meta_description: '', is_published: true, show_in_menu: false, sort_order: 0 })
+        setFormData({ title: '', slug: '', content: '', template: 'default', meta_title: '', meta_description: '', is_published: true, show_in_menu: false, sort_order: 0, featured_image: [] })
         setDialogOpen(true)
     }
 
@@ -57,7 +60,8 @@ export default function PagesPage() {
         setFormData({
             title: page.title || '', slug: page.slug || '', content: page.content || '', template: page.template || 'default',
             meta_title: page.meta_title || '', meta_description: page.meta_description || '',
-            is_published: page.is_published !== false, show_in_menu: page.show_in_menu || false, sort_order: page.sort_order || 0
+            is_published: page.is_published !== false, show_in_menu: page.show_in_menu || false, sort_order: page.sort_order || 0,
+            featured_image: page.featured_image ? [page.featured_image] : []
         })
         setDialogOpen(true)
     }
@@ -74,10 +78,11 @@ export default function PagesPage() {
 
     const handleSave = async () => {
         try {
+            const payload = { ...formData, featured_image_id: formData.featured_image?.[0]?.id || null }
             if (editing) {
-                await apiCall(`/api/pages/${editing.id}`, { method: 'PUT', body: JSON.stringify(formData) })
+                await apiCall(`/api/pages/${editing.id}`, { method: 'PUT', body: JSON.stringify(payload) })
             } else {
-                await apiCall('/api/pages', { method: 'POST', body: JSON.stringify(formData) })
+                await apiCall('/api/pages', { method: 'POST', body: JSON.stringify(payload) })
             }
             setDialogOpen(false)
             await loadPages()
@@ -87,6 +92,17 @@ export default function PagesPage() {
     }
 
     const columns = [
+        {
+            key: 'featured_image', header: 'Image', render: (row) => (
+                <div className="relative h-12 w-20 overflow-hidden rounded-md border bg-muted">
+                    {row.featured_image?.url ? (
+                        <img src={row.featured_image.url} alt="" className="h-full w-full object-cover" />
+                    ) : (
+                        <div className="flex h-full items-center justify-center text-[10px] text-muted-foreground uppercase">No Image</div>
+                    )}
+                </div>
+            )
+        },
         { key: 'title', header: 'Title', sortable: true, render: (row) => (<div><div className="font-medium">{row.title}</div><div className="text-xs text-muted-foreground">/{row.slug}</div></div>) },
         { key: 'template', header: 'Template', render: (row) => <span className="text-sm">{row.template}</span> },
         { key: 'is_published', header: 'Status', render: (row) => <StatusBadge status={row.is_published ? 'published' : 'draft'} /> },
@@ -110,25 +126,62 @@ export default function PagesPage() {
             <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
                 <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
                     <DialogHeader><DialogTitle>{editing ? 'Edit Page' : 'Create Page'}</DialogTitle></DialogHeader>
-                    <div className="space-y-6 py-4">
-                        <div className="grid gap-4">
-                            <div><Label>Title *</Label><Input value={formData.title} onChange={(e) => setFormData({ ...formData, title: e.target.value, slug: formData.slug || generateSlug(e.target.value) })} /></div>
-                            <div><Label>Slug *</Label><Input value={formData.slug} onChange={(e) => setFormData({ ...formData, slug: e.target.value })} placeholder="about-us" /></div>
-                            <RichEditor label="Page Content *" value={formData.content} onChange={(content) => setFormData({ ...formData, content })} minHeight="400px" />
-                            <div className="border-t pt-4 space-y-4">
-                                <div className="flex items-center justify-between">
-                                    <div><Label>Published</Label><p className="text-sm text-muted-foreground">Make this page accessible</p></div>
-                                    <Switch checked={formData.is_published} onCheckedChange={(checked) => setFormData({ ...formData, is_published: checked })} />
-                                </div>
-                                <div className="flex items-center justify-between">
-                                    <div><Label>Show in Menu</Label><p className="text-sm text-muted-foreground">Add to navigation</p></div>
-                                    <Switch checked={formData.show_in_menu} onCheckedChange={(checked) => setFormData({ ...formData, show_in_menu: checked })} />
-                                </div>
+                    <div className="py-4">
+                        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                            {/* Main Content */}
+                            <div className="md:col-span-2 space-y-6">
+                                <Card className="p-4 space-y-4">
+                                    <div><Label>Title *</Label><Input value={formData.title} onChange={(e) => setFormData({ ...formData, title: e.target.value, slug: formData.slug || generateSlug(e.target.value) })} placeholder="Enter page title" /></div>
+                                    <div><Label>Slug *</Label><Input value={formData.slug} onChange={(e) => setFormData({ ...formData, slug: e.target.value })} placeholder="page-slug" /></div>
+                                </Card>
+                                <Card className="p-4">
+                                    <RichEditor label="Page Content *" value={formData.content} onChange={(content) => setFormData({ ...formData, content })} minHeight="500px" />
+                                </Card>
+                            </div>
+
+                            {/* Sidebar */}
+                            <div className="space-y-6">
+                                <Card className="p-4 space-y-4">
+                                    <h3 className="font-medium border-b pb-2">Status & visibility</h3>
+                                    <div className="flex items-center justify-between">
+                                        <div><Label>Published</Label><p className="text-[10px] text-muted-foreground uppercase">Visible on site</p></div>
+                                        <Switch checked={formData.is_published} onCheckedChange={(checked) => setFormData({ ...formData, is_published: checked })} />
+                                    </div>
+                                    <div className="flex items-center justify-between">
+                                        <div><Label>Show in Menu</Label><p className="text-[10px] text-muted-foreground uppercase">Add to navigation</p></div>
+                                        <Switch checked={formData.show_in_menu} onCheckedChange={(checked) => setFormData({ ...formData, show_in_menu: checked })} />
+                                    </div>
+                                    <div className="pt-2">
+                                        <Label>Template</Label>
+                                        <Input value={formData.template} onChange={(e) => setFormData({ ...formData, template: e.target.value })} placeholder="default" />
+                                    </div>
+                                    <div className="pt-2">
+                                        <Label>Sort Order</Label>
+                                        <Input type="number" value={formData.sort_order} onChange={(e) => setFormData({ ...formData, sort_order: parseInt(e.target.value) || 0 })} />
+                                    </div>
+                                </Card>
+
+                                <Card className="p-4 space-y-4">
+                                    <h3 className="font-medium border-b pb-2">Featured Image</h3>
+                                    <MediaGallery
+                                        label=""
+                                        images={formData.featured_image}
+                                        onChange={(images) => setFormData({ ...formData, featured_image: images })}
+                                        maxImages={1}
+                                    />
+                                </Card>
+
+                                <Card className="p-4 space-y-4">
+                                    <h3 className="font-medium border-b pb-2">SEO Settings</h3>
+                                    <div><Label>Meta Title</Label><Input value={formData.meta_title} onChange={(e) => setFormData({ ...formData, meta_title: e.target.value })} placeholder="SEO Title" /></div>
+                                    <div><Label>Meta Description</Label><Textarea value={formData.meta_description} onChange={(e) => setFormData({ ...formData, meta_description: e.target.value })} rows={4} placeholder="SEO Description" /></div>
+                                </Card>
                             </div>
                         </div>
-                        <div className="flex justify-end gap-2 pt-4 border-t">
+
+                        <div className="flex justify-end gap-2 pt-6 mt-6 border-t">
                             <Button variant="outline" onClick={() => setDialogOpen(false)}>Cancel</Button>
-                            <Button onClick={handleSave}><Save className="h-4 w-4 mr-2" />Save Page</Button>
+                            <Button onClick={handleSave} className="min-w-[120px]"><Save className="h-4 w-4 mr-2" />Save Page</Button>
                         </div>
                     </div>
                 </DialogContent>

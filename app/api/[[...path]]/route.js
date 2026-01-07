@@ -920,6 +920,10 @@ async function handleRoute(request, { params }) {
         const pool = getPool()
         const result = await pool.query(`
           SELECT bp.*, c.name as category_name, u.email as author_email,
+                 (
+                   SELECT json_build_object('id', fmi.id, 'url', fmi.url, 'alt', fmi.alt_text)
+                   FROM media_items fmi WHERE fmi.id = bp.featured_image_id
+                 ) as featured_image,
                  json_agg(DISTINCT jsonb_build_object('id', t.id, 'name', t.name, 'slug', t.slug)) FILTER (WHERE t.id IS NOT NULL) as tags
           FROM blog_posts bp
           LEFT JOIN categories c ON bp.category_id = c.id
@@ -1020,9 +1024,14 @@ async function handleRoute(request, { params }) {
       if (await pgEnabled()) {
         const pool = getPool()
         const result = await pool.query(`
-          SELECT * FROM cms_pages
-          WHERE deleted_at IS NULL AND is_published = true
-          ORDER BY sort_order ASC, created_at DESC
+          SELECT p.*,
+                 (
+                   SELECT json_build_object('id', fmi.id, 'url', fmi.url, 'alt', fmi.alt_text)
+                   FROM media_items fmi WHERE fmi.id = p.featured_image_id
+                 ) as featured_image
+          FROM cms_pages p
+          WHERE p.deleted_at IS NULL AND p.is_published = true
+          ORDER BY p.sort_order ASC, p.created_at DESC
         `)
         return handleCORS(NextResponse.json(result.rows))
       }
@@ -1033,7 +1042,14 @@ async function handleRoute(request, { params }) {
       const slug = parts[1]
       if (await pgEnabled()) {
         const pool = getPool()
-        const result = await pool.query('SELECT * FROM cms_pages WHERE slug = $1 AND deleted_at IS NULL', [slug])
+        const result = await pool.query(`
+          SELECT p.*,
+                 (
+                   SELECT json_build_object('id', fmi.id, 'url', fmi.url, 'alt', fmi.alt_text)
+                   FROM media_items fmi WHERE fmi.id = p.featured_image_id
+                 ) as featured_image
+          FROM cms_pages p WHERE p.slug = $1 AND p.deleted_at IS NULL
+        `, [slug])
         if (!result.rows[0]) return handleCORS(NextResponse.json({ error: 'Page not found' }, { status: 404 }))
         return handleCORS(NextResponse.json(result.rows[0]))
       }
@@ -1049,10 +1065,10 @@ async function handleRoute(request, { params }) {
       const id = uuidv4()
 
       const result = await pool.query(`
-        INSERT INTO cms_pages (id, title, slug, content, template, meta_title, meta_description, is_published, show_in_menu, parent_id, sort_order)
-        VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11)
+        INSERT INTO cms_pages (id, title, slug, content, template, meta_title, meta_description, is_published, show_in_menu, parent_id, sort_order, featured_image_id)
+        VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12)
         RETURNING *
-      `, [id, body.title, body.slug, body.content, body.template || 'default', body.meta_title, body.meta_description, body.is_published !== false, body.show_in_menu || false, body.parent_id, body.sort_order || 0])
+      `, [id, body.title, body.slug, body.content, body.template || 'default', body.meta_title, body.meta_description, body.is_published !== false, body.show_in_menu || false, body.parent_id, body.sort_order || 0, body.featured_image_id || null])
 
       return handleCORS(NextResponse.json(result.rows[0]))
     }
@@ -1068,10 +1084,10 @@ async function handleRoute(request, { params }) {
       const result = await pool.query(`
         UPDATE cms_pages 
         SET title = $1, slug = $2, content = $3, template = $4, meta_title = $5, meta_description = $6, 
-            is_published = $7, show_in_menu = $8, parent_id = $9, sort_order = $10
+            is_published = $7, show_in_menu = $8, parent_id = $9, sort_order = $10, featured_image_id = $12
         WHERE id = $11 AND deleted_at IS NULL
         RETURNING *
-      `, [body.title, body.slug, body.content, body.template, body.meta_title, body.meta_description, body.is_published, body.show_in_menu, body.parent_id, body.sort_order, id])
+      `, [body.title, body.slug, body.content, body.template, body.meta_title, body.meta_description, body.is_published, body.show_in_menu, body.parent_id, body.sort_order, id, body.featured_image_id])
 
       if (!result.rows[0]) return handleCORS(NextResponse.json({ error: 'Page not found' }, { status: 404 }))
       return handleCORS(NextResponse.json(result.rows[0]))

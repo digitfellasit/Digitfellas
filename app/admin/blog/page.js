@@ -93,6 +93,17 @@ export default function BlogPage() {
     }
 
     const columns = [
+        {
+            key: 'featured_image', header: 'Image', render: (row) => (
+                <div className="relative h-12 w-20 overflow-hidden rounded-md border bg-muted">
+                    {row.featured_image?.url ? (
+                        <img src={row.featured_image.url} alt="" className="h-full w-full object-cover" />
+                    ) : (
+                        <div className="flex h-full items-center justify-center text-[10px] text-muted-foreground uppercase">No Image</div>
+                    )}
+                </div>
+            )
+        },
         { key: 'title', header: 'Title', sortable: true, render: (row) => (<div><div className="font-medium">{row.title}</div><div className="text-xs text-muted-foreground">/{row.slug}</div></div>) },
         { key: 'excerpt', header: 'Excerpt', render: (row) => <div className="max-w-md truncate text-sm text-muted-foreground">{row.excerpt}</div> },
         { key: 'is_published', header: 'Status', render: (row) => <StatusBadge status={row.is_published ? 'published' : 'draft'} /> },
@@ -116,36 +127,65 @@ export default function BlogPage() {
             <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
                 <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
                     <DialogHeader><DialogTitle>{editing ? 'Edit Post' : 'Create Post'}</DialogTitle></DialogHeader>
-                    <div className="space-y-6 py-4">
-                        <div className="grid gap-4">
-                            <div><Label>Title *</Label><Input value={formData.title} onChange={(e) => setFormData({ ...formData, title: e.target.value, slug: formData.slug || generateSlug(e.target.value) })} /></div>
-                            <div><Label>Slug *</Label><Input value={formData.slug} onChange={(e) => setFormData({ ...formData, slug: e.target.value })} /></div>
-                            <div><Label>Excerpt</Label><Textarea value={formData.excerpt} onChange={(e) => setFormData({ ...formData, excerpt: e.target.value })} rows={2} placeholder="Brief summary for listings" /></div>
-                            <div><Label>Short Description (Listings)</Label><Textarea value={formData.short_description} onChange={(e) => setFormData({ ...formData, short_description: e.target.value })} rows={2} placeholder="Very brief summary for cards" /></div>
-                            <RichEditor label="Content" value={formData.content} onChange={(content) => setFormData({ ...formData, content })} minHeight="400px" />
-                            <div><Label>Reading Time (minutes)</Label><Input type="number" value={formData.reading_time_minutes} onChange={(e) => setFormData({ ...formData, reading_time_minutes: parseInt(e.target.value) || 5 })} /></div>
+                    <div className="py-4">
+                        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                            {/* Main Content */}
+                            <div className="md:col-span-2 space-y-6">
+                                <Card className="p-4 space-y-4">
+                                    <div><Label>Title *</Label><Input value={formData.title} onChange={(e) => setFormData({ ...formData, title: e.target.value, slug: formData.slug || generateSlug(e.target.value) })} placeholder="Enter post title" /></div>
+                                    <div><Label>Slug *</Label><Input value={formData.slug} onChange={(e) => setFormData({ ...formData, slug: e.target.value })} placeholder="post-slug" /></div>
+                                </Card>
 
-                            <MediaGallery
-                                label="Featured Image (List Card)"
-                                images={formData.featured_image}
-                                onChange={(images) => setFormData({ ...formData, featured_image: images })}
-                                maxImages={1}
-                            />
+                                <Card className="p-4">
+                                    <RichEditor label="Content" value={formData.content} onChange={(content) => setFormData({ ...formData, content })} minHeight="500px" />
+                                </Card>
 
-                            <div className="border-t pt-4 space-y-4">
-                                <div className="flex items-center justify-between">
-                                    <div><Label>Published</Label><p className="text-sm text-muted-foreground">Make this post visible</p></div>
-                                    <Switch checked={formData.is_published} onCheckedChange={(checked) => setFormData({ ...formData, is_published: checked })} />
-                                </div>
-                                <div className="flex items-center justify-between">
-                                    <div><Label>Featured</Label><p className="text-sm text-muted-foreground">Highlight this post</p></div>
-                                    <Switch checked={formData.is_featured} onCheckedChange={(checked) => setFormData({ ...formData, is_featured: checked })} />
-                                </div>
+                                <Card className="p-4 space-y-4">
+                                    <h3 className="font-medium border-b pb-2">Summaries</h3>
+                                    <div><Label>Excerpt</Label><Textarea value={formData.excerpt} onChange={(e) => setFormData({ ...formData, excerpt: e.target.value })} rows={2} placeholder="Brief summary for listings" /></div>
+                                    <div><Label>Short Description (Listings)</Label><Textarea value={formData.short_description} onChange={(e) => setFormData({ ...formData, short_description: e.target.value })} rows={2} placeholder="Very brief summary for cards" /></div>
+                                </Card>
+                            </div>
+
+                            {/* Sidebar */}
+                            <div className="space-y-6">
+                                <Card className="p-4 space-y-4">
+                                    <h3 className="font-medium border-b pb-2">Status & Visibility</h3>
+                                    <div className="flex items-center justify-between">
+                                        <div><Label>Published</Label><p className="text-[10px] text-muted-foreground uppercase">Visible to everyone</p></div>
+                                        <Switch checked={formData.is_published} onCheckedChange={(checked) => setFormData({ ...formData, is_published: checked })} />
+                                    </div>
+                                    <div className="flex items-center justify-between">
+                                        <div><Label>Featured</Label><p className="text-[10px] text-muted-foreground uppercase">Highlight on home</p></div>
+                                        <Switch checked={formData.is_featured} onCheckedChange={(checked) => setFormData({ ...formData, is_featured: checked })} />
+                                    </div>
+                                    <div className="pt-2">
+                                        <Label>Reading Time (min)</Label>
+                                        <Input type="number" value={formData.reading_time_minutes} onChange={(e) => setFormData({ ...formData, reading_time_minutes: parseInt(e.target.value) || 5 })} />
+                                    </div>
+                                </Card>
+
+                                <Card className="p-4 space-y-4">
+                                    <h3 className="font-medium border-b pb-2">Featured Image</h3>
+                                    <MediaGallery
+                                        label=""
+                                        images={formData.featured_image}
+                                        onChange={(images) => setFormData({ ...formData, featured_image: images })}
+                                        maxImages={1}
+                                    />
+                                </Card>
+
+                                <Card className="p-4 space-y-4">
+                                    <h3 className="font-medium border-b pb-2">SEO Settings</h3>
+                                    <div><Label>Meta Title</Label><Input value={formData.meta_title} onChange={(e) => setFormData({ ...formData, meta_title: e.target.value })} placeholder="SEO Title" /></div>
+                                    <div><Label>Meta Description</Label><Textarea value={formData.meta_description} onChange={(e) => setFormData({ ...formData, meta_description: e.target.value })} rows={4} placeholder="SEO Description" /></div>
+                                </Card>
                             </div>
                         </div>
-                        <div className="flex justify-end gap-2 pt-4 border-t">
+
+                        <div className="flex justify-end gap-2 pt-6 mt-6 border-t">
                             <Button variant="outline" onClick={() => setDialogOpen(false)}>Cancel</Button>
-                            <Button onClick={handleSave}><Save className="h-4 w-4 mr-2" />Save Post</Button>
+                            <Button onClick={handleSave} className="min-w-[120px]"><Save className="h-4 w-4 mr-2" />Save Post</Button>
                         </div>
                     </div>
                 </DialogContent>
