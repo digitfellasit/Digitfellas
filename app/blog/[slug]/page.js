@@ -1,52 +1,33 @@
-'use client'
-
-import { useParams } from 'next/navigation'
 import Link from 'next/link'
 import Image from 'next/image'
 import { ArrowLeft, Calendar, User, Clock } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Card } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
-import { useBlogPost } from '@/lib/api-hooks'
 import { renderMarkdown } from '@/lib/render-markdown'
+import { getBlogPostBySlug, getAllBlogSlugs } from '@/lib/blog-service'
+import { notFound } from 'next/navigation'
 
-export default function BlogPostPage() {
-  const params = useParams()
+// ISR: Revalidate every hour
+export const revalidate = 3600
+
+export async function generateStaticParams() {
+  const slugs = await getAllBlogSlugs()
+  return slugs.map((slug) => ({
+    slug,
+  }))
+}
+
+export default async function BlogPostPage({ params }) {
   const slug = params?.slug
-  const { post, loading, error } = useBlogPost(slug)
+  const post = await getBlogPostBySlug(slug)
 
-  if (loading) {
-    return (
-      <div className="min-h-screen bg-background">
-        <div className="container py-24">
-          <div className="h-12 w-64 rounded-full bg-muted animate-pulse mb-8" />
-          <div className="mt-6 h-20 w-3/4 rounded-3xl bg-muted animate-pulse mb-4" />
-        </div>
-      </div>
-    )
-  }
-
-  if (error || !post) {
-    return (
-      <div className="min-h-screen flex items-center justify-center p-6">
-        <Card className="max-w-md w-full rounded-3xl border-border p-8 text-center shadow-2xl">
-          <h2 className="text-2xl font-bold mb-3">Post Not Found</h2>
-          <p className="text-muted-foreground mb-8">
-            {error || 'The blog post you\'re looking for doesn\'t exist.'}
-          </p>
-          <Button asChild className="w-full rounded-full py-6">
-            <Link href="/blog">
-              <ArrowLeft className="mr-2 h-4 w-4" />
-              Back to Blog
-            </Link>
-          </Button>
-        </Card>
-      </div>
-    )
+  if (!post) {
+    notFound()
   }
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-[#01010e]">
       <article className="container py-16 md:py-24">
         <Link href="/blog" className="inline-flex items-center text-sm text-muted-foreground hover:text-foreground mb-8">
           <ArrowLeft className="h-4 w-4 mr-2" />
@@ -88,10 +69,10 @@ export default function BlogPostPage() {
                 })}
               </div>
             )}
-            {post.reading_time && (
+            {post.reading_time_minutes && (
               <div className="flex items-center gap-2">
                 <Clock className="h-4 w-4" />
-                {post.reading_time} min read
+                {post.reading_time_minutes} min read
               </div>
             )}
           </div>
@@ -104,10 +85,10 @@ export default function BlogPostPage() {
           )}
 
           {/* Featured Image */}
-          {post.featured_image_url && (
+          {post.featured_image?.url && (
             <div className="mb-12 relative h-[500px]">
               <Image
-                src={post.featured_image_url}
+                src={post.featured_image.url}
                 alt={post.title}
                 fill
                 className="object-cover rounded-3xl shadow-2xl"
@@ -119,13 +100,13 @@ export default function BlogPostPage() {
           {/* Content */}
           {post.content && (
             <div
-              className="prose prose-lg max-w-none mb-12"
+              className="prose prose-lg max-w-none mb-12 prose-invert"
               dangerouslySetInnerHTML={{ __html: renderMarkdown(post.content) }}
             />
           )}
 
           {/* CTA */}
-          <Card className="p-8 md:p-12 bg-gradient-to-br from-primary/10 to-primary/5 mt-16">
+          <Card className="p-8 md:p-12 bg-gradient-to-br from-primary/10 to-primary/5 mt-16 border-white/5">
             <h2 className="text-2xl font-bold mb-4">Enjoyed this article?</h2>
             <p className="text-muted-foreground mb-6">
               Check out more of our articles or get in touch to discuss your project.

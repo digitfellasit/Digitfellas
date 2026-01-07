@@ -16,7 +16,7 @@ export default function BlogListingPage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-background">
+      <div className="min-h-screen bg-[#01010e]">
         <div className="container py-24">
           <div className="h-12 w-48 rounded-full bg-muted animate-pulse mb-4" />
           <div className="h-8 w-64 rounded-full bg-muted animate-pulse mb-12" />
@@ -31,7 +31,7 @@ export default function BlogListingPage() {
   }
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-[#01010e]">
       {hero && <HeroSection hero={hero} />}
 
       <section className="container py-16 md:py-24">

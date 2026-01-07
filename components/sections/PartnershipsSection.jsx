@@ -5,7 +5,7 @@ import Image from 'next/image'
 import { ScrollReveal } from '@/components/ui/ScrollReveal'
 import { useClientLogos } from '@/lib/homepage-hooks'
 
-export function PartnershipsSection({ data }) {
+export function PartnershipsSection({ data, logos: initialLogos = [] }) {
     const { data: clientLogos = [] } = useClientLogos()
 
     const {
@@ -13,10 +13,11 @@ export function PartnershipsSection({ data }) {
         description = "We work with leading technologies to deliver scalable solutions."
     } = data || {}
 
-    // Use only DB logos
-    const marqueeItems = clientLogos.map(logo => ({ ...logo, type: 'image' }))
+    // Prioritize server-passed logos for SSR, fallback to client-side data
+    const displayLogos = clientLogos.length > 0 ? clientLogos : initialLogos
+    const marqueeItems = displayLogos.map(logo => ({ ...logo, type: 'image' }))
 
-    // Duplicate for seamless loop - triple to ensure container is filled on large screens
+    // Duplicate for seamless loop - triple/quadruple to ensure container is filled on large screens
     const duplicatedItems = [...marqueeItems, ...marqueeItems, ...marqueeItems, ...marqueeItems]
 
     return (

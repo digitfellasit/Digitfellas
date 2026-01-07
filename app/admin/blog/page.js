@@ -122,7 +122,7 @@ export default function BlogPage() {
                             <div><Label>Slug *</Label><Input value={formData.slug} onChange={(e) => setFormData({ ...formData, slug: e.target.value })} /></div>
                             <div><Label>Excerpt</Label><Textarea value={formData.excerpt} onChange={(e) => setFormData({ ...formData, excerpt: e.target.value })} rows={2} placeholder="Brief summary for listings" /></div>
                             <div><Label>Short Description (Listings)</Label><Textarea value={formData.short_description} onChange={(e) => setFormData({ ...formData, short_description: e.target.value })} rows={2} placeholder="Very brief summary for cards" /></div>
-                            <RichEditor label="Content *" value={formData.content} onChange={(content) => setFormData({ ...formData, content })} minHeight="400px" />
+                            <RichEditor label="Content" value={formData.content} onChange={(content) => setFormData({ ...formData, content })} minHeight="400px" />
                             <div><Label>Reading Time (minutes)</Label><Input type="number" value={formData.reading_time_minutes} onChange={(e) => setFormData({ ...formData, reading_time_minutes: parseInt(e.target.value) || 5 })} /></div>
 
                             <MediaGallery

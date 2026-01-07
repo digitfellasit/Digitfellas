@@ -120,7 +120,7 @@ CREATE TABLE IF NOT EXISTS blog_posts (
     slug VARCHAR(255) UNIQUE NOT NULL,
     excerpt TEXT,
     short_description TEXT, -- Brief summary for listings
-    content TEXT NOT NULL, -- Rich content
+    content TEXT, -- Rich content
     featured_image_id UUID REFERENCES media_items(id),
     author_id UUID REFERENCES df_users(id),
     category_id UUID REFERENCES categories(id),

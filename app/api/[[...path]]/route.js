@@ -943,7 +943,6 @@ async function handleRoute(request, { params }) {
         const pool = getPool()
         const result = await pool.query(`
           SELECT bp.*, c.name as category_name, u.email as author_email,
-          SELECT bp.*, c.name as category_name,
                  (
                    SELECT json_build_object('id', fmi.id, 'url', fmi.url, 'alt', fmi.alt_text)
                    FROM media_items fmi WHERE fmi.id = bp.featured_image_id
