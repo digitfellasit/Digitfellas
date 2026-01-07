@@ -44,7 +44,6 @@ export default async function Home() {
 
   return (
     <>
-      <SiteHeader />
       <main className="min-h-screen">
         <HeroSection hero={hero} />
         {/* SponsorsSection moved to bottom */}
