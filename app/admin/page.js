@@ -132,9 +132,6 @@ export default function AdminPage() {
               Sign In
             </Button>
           </div>
-          <p className="mt-6 text-xs text-muted-foreground">
-            Default: admin@digitfellas.com / admin123
-          </p>
         </Card>
       </div>
     )

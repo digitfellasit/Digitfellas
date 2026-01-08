@@ -27,6 +27,7 @@ async function migrate() {
                 years_count TEXT DEFAULT '20+',
                 years_label TEXT DEFAULT 'Years of Experience',
                 image_url TEXT,
+                image_alt TEXT DEFAULT '',
                 updated_at TIMESTAMPTZ DEFAULT NOW()
             );
         `);
