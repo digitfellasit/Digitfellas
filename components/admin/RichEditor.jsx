@@ -46,6 +46,14 @@ export function RichEditor({ value = '', onChange, label = 'Content', minHeight 
                 return
             }
 
+            // Prompt for Alt Text
+            const altText = window.prompt("Enter image description (Alt Text):", "")
+            if (altText === null) {
+                // User cancelled
+                document.body.removeChild(input)
+                return
+            }
+
             setUploading(true)
             const formData = new FormData()
             formData.append('files', file)
@@ -65,10 +73,17 @@ export function RichEditor({ value = '', onChange, label = 'Content', minHeight 
                 const imageUrl = data.uploaded?.[0]?.url
 
                 if (imageUrl) {
+                    // Save Alt Text to DB as well
+                    await fetch('/api/uploads', {
+                        method: 'PUT',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ url: imageUrl, alt: altText })
+                    }).catch(console.error)
+
                     if (file.type.startsWith('video/')) {
                         insertMarkdown(`\n<video controls width="100%" class="rounded-lg my-4"><source src="${imageUrl}" type="${file.type}"></video>\n`)
                     } else {
-                        insertMarkdown(`![Image](${imageUrl})`)
+                        insertMarkdown(`![${altText}](${imageUrl})`)
                     }
                 } else {
                     throw new Error('No image URL returned')

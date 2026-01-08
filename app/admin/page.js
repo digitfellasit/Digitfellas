@@ -2,10 +2,11 @@
 
 import { useEffect, useState } from 'react'
 import Link from 'next/link'
-import { Save, RefreshCw, LogOut, FileText, Briefcase, FolderOpen, Sparkles, Eye, TrendingUp, Users } from 'lucide-react'
+import { Save, RefreshCw, LogOut, FileText, Briefcase, FolderOpen, Sparkles, Eye, TrendingUp, Users, Layout } from 'lucide-react'
 import { AdminLayout } from '@/components/admin/AdminLayout'
 import { Button } from '@/components/ui/button'
 import { Card } from '@/components/ui/card'
+import { toast } from 'sonner'
 
 async function apiJson(url, opts) {
   const res = await fetch(url, {
@@ -22,7 +23,6 @@ export default function AdminPage() {
   const [stats, setStats] = useState({ services: 0, projects: 0, blog: 0, pages: 0 })
   const [recentBlog, setRecentBlog] = useState([])
   const [loading, setLoading] = useState(true)
-  const [authError, setAuthError] = useState('')
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
 
@@ -81,7 +81,7 @@ export default function AdminPage() {
   }, [])
 
   const login = async () => {
-    setAuthError('')
+
     try {
       const json = await apiJson('/api/auth/login', {
         method: 'POST',
@@ -90,7 +90,6 @@ export default function AdminPage() {
       setMe(json?.user || null)
       await refresh()
     } catch (e) {
-      setAuthError(e?.message || 'Login failed')
     }
   }
 
@@ -132,7 +131,6 @@ export default function AdminPage() {
             <Button onClick={login} className="w-full">
               Sign In
             </Button>
-            {authError && <p className="text-sm text-destructive">{authError}</p>}
           </div>
           <p className="mt-6 text-xs text-muted-foreground">
             Default: admin@digitfellas.com / admin123
@@ -297,6 +295,12 @@ export default function AdminPage() {
               <Link href="/admin/media">
                 <TrendingUp className="h-4 w-4 mr-2" />
                 Upload Media
+              </Link>
+            </Button>
+            <Button asChild variant="outline" className="justify-start">
+              <Link href="/admin/navigation">
+                <Layout className="h-4 w-4 mr-2" />
+                Manage Navigation
               </Link>
             </Button>
           </div>

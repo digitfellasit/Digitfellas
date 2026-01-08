@@ -4,6 +4,7 @@ import { Inter, Manrope } from 'next/font/google'
 import { ThemeProvider } from '@/components/theme-provider'
 import { QueryProvider } from '@/components/query-provider'
 import { SiteHeader } from '@/components/SiteHeader'
+import { Toaster } from '@/components/ui/sonner'
 
 const inter = Inter({
   subsets: ['latin'],
@@ -38,6 +39,7 @@ export default function RootLayout({ children }) {
             <SiteHeader />
             {children}
             <SiteFooter />
+            <Toaster />
           </QueryProvider>
         </ThemeProvider>
       </body>

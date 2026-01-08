@@ -74,7 +74,7 @@ export default async function InsightPage({ params }) {
           )}
 
           {/* Title */}
-          <h1 className="text-4xl md:text-6xl font-bold mb-6">{post.title}</h1>
+          <h1 className="text-2xl md:text-3xl font-bold mb-6">{post.title}</h1>
 
           {/* Meta Info */}
           <div className="flex flex-wrap items-center gap-6 text-sm text-muted-foreground mb-8 pb-8 border-b border-border">
@@ -101,6 +101,19 @@ export default async function InsightPage({ params }) {
               </div>
             )}
           </div>
+
+          {/* Featured Image */}
+          {post.featured_image?.url && (
+            <div className="relative w-full aspect-video rounded-3xl overflow-hidden mb-12 border border-white/10 shadow-2xl">
+              <Image
+                src={post.featured_image.url}
+                alt={post.featured_image.alt || post.title}
+                fill
+                className="object-cover"
+                priority
+              />
+            </div>
+          )}
 
           {/* Excerpt */}
           {post.excerpt && (

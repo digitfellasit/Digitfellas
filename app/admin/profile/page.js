@@ -6,6 +6,7 @@ import { AdminLayout } from '@/components/admin/AdminLayout'
 import { Button } from '@/components/ui/button'
 import { Card } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
+import { toast } from 'sonner'
 
 async function apiCall(url, opts) {
     const res = await fetch(url, {
@@ -23,7 +24,6 @@ export default function ProfilePage() {
     const [confirmPassword, setConfirmPassword] = useState('')
     const [loading, setLoading] = useState(true)
     const [saving, setSaving] = useState(false)
-    const [message, setMessage] = useState({ type: '', text: '' })
 
     const loadProfile = async () => {
         setLoading(true)
@@ -36,7 +36,7 @@ export default function ProfilePage() {
                 })
             }
         } catch (error) {
-            setMessage({ type: 'error', text: 'Failed to load profile: ' + error.message })
+            toast.error('Failed to load profile', { description: error.message })
         } finally {
             setLoading(false)
         }
@@ -48,14 +48,15 @@ export default function ProfilePage() {
 
     const handleSave = async (e) => {
         e.preventDefault()
-        setMessage({ type: '', text: '' })
 
         if (password && password !== confirmPassword) {
-            setMessage({ type: 'error', text: 'Passwords do not match' })
+            toast.error('Passwords do not match')
             return
         }
 
         setSaving(true)
+        const toastId = toast.loading('Updating profile...')
+
         try {
             const payload = {
                 name: user.name,
@@ -68,12 +69,15 @@ export default function ProfilePage() {
                 body: JSON.stringify(payload)
             })
 
-            setMessage({ type: 'success', text: 'Profile updated successfully' })
+            toast.success('Profile updated successfully', { id: toastId })
             setPassword('')
             setConfirmPassword('')
             await loadProfile()
         } catch (error) {
-            setMessage({ type: 'error', text: 'Failed to update profile: ' + error.message })
+            toast.error('Failed to update profile', {
+                description: error.message,
+                id: toastId
+            })
         } finally {
             setSaving(false)
         }
@@ -167,15 +171,6 @@ export default function ProfilePage() {
                             </div>
                         </div>
                     </Card>
-
-                    {message.text && (
-                        <div className={`p-4 rounded-lg text-sm ${message.type === 'success'
-                                ? 'bg-green-100 text-green-800'
-                                : 'bg-red-100 text-red-800'
-                            }`}>
-                            {message.text}
-                        </div>
-                    )}
 
                     <div className="flex justify-end">
                         <Button type="submit" disabled={saving}>

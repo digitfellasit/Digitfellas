@@ -389,7 +389,14 @@ async function pgUpdateProfile(userId, data) {
 
   if (updates.length > 0) {
     values.push(userId)
-    await pool.query(`UPDATE df_users SET ${updates.join(', ')} WHERE id = $${idx}`, values)
+    try {
+      await pool.query(`UPDATE df_users SET ${updates.join(', ')} WHERE id = $${idx}`, values)
+    } catch (err) {
+      if (err.code === '23505') { // Unique violation
+        throw new Error('Email already in use')
+      }
+      throw err
+    }
   }
 }
 
@@ -586,10 +593,32 @@ async function handleRoute(request, { params }) {
     }
 
     // Uploads (admin)
-    if (route === '/uploads' && method === 'POST') {
+    if (route === '/uploads') {
       const session = requireAdmin(request)
       if (!session) return handleCORS(NextResponse.json({ error: 'Unauthorized' }, { status: 401 }))
-      return await handleUpload(request)
+
+      if (method === 'POST') {
+        return await handleUpload(request)
+      }
+
+      if (method === 'PUT') {
+        try {
+          const body = await request.json()
+          const { url, alt } = body
+
+          if (!url) return handleCORS(NextResponse.json({ error: 'URL required' }, { status: 400 }))
+
+          if (await pgEnabled()) {
+            const pool = getPool()
+            await pool.query('UPDATE media_items SET alt_text = $1 WHERE url = $2', [alt || '', url])
+            return handleCORS(NextResponse.json({ ok: true }))
+          }
+          return handleCORS(NextResponse.json({ ok: true })) // JSON mode fallback (no-op or handled via entity)
+        } catch (e) {
+          console.error("Failed to update media metadata", e)
+          return handleCORS(NextResponse.json({ error: 'Update failed' }, { status: 500 }))
+        }
+      }
     }
 
     // Site

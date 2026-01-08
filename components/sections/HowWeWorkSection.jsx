@@ -30,7 +30,7 @@ export function HowWeWorkSection({ data }) {
     } = data || {}
 
     return (
-        <section id="how-we-work" className="py-24 md:py-32 bg-[#01010e] transition-colors duration-300 relative overflow-hidden">
+        <section id="how-we-work" className="scroll-mt-[100px] py-24 md:py-32 bg-[#01010e] transition-colors duration-300 relative overflow-hidden">
             {/* Background Layer (Re-added per user request with specific image) */}
             <div className="absolute inset-0 z-0">
                 <div

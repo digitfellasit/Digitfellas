@@ -71,7 +71,7 @@ export default async function Home() {
 
           <div className="container relative z-10 max-w-4xl mx-auto px-6 text-center">
             <ScrollReveal variant="fade-up">
-              <h2 className="text-3xl md:text-5xl lg:text-6xl font-bold mb-8 leading-tight font-heading tracking-tight text-foreground">
+              <h2 className="text-2xl md:text-3xl lg:text-4xl font-bold mb-8 leading-tight font-heading tracking-tight text-foreground">
                 We work best with organizations that value <span className="text-primary">clarity</span>, <span className="text-primary">structure</span>, and <span className="text-primary">long-term thinking</span>.
               </h2>
 

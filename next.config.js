@@ -90,7 +90,7 @@ const nextConfig = {
 
   // Performance optimizations
   experimental: {
-    optimizeCss: false,
+    optimizeCss: true,
     optimizePackageImports: [
       'framer-motion',
       'lucide-react',

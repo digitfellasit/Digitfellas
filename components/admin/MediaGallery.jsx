@@ -133,6 +133,18 @@ export function MediaGallery({
                                 placeholder="Alt text"
                                 value={image.alt || ''}
                                 onChange={(e) => handleAltChange(index, e.target.value)}
+                                onBlur={async () => {
+                                    if (!image.url) return
+                                    try {
+                                        await fetch('/api/uploads', {
+                                            method: 'PUT',
+                                            headers: { 'Content-Type': 'application/json' },
+                                            body: JSON.stringify({ url: image.url, alt: image.alt })
+                                        })
+                                    } catch (e) {
+                                        console.error("Failed to save alt text", e)
+                                    }
+                                }}
                                 className="mt-2 text-xs"
                             />
                         </div>

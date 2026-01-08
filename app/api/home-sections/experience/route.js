@@ -26,17 +26,17 @@ export async function PUT(req) {
             const id = checkRes.rows[0].id
             const updateRes = await pool.query(`
         UPDATE experience_sections 
-        SET title = $1, description_1 = $2, description_2 = $3, principles = $4, years_count = $5, years_label = $6, image_url = $7, updated_at = NOW()
-        WHERE id = $8
+        SET title = $1, description_1 = $2, description_2 = $3, principles = $4, years_count = $5, years_label = $6, image_url = $7, image_alt = $8, updated_at = NOW()
+        WHERE id = $9
         RETURNING *
-      `, [title, description_1, description_2, JSON.stringify(principles), years_count, years_label, image_url, id])
+      `, [title, description_1, description_2, JSON.stringify(principles), years_count, years_label, image_url, body.image_alt || '', id])
             return NextResponse.json(updateRes.rows[0])
         } else {
             const insertRes = await pool.query(`
-        INSERT INTO experience_sections (title, description_1, description_2, principles, years_count, years_label, image_url)
-        VALUES ($1, $2, $3, $4, $5, $6, $7)
+        INSERT INTO experience_sections (title, description_1, description_2, principles, years_count, years_label, image_url, image_alt)
+        VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
         RETURNING *
-      `, [title, description_1, description_2, JSON.stringify(principles), years_count, years_label, image_url])
+      `, [title, description_1, description_2, JSON.stringify(principles), years_count, years_label, image_url, body.image_alt || ''])
             return NextResponse.json(insertRes.rows[0])
         }
 

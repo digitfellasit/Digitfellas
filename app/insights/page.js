@@ -49,16 +49,16 @@ export default function InsightsListingPage() {
       </Head>
       {hero && <HeroSection hero={hero} />}
 
-      <section className="container py-16 md:py-24">
+      <section className="container py-24 md:py-28">
         {!hero && (
           <ScrollReveal
             variant="fade-up"
           >
-            <div className="text-xs font-bold uppercase tracking-[0.2em] text-primary mb-4">Insights</div>
-            <h1 className="text-4xl md:text-6xl font-extrabold tracking-tight mb-6">
+
+            <h1 className="text-2xl md:text-4xl font-bold text-center tracking-tight mb-6">
               Articles & Updates
             </h1>
-            <p className="text-xl text-muted-foreground max-w-2xl mb-12">
+            <p className="text-xl text-muted-foreground text-center mb-12">
               Practical engineering notes, product thinking, and delivery lessons.
             </p>
           </ScrollReveal>
@@ -72,10 +72,10 @@ export default function InsightsListingPage() {
               delay={i * 100}
             >
               <Link href={`/insights/${post.slug}`} className="group block h-full">
-                <Card className="h-full overflow-hidden rounded-3xl border-border hover:shadow-2xl transition-shadow">
+                <Card className="h-full overflow-hidden bg-[#02000f] rounded-3xl border-border hover:shadow-2xl transition-shadow">
                   <div className="relative aspect-[4/3] overflow-hidden">
                     <Image
-                      alt={post.title}
+                      alt={post.featured_image?.alt || post.title}
                       src={post.featured_image?.url || '/uploads/placeholder-blog.jpg'}
                       fill
                       className="object-cover transition-transform duration-700 group-hover:scale-110"
@@ -112,7 +112,7 @@ export default function InsightsListingPage() {
                     <p className="text-sm text-muted-foreground line-clamp-3 mb-6">
                       {post.excerpt}
                     </p>
-                    <Button variant="outline" className="w-full rounded-full group-hover:bg-primary group-hover:text-primary-foreground transition-colors">
+                    <Button variant="outline" className="w-full rounded-full font-bold bg-[#100d1c] hover:bg-primary group-hover:bg-primary group-hover:text-primary-foreground transition-colors">
                       Read Article <ArrowRight className="ml-2 h-4 w-4" />
                     </Button>
                   </div>

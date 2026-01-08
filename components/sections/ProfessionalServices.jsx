@@ -6,7 +6,7 @@ export function ProfessionalServices({ services = [] }) {
     // Auto-scroll logic removed for vertical stack layout
 
     return (
-        <section className="relative w-full bg-[#01010e] pt-16 md:pt-20 pb-24 transition-colors duration-300 overflow-hidden">
+        <section id="capabilities" className="scroll-mt-[100px] relative w-full bg-[#01010e] pt-16 md:pt-20 pb-24 transition-colors duration-300 overflow-hidden">
             {/* Background Layer */}
             <div className="absolute inset-0 z-0">
                 {/* Top Fade */}

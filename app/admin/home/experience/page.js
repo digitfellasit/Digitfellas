@@ -24,6 +24,7 @@ export default function ExperienceSectionPage() {
             years_count: '',
             years_label: '',
             image_url: '',
+            image_alt: '',
             principles: []
         }
     })
@@ -179,8 +180,12 @@ export default function ExperienceSectionPage() {
                                 <div className="space-y-2">
                                     <Label>Main Image</Label>
                                     <ImageUploader
-                                        value={watch('image_url') ? [{ url: watch('image_url') }] : []}
-                                        onChange={(images) => setValue('image_url', images[0]?.url || '')}
+                                        value={watch('image_url') ? [{ url: watch('image_url'), alt: watch('image_alt') || '' }] : []}
+                                        onChange={(images) => {
+                                            const img = images[0] || {}
+                                            setValue('image_url', img.url || '')
+                                            setValue('image_alt', img.alt || '')
+                                        }}
                                         maxImages={1}
                                         className="aspect-[3/4] w-full"
                                     />

@@ -16,14 +16,15 @@ export function AboutSection({ data }) {
         ],
         years_count = "20+",
         years_label = "Years of Experience",
-        image_url
+        image_url,
+        image_alt
     } = data || {}
 
     return (
         <section id="about" className="py-20 md:py-32 bg-[#01010e] transition-colors duration-300 relative overflow-hidden">
             {/* Background Layer */}
             <div className="absolute inset-0 z-0">
-                
+
 
                 {/* Top Fade */}
                 <div className="absolute top-0 left-0 right-0 h-32 bg-gradient-to-b from-[#01010e] to-transparent z-20" />
@@ -31,10 +32,10 @@ export function AboutSection({ data }) {
                 {/* Bottom Fade */}
                 <div className="absolute bottom-0 left-0 right-0 h-40 bg-gradient-to-t from-[#01010e] to-transparent z-20" />
 
-              
+
             </div>
 
-            <div className="container relative z-10 px-6 mx-auto">
+            <div className="container relative z-10 max-w-[1248px] px-6 lg:px-10 mx-auto">
                 <div className="flex flex-col-reverse lg:flex-row lg:items-stretch gap-16">
 
                     {/* Left Column: Text Content */}
@@ -70,7 +71,7 @@ export function AboutSection({ data }) {
                                 <div className="relative w-full aspect-square lg:aspect-auto lg:h-full overflow-hidden">
                                     <Image
                                         src={image_url}
-                                        alt="Experience"
+                                        alt={image_alt || "Experience"}
                                         fill
                                         className="object-cover"
                                     />

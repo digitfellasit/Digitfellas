@@ -169,6 +169,19 @@ function UploadButton({ onUpload, uploading, label }) {
 }
 
 function ImagePreview({ image, onRemove, onAltChange }) {
+    const handleBlur = async () => {
+        if (!image.url) return
+        try {
+            await fetch('/api/uploads', {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ url: image.url, alt: image.alt })
+            })
+        } catch (e) {
+            console.error("Failed to save alt text", e)
+        }
+    }
+
     return (
         <Card className="p-3">
             <div className="flex gap-3">
@@ -183,6 +196,7 @@ function ImagePreview({ image, onRemove, onAltChange }) {
                         placeholder="Alt text (optional)"
                         value={image.alt || ''}
                         onChange={(e) => onAltChange(e.target.value)}
+                        onBlur={handleBlur}
                         className="w-full px-2 py-1 text-sm border border-border rounded bg-background"
                     />
                     <Button

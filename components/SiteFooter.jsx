@@ -9,11 +9,11 @@ import { useSite } from '@/lib/api-hooks'
 const navigation = {
     main: [
         { name: 'About', href: '/about' },
-        { name: 'Capabilities', href: '/services' },
-        { name: 'How We Work', href: '/how-we-work' },
+        { name: 'Capabilities', href: '/#capabilities' },
+        { name: 'How We Work', href: '/#how-we-work' },
         { name: 'Case Studies', href: '/case-studies' },
         { name: 'Insights', href: '/insights' },
-        { name: 'Partnerships', href: '#partnerships' },
+        { name: 'Partnerships', href: '/#partnerships' },
         { name: 'Contact', href: '/contact' },
     ]
 }
@@ -100,7 +100,7 @@ export function SiteFooter() {
                                 <Link
                                     key={item.name}
                                     href={item.href}
-                                    className="text-sm font-bold transition-colors py-2 text-[#83868a] hover:text-[#331676] dark:text-foreground/80 dark:hover:text-primary"
+                                    className="text-sm font transition-colors py-2 text-[#83868a] hover:text-[#331676] dark:text-foreground/80 dark:hover:text-primary"
                                 >
                                     {item.name}
                                 </Link>
@@ -110,7 +110,7 @@ export function SiteFooter() {
 
                 </div>
 
-                <div className="border-t border-border pt-8 flex flex-col md:flex-row items-center justify-between gap-6 text-muted-foreground text-sm font-medium">
+                <div className="border-t border-border pt-8 flex flex-col md:flex-row items-center justify-between gap-6 text-muted-foreground text-sm font-small">
                     <p>© {new Date().getFullYear()} Digitfellas. All rights reserved.</p>
                     <div className="flex items-center gap-8">
                         <Link href="/terms" className="hover:text-white transition-colors">

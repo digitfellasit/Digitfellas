@@ -25,6 +25,13 @@ export default function Page() {
       return
     }
 
+    // Phone validation (matches international formats, allows spaces/dashes, min 10 chars)
+    const phoneRegex = /^[+]?[(]?[0-9]{3}[)]?[-\s.]?[0-9]{3}[-\s.]?[0-9]{4,6}$/im
+    if (formData.phone && !phoneRegex.test(formData.phone.replace(/\s/g, ''))) {
+      setError("Please enter a valid phone number.")
+      return
+    }
+
     if (!captchaToken) {
       setError("Please complete the reCAPTCHA.")
       return
@@ -170,7 +177,7 @@ export default function Page() {
                 </div>
 
                 <div>
-                  <label className="block text-xs font-bold text-white/40 mb-2 uppercase tracking-widest">Project Details *</label>
+                  <label className="block text-xs font-bold text-white/40 mb-2 uppercase tracking-widest">Message *</label>
                   <Textarea
                     placeholder="Tell us about your project or inquiry..."
                     rows={4}

@@ -35,15 +35,6 @@ export function SiteHeader() {
     const { services = [] } = useServices()
     const { theme, setTheme } = useTheme()
 
-    // New Nav Structure
-    const items = [
-        { id: 'about', label: 'About', url: '/#about' },
-        { id: 'capabilities', label: 'Capabilities', url: '/services', type: 'dropdown', data: services },
-        { id: 'how-we-work', label: 'How We Work', url: '/#how-we-work' },
-        { id: 'resources', label: 'Resources', url: '/resources', type: 'dropdown', data: [] },
-        { id: 'contact', label: 'Contact', url: '/contact' },
-    ]
-
     // Resources Data (Insights & Case Studies)
     const resourcesData = [
         {
@@ -61,6 +52,17 @@ export function SiteHeader() {
             icon: Briefcase
         },
     ]
+
+    // New Nav Structure
+    const items = [
+        { id: 'about', label: 'About', url: '/about' },
+        { id: 'capabilities', label: 'Capabilities', url: '/#capabilities', type: 'dropdown', data: services },
+        { id: 'how-we-work', label: 'How We Work', url: '/#how-we-work' },
+        { id: 'resources', label: 'Resources', url: '/resources', type: 'dropdown', data: [] },
+        { id: 'contact', label: 'Contact', url: '/contact' },
+    ]
+
+
 
     useEffect(() => {
         setMounted(true)

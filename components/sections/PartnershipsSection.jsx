@@ -21,7 +21,7 @@ export function PartnershipsSection({ data, logos: initialLogos = [] }) {
     const duplicatedItems = [...marqueeItems, ...marqueeItems, ...marqueeItems, ...marqueeItems]
 
     return (
-        <section className="relative w-full bg-[#01010e] py-24 border-t border-border overflow-hidden transition-colors duration-300">
+        <section id="partnerships" className="scroll-mt-[100px] relative w-full bg-[#01010e] py-24 border-t border-border overflow-hidden transition-colors duration-300">
             <div className="container max-w-7xl mx-auto px-6">
 
                 <div className="flex flex-col md:flex-row items-center justify-center mb-16">

@@ -42,7 +42,7 @@ export function InsightsSection({ posts = [] }) {
                             key={post.id || index}
                             variant="fade-up"
                             delay={index * 100}
-                            className="group h-full flex flex-col justify-between border-t border-border pt-8 hover:border-transparent px-6 -mx-6 rounded-xl hover:bg-[#331676] transition-all duration-300 cursor-pointer"
+                            className="group h-full flex flex-col justify-between border-t border-border pt-8 pb-2 md:pb-4 hover:border-transparent px-6 -mx-6 rounded-xl hover:bg-[#331676] transition-all duration-300 cursor-pointer"
                         >
                             <Link href={`/insights/${post.slug}`} className="block h-full">
                                 <div>

@@ -51,13 +51,13 @@ export default async function CaseStudyPage({ params }) {
 
     return (
         <div className="min-h-screen bg-[#01010e]">
-            <div className="container py-16 md:py-24">
+            <div className="container py-24 md:py-28">
                 <Link href="/case-studies" className="inline-flex items-center text-sm text-muted-foreground hover:text-foreground mb-8">
                     <ArrowLeft className="h-4 w-4 mr-2" />
                     Back to Case Studies
                 </Link>
 
-                <div className="max-w-4xl">
+                <div className="max-w-4xl mx-auto">
                     {/* Industry Badge */}
                     {caseStudy.industry && (
                         <Badge className="mb-4 rounded-full px-4 py-1">
