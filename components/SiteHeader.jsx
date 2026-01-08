@@ -14,7 +14,7 @@ import {
 import { motion, AnimatePresence } from 'framer-motion'
 import { useTheme } from 'next-themes'
 import { Button } from '@/components/ui/button'
-import { useNavigation, useSite, useServices } from '@/lib/api-hooks'
+import { useNavigation, useSite, useServices, usePages } from '@/lib/api-hooks'
 
 function cx(...classes) {
     return classes.filter(Boolean).join(' ')
@@ -33,6 +33,7 @@ export function SiteHeader() {
     const { navigation } = useNavigation()
     const { site } = useSite()
     const { services = [] } = useServices()
+    const { pages = [] } = usePages()
     const { theme, setTheme } = useTheme()
 
     // Resources Data (Insights & Case Studies)
@@ -60,6 +61,7 @@ export function SiteHeader() {
         { id: 'how-we-work', label: 'How We Work', url: '/#how-we-work' },
         { id: 'resources', label: 'Resources', url: '/resources', type: 'dropdown', data: [] },
         { id: 'contact', label: 'Contact', url: '/contact' },
+        ...pages.filter(p => p.show_in_menu).map(p => ({ id: p.id, label: p.title, url: `/${p.slug}` }))
     ]
 
 

@@ -65,7 +65,7 @@ export function AboutSection({ data }) {
                     </div>
 
                     {/* Right Column: Visual/Stats or Image */}
-                    <div className="w-full lg:w-1/2 relative">
+                    <div className="w-full lg:w-1/2 relative aspect-[4/3] lg:aspect-auto">
                         <ScrollReveal variant="fade-left" className="relative w-full h-full">
                             {image_url ? (
                                 <div className="relative overflow-hidden rounded-[1rem] lg:rounded-[2rem] shadow-2xl bg-card w-full h-full">
