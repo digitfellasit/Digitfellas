@@ -234,6 +234,7 @@ function defaultSite() {
         { id: uuidv4(), label: 'WhatsApp', href: 'https://wa.me/1234567890' },
       ],
     },
+    head_scripts: '',
     _meta: { updatedAt: new Date().toISOString() },
   }
 }
@@ -653,6 +654,7 @@ async function handleRoute(request, { params }) {
         seo_default_title: site?.brand?.name || '',
         seo_default_description: site?.footer?.tagline || '',
         analytics_id: site?.analytics_id || '',
+        head_scripts: site?.head_scripts || '',
       }))
     }
 
@@ -688,7 +690,8 @@ async function handleRoute(request, { params }) {
             { id: 'wa', label: 'WhatsApp', href: settings.social_whatsapp },
           ].filter(s => s.href)
         },
-        analytics_id: settings.analytics_id
+        analytics_id: settings.analytics_id,
+        head_scripts: settings.head_scripts
       }
 
       const saved = (await pgEnabled()) ? await pgSetSite(updatedSite) : await jsonSetSite(updatedSite)

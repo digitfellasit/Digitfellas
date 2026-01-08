@@ -1,38 +1,28 @@
-'use client'
-
 import Link from 'next/link'
-import { useEffect, useState } from 'react'
 import { ArrowRight } from 'lucide-react'
 import { renderMarkdown } from '@/lib/render-markdown'
 
 import { Button } from '@/components/ui/button'
 import { Card } from '@/components/ui/card'
 import { Separator } from '@/components/ui/separator'
+import { getPool } from '@/lib/db'
 
-export default function Page() {
-  const [site, setSite] = useState(null)
-  const [loading, setLoading] = useState(true)
-
-  useEffect(() => {
-    const run = async () => {
-      const res = await fetch('/api/site', { cache: 'no-store' })
-      const json = await res.json()
-      setSite(json)
-      setLoading(false)
-    }
-    run()
-  }, [])
-
-  if (loading) {
-    return (
-      <div className="container  py-16">
-        <div className="h-10 w-52 rounded bg-muted" />
-        <div className="mt-6 h-6 w-2/3 rounded bg-muted" />
-      </div>
-    )
+async function getAboutData() {
+  if (!process.env.DATABASE_URL) return {}
+  const pool = getPool()
+  try {
+    const res = await pool.query('SELECT data FROM df_site ORDER BY updated_at DESC LIMIT 1')
+    return res?.rows?.[0]?.data?.pages?.about || {}
+  } catch (e) {
+    console.error("Failed to fetch about data", e)
+    return {}
   }
+}
 
-  const about = site?.pages?.about
+export const dynamic = 'force-dynamic'
+
+export default async function Page() {
+  const about = await getAboutData()
 
   return (
     <div className="min-h-screen bg-[#01010e]">

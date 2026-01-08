@@ -32,6 +32,7 @@ export default function SiteSettingsPage() {
         seo_default_title: '',
         seo_default_description: '',
         analytics_id: '',
+        head_scripts: '',
     })
     const [loading, setLoading] = useState(true)
     const [saving, setSaving] = useState(false)
@@ -56,6 +57,7 @@ export default function SiteSettingsPage() {
                 seo_default_title: site?.brand?.name || '',
                 seo_default_description: site?.footer?.tagline || '',
                 analytics_id: site?.analytics_id || '',
+                head_scripts: site?.head_scripts || '',
             })
         } catch (error) {
             console.error('Failed to load settings:', error)
@@ -97,7 +99,8 @@ export default function SiteSettingsPage() {
                         { id: 'wa', label: 'WhatsApp', href: settings.social_whatsapp },
                     ].filter(s => s.href) // Only include socials with URLs
                 },
-                analytics_id: settings.analytics_id
+                analytics_id: settings.analytics_id,
+                head_scripts: settings.head_scripts
             }
 
             await apiCall('/api/site', { method: 'PUT', body: JSON.stringify(updatedSite) })
@@ -241,6 +244,19 @@ export default function SiteSettingsPage() {
                                     <Label>Google Analytics ID</Label>
                                     <Input value={settings.analytics_id} onChange={(e) => setSettings({ ...settings, analytics_id: e.target.value })} placeholder="G-XXXXXXXXXX" />
                                     <p className="text-xs text-muted-foreground mt-1">Google Analytics measurement ID</p>
+                                </div>
+                                <div className="pt-4 border-t">
+                                    <Label>Custom Head Scripts</Label>
+                                    <Textarea
+                                        value={settings.head_scripts}
+                                        onChange={(e) => setSettings({ ...settings, head_scripts: e.target.value })}
+                                        rows={10}
+                                        className="font-mono text-sm"
+                                        placeholder="<script>...</script>&#10;<meta ... />&#10;<link ... />"
+                                    />
+                                    <p className="text-xs text-muted-foreground mt-1">
+                                        Added to the &lt;head&gt; tag of every page. Use for SEO, analytics, or custom meta tags.
+                                    </p>
                                 </div>
                             </div>
                         </Card>

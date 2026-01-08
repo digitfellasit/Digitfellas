@@ -106,7 +106,6 @@ export default function BlogPage() {
             )
         },
         { key: 'title', header: 'Title', sortable: true, render: (row) => (<div><div className="font-medium">{row.title}</div><div className="text-xs text-muted-foreground">/{row.slug}</div></div>) },
-        { key: 'excerpt', header: 'Excerpt', render: (row) => <div className="max-w-md truncate text-sm text-muted-foreground">{row.excerpt}</div> },
         { key: 'is_published', header: 'Status', render: (row) => <StatusBadge status={row.is_published ? 'published' : 'draft'} /> },
         { key: 'view_count', header: 'Views', render: (row) => row.view_count || 0 },
         { key: 'published_at', header: 'Published', sortable: true, render: (row) => row.published_at ? new Date(row.published_at).toLocaleDateString() : '-' },

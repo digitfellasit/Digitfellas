@@ -197,7 +197,7 @@ export function HeroSection({ hero }) {
                                 >
                                     <Image
                                         src={image1}
-                                        alt="Main Feature"
+                                        alt={hero?.media?.[0]?.alt || hero?.title || "Main Feature"}
                                         fill
                                         className="object-cover"
                                         sizes="(max-width: 768px) 100vw, 55vw"

@@ -131,7 +131,7 @@ export default async function InsightPage({ params }) {
           )}
 
           {/* CTA */}
-          <Card className="p-8 md:p-12 bg-gradient-to-br from-primary/10 to-primary/5 mt-16 border-white/5">
+          <Card className="p-8 md:p-12 bg-[#02000f] from-primary/10 to-primary/5 mt-16 border-white/5">
             <h2 className="text-2xl font-bold mb-4">Enjoyed this article?</h2>
             <p className="text-muted-foreground mb-6">
               Check out more of our insights or get in touch to discuss your project.
@@ -143,7 +143,7 @@ export default async function InsightPage({ params }) {
                   More Insights
                 </Link>
               </Button>
-              <Button asChild size="lg" variant="outline" className="rounded-full">
+              <Button asChild size="lg" variant="outline" className="rounded-full bg-[#100d1c]">
                 <Link href="/contact">Contact Us</Link>
               </Button>
             </div>
