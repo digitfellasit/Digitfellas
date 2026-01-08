@@ -68,7 +68,7 @@ export function AboutSection({ data }) {
                     <div className="w-full lg:w-1/2 relative">
                         <ScrollReveal variant="fade-left" className="relative w-full h-full">
                             {image_url ? (
-                                <div className="relative w-full aspect-square lg:aspect-auto lg:h-full overflow-hidden">
+                                <div className="relative overflow-hidden rounded-[1rem] lg:rounded-[2rem] shadow-2xl bg-card w-full h-full">
                                     <Image
                                         src={image_url}
                                         alt={image_alt || "Experience"}

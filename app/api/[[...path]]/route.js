@@ -71,7 +71,7 @@ function defaultSite() {
       items: [
         { id: uuidv4(), label: 'Home', href: '/' },
         { id: uuidv4(), label: 'About', href: '/about' },
-        { id: uuidv4(), label: 'Services', href: '/services' },
+        { id: uuidv4(), label: 'Capabilities', href: '/capabilities' },
         { id: uuidv4(), label: 'Projects', href: '/projects' },
         { id: uuidv4(), label: 'Blog', href: '/blog' },
         { id: uuidv4(), label: 'Contact', href: '/contact' },
@@ -700,9 +700,9 @@ async function handleRoute(request, { params }) {
     }
 
     // ============================================
-    // SERVICES CRUD
+    // CAPABILITIES (SERVICES) CRUD
     // ============================================
-    if (route === '/services' && method === 'GET') {
+    if ((route === '/services' || route === '/capabilities') && method === 'GET') {
       if (await pgEnabled()) {
         const pool = getPool()
         const result = await pool.query(`
@@ -737,7 +737,7 @@ async function handleRoute(request, { params }) {
       }
     }
 
-    if (route.match(/^\/services\/[^/]+$/) && method === 'GET') {
+    if ((route.match(/^\/services\/[^/]+$/) || route.match(/^\/capabilities\/[^/]+$/)) && method === 'GET') {
       const slug = parts[1]
       if (await pgEnabled()) {
         const pool = getPool()
@@ -761,7 +761,7 @@ async function handleRoute(request, { params }) {
       return handleCORS(NextResponse.json({ error: 'Not found' }, { status: 404 }))
     }
 
-    if (route === '/services' && method === 'POST') {
+    if ((route === '/services' || route === '/capabilities') && method === 'POST') {
       const session = requireAdmin(request)
       if (!session) return handleCORS(NextResponse.json({ error: 'Unauthorized' }, { status: 401 }))
 
@@ -779,7 +779,7 @@ async function handleRoute(request, { params }) {
       return handleCORS(NextResponse.json(result.rows[0]))
     }
 
-    if (route.match(/^\/services\/[^/]+$/) && method === 'PUT') {
+    if ((route.match(/^\/services\/[^/]+$/) || route.match(/^\/capabilities\/[^/]+$/)) && method === 'PUT') {
       const session = requireAdmin(request)
       if (!session) return handleCORS(NextResponse.json({ error: 'Unauthorized' }, { status: 401 }))
 
@@ -796,13 +796,17 @@ async function handleRoute(request, { params }) {
         RETURNING *
       `, [body.title, body.slug, body.description, body.short_description, body.content, body.excerpt, body.icon_url, body.category_id, body.meta_title, body.meta_description, body.is_featured, body.is_published, body.sort_order, id, body.featured_image_id, JSON.stringify(body.hero_data || {}), body.intro_content || '', JSON.stringify(body.features || []), JSON.stringify(body.details_sections || [])])
 
-      if (!result.rows[0]) return handleCORS(NextResponse.json({ error: 'Service not found' }, { status: 404 }))
+      if (!result.rows[0]) return handleCORS(NextResponse.json({ error: 'Capability not found' }, { status: 404 }))
       revalidatePath('/services')
-      if (result.rows[0]?.slug) revalidatePath(`/services/${result.rows[0].slug}`)
+      revalidatePath('/capabilities')
+      if (result.rows[0]?.slug) {
+        revalidatePath(`/services/${result.rows[0].slug}`)
+        revalidatePath(`/capabilities/${result.rows[0].slug}`)
+      }
       return handleCORS(NextResponse.json(result.rows[0]))
     }
 
-    if (route.match(/^\/services\/[^/]+$/) && method === 'DELETE') {
+    if ((route.match(/^\/services\/[^/]+$/) || route.match(/^\/capabilities\/[^/]+$/)) && method === 'DELETE') {
       const session = requireAdmin(request)
       if (!session) return handleCORS(NextResponse.json({ error: 'Unauthorized' }, { status: 401 }))
 
@@ -810,6 +814,7 @@ async function handleRoute(request, { params }) {
       const pool = getPool()
       await pool.query('UPDATE services SET deleted_at = NOW() WHERE id = $1', [id])
       revalidatePath('/services')
+      revalidatePath('/capabilities')
       return handleCORS(NextResponse.json({ ok: true }))
     }
 

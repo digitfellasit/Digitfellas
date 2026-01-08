@@ -55,7 +55,7 @@ export function ProfessionalServices({ services = [] }) {
                                 <h4 className="text-xl font-bold text-foreground mb-4 group-hover:text-white dark:group-hover:text-primary transition-colors">
                                     {service.title}
                                 </h4>
-                                <p className="text-muted-foreground leading-relaxed text-sm group-hover:text-white dark:group-hover:text-foreground transition-colors">
+                                <p className="text-muted-foreground leading-relaxed text-sm group-hover:text-white dark:group-hover:text-foreground transition-colors line-clamp-4">
                                     {service.description}
                                 </p>
                             </div>

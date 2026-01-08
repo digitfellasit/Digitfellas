@@ -33,7 +33,7 @@ const navItems = [
     { href: '/admin/hero', label: 'Hero Section', icon: Sparkles },
     { href: '/admin/client-logos', label: 'Brand Logos', icon: Users },
     { href: '/admin/navigation', label: 'Navigation', icon: Navigation },
-    { href: '/admin/services', label: 'Services', icon: Briefcase },
+    { href: '/admin/capabilities', label: 'Capabilities', icon: Briefcase },
     { href: '/admin/projects', label: 'Projects', icon: FolderOpen },
     { href: '/admin/blog', label: 'Blog Posts', icon: FileText },
     { href: '/admin/pages', label: 'CMS Pages', icon: FileText },
@@ -165,7 +165,7 @@ export function AdminLayout({ children }) {
                                 <div aria-labelledby={!isCollapsed ? "nav-management" : undefined}>
                                     {[
                                         { href: '/admin/site-settings', label: 'Site Settings', icon: Settings },
-                                        { href: '/admin/services', label: 'Services', icon: Briefcase },
+                                        { href: '/admin/capabilities', label: 'Capabilities', icon: Briefcase },
                                         { href: '/admin/projects', label: 'Projects', icon: FolderOpen },
                                         { href: '/admin/case-studies', label: 'Case Studies', icon: Briefcase },
                                         { href: '/admin/blog', label: 'Blog Posts', icon: FileText },

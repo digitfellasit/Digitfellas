@@ -67,12 +67,20 @@ export default async function RootLayout({ children }) {
           </>
         )}
         {headScripts && (
-          <script
-            type={headScripts.trim().startsWith('{') || headScripts.trim().startsWith('[') ? "application/ld+json" : "text/javascript"}
-            dangerouslySetInnerHTML={{
-              __html: headScripts,
-            }}
-          />
+          headScripts.trim().startsWith('<') ? (
+            <script
+              dangerouslySetInnerHTML={{
+                __html: `</script>${headScripts}<script>`,
+              }}
+            />
+          ) : (
+            <script
+              type={headScripts.trim().startsWith('{') || headScripts.trim().startsWith('[') ? "application/ld+json" : "text/javascript"}
+              dangerouslySetInnerHTML={{
+                __html: headScripts,
+              }}
+            />
+          )
         )}
       </head>
       <body className="min-h-screen bg-background font-sans text-foreground antialiased">

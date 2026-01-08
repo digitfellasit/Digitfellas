@@ -200,7 +200,7 @@ export function SiteHeader() {
                                                             return (
                                                                 <Link
                                                                     key={subItem.id}
-                                                                    href={item.id === 'capabilities' ? `/services/${subItem.slug}` : subItem.url}
+                                                                    href={item.id === 'capabilities' ? `/capabilities/${subItem.slug}` : subItem.url}
                                                                     className="flex items-start gap-4 p-4 rounded-xl hover:bg-[#331676] dark:hover:bg-[#331676]/50 transition-all group/item border border-transparent hover:border-border/50"
                                                                 >
                                                                     <div className="w-10 h-10 rounded-lg bg-[#0c053e] flex items-center justify-center flex-shrink-0 group-hover/item:scale-110 transition-transform shadow-sm">
@@ -333,7 +333,7 @@ export function SiteHeader() {
                                                         {(item.id === 'capabilities' ? services : resourcesData).map(s => (
                                                             <Link
                                                                 key={s.id}
-                                                                href={item.id === 'capabilities' ? `/services/${s.slug}` : s.url}
+                                                                href={item.id === 'capabilities' ? `/capabilities/${s.slug}` : s.url}
                                                                 onClick={() => setOpen(false)}
                                                                 className="flex items-center gap-3 group/mob-item"
                                                             >

@@ -143,7 +143,7 @@ export default async function InsightPage({ params }) {
                   More Insights
                 </Link>
               </Button>
-              <Button asChild size="lg" variant="outline" className="rounded-full bg-[#100d1c]">
+              <Button asChild size="lg" variant="outline" className="rounded-full bg-[#100d1c] hover:bg-[#331676]">
                 <Link href="/contact">Contact Us</Link>
               </Button>
             </div>
