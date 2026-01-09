@@ -114,10 +114,10 @@ export function SiteFooter() {
                 <div className="border-t border-border pt-8 flex flex-col md:flex-row items-center justify-between gap-6 text-muted-foreground text-sm font-small">
                     <p>© {new Date().getFullYear()} Digitfellas. All rights reserved.</p>
                     <div className="flex items-center gap-8">
-                        <Link href="/terms" className="hover:text-white transition-colors">
+                        <Link href="/terms-and-conditions" className="hover:text-white transition-colors">
                             Terms & Conditions
                         </Link>
-                        <Link href="/privacy" className="hover:text-white transition-colors">
+                        <Link href="/privacy-statement" className="hover:text-white transition-colors">
                             Privacy Policy
                         </Link>
                     </div>

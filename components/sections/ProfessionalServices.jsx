@@ -1,6 +1,8 @@
 'use client'
 
 import { ScrollReveal } from '@/components/ui/ScrollReveal'
+import Link from 'next/link'
+import { ArrowUpRight } from 'lucide-react'
 
 export function ProfessionalServices({ services = [] }) {
     // Auto-scroll logic removed for vertical stack layout
@@ -44,10 +46,16 @@ export function ProfessionalServices({ services = [] }) {
                         </div>
                     )}
                     {services.map((service, index) => (
-                        <div
+                        <Link
                             key={service.id || index}
-                            className="h-full group p-8 rounded-3xl bg-[#0c053e] border border-border hover:border-[#331676]/30 hover:bg-[#331676] transition-all duration-500 relative overflow-hidden text-left shadow-sm"
+                            href={`/capabilities/${service.slug}`}
+                            className="h-full block group p-8 rounded-3xl bg-[#0c053e] border border-border hover:border-[#331676]/30 hover:bg-[#331676] transition-all duration-500 relative overflow-hidden text-left shadow-sm"
                         >
+                            {/* Arrow in top right */}
+                            <div className="absolute top-4 right-2 z-20">
+                                <ArrowUpRight className="w-5 h-5 text-primary group-hover:text-white group-hover:-translate-y-1 group-hover:translate-x-1 transition-all duration-300" />
+                            </div>
+
                             {/* Subtle Gradient Hover Effect */}
                             <div className="absolute inset-0 bg-gradient-to-br from-primary/0 via-primary/0 to-primary/0 dark:group-hover:from-primary/5 dark:group-hover:to-primary/5 transition-all duration-500" />
 
@@ -59,7 +67,7 @@ export function ProfessionalServices({ services = [] }) {
                                     {service.description}
                                 </p>
                             </div>
-                        </div>
+                        </Link>
                     ))}
                 </div>
 
