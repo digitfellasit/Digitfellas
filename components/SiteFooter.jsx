@@ -39,10 +39,11 @@ export function SiteFooter() {
     // Ensure common socials are present even if not in DB
     const hasFB = socials.some(s => s.label.toLowerCase() === 'facebook')
     const hasIG = socials.some(s => s.label.toLowerCase() === 'instagram')
+    const hasLinkedin = socials.some(s => s.label.toLowerCase() === 'linkedin')
 
     if (!hasFB) socials.push({ id: 'fb-fallback', label: 'Facebook', href: 'https://facebook.com/digitfellas' })
     if (!hasIG) socials.push({ id: 'ig-fallback', label: 'Instagram', href: 'https://instagram.com/digitfellas' })
-
+    if(!hasLinkedin) socials.push({ id: 'linkedin-fallback', label: 'LinkedIn', href: 'https://linkedin.com/digitfellas' })
     // Sort to keep LinkedIn first if possible
     socials = socials.sort((a, b) => {
         if (a.label.toLowerCase() === 'linkedin') return -1

@@ -6,7 +6,8 @@ import { Card } from '@/components/ui/card'
 import { renderMarkdown } from '@/lib/render-markdown'
 import { getPool } from '@/lib/db'
 import { notFound } from 'next/navigation'
-import { HeroSection } from '@/components/HeroSection'
+import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion'
+import { CapabilityHero } from '@/components/sections/CapabilityHero'
 
 export const dynamic = 'force-dynamic'
 
@@ -35,21 +36,23 @@ async function getServiceBySlug(slug) {
         `, [slug])
         service.related = othersRes.rows || []
 
-        // Normalize Hero Data from the JSONB column
+        // Normalize Hero Data or Construct Default from Service Data
         let normalizedHero = null
-        if (service.hero_data) {
-            const h = typeof service.hero_data === 'string' ? JSON.parse(service.hero_data) : service.hero_data
-            if (h.desktop?.length > 0 || h.mobile?.length > 0 || h.title) {
-                const media = []
-                if (h.desktop?.[0]?.url) media.push({ ...h.desktop[0], variant: 'desktop' })
-                if (h.mobile?.[0]?.url) media.push({ ...h.mobile[0], variant: 'mobile' })
+        const h = (typeof service.hero_data === 'string' ? JSON.parse(service.hero_data) : service.hero_data) || {}
 
-                normalizedHero = {
-                    title: h.title || service.title,
-                    subtitle: h.tagline || service.short_description,
-                    media: media
-                }
-            }
+        normalizedHero = {
+            title: h.title || service.title,
+            // User requested Long Description on the left side
+            subtitle: h.tagline || service.description || service.short_description,
+            // Background Image from Hero configuration (Admin -> Capabilities -> Hero & Header -> Desktop Background)
+            backgroundImage: h.desktop?.[0]?.url || '/images/Hero_Background.webp',
+            mobileBackgroundImage: h.mobile?.[0]?.url || '/images/Hero_Background.webp',
+            // Featured Image (Card Image) for the right side card
+            featuredImage: service.featured_image?.url || null,
+
+            // Pass explicitly as heading/subheading for compatibility if needed
+            heading: h.title || service.title,
+            subheading: h.tagline || service.description || service.short_description
         }
 
         service.hero = normalizedHero
@@ -83,102 +86,92 @@ export default async function ServiceDetailPage({ params }) {
     }
 
     // Parse JSON fields safely
-    const features = service.features ? (typeof service.features === 'string' ? JSON.parse(service.features) : service.features) : []
+    const safeParse = (val, fallback = []) => {
+        if (!val) return fallback
+        if (typeof val === 'object') return val
+        try {
+            const parsed = JSON.parse(val)
+            return parsed || fallback
+        } catch (e) {
+            return fallback
+        }
+    }
+
+    const features = safeParse(service.features)
     const featuresList = Array.isArray(features) ? features : []
 
-    const detailsSections = service.details_sections ? (typeof service.details_sections === 'string' ? JSON.parse(service.details_sections) : service.details_sections) : []
+    const detailsSections = safeParse(service.details_sections)
     const sectionsList = Array.isArray(detailsSections) ? detailsSections : []
+
+    const faq = safeParse(service.faq)
+    const faqList = Array.isArray(faq) ? faq : []
+
+    const isCentered = service.template === 'centered'
 
     return (
         <div className="min-h-screen bg-[#01010e] text-white">
-            {/* 1. Hero Section */}
-            {service.hero ? (
-                <HeroSection hero={service.hero} />
-            ) : (
-                <div className="bg-[#0c053e] pt-32 pb-20">
-                    <div className="container px-6">
-                        <Link href="/capabilities" className="inline-flex items-center text-sm text-slate-400 hover:text-white mb-8 transition-colors">
-                            <ArrowLeft className="h-4 w-4 mr-2" />
-                            Back to Capabilities
-                        </Link>
-                        <h1 className="text-4xl md:text-7xl font-bold tracking-tight mb-6">{service.title}</h1>
-                        <p className="text-xl md:text-2xl text-slate-300 max-w-3xl leading-relaxed">
-                            {service.short_description}
-                        </p>
-                    </div>
-                </div>
-            )}
+            {/* 1. Hero Section (Unified Logic) */}
+            <CapabilityHero hero={service.hero} />
 
-            <div className="container py-20 px-6">
+            <div className="container max-w-[1240px] mx-auto pt-20 pb-12 px-6">
 
                 {/* 2. Intro Content (Large Typography) */}
-                {service.intro_content && (
-                    <div className="max-w-4xl mb-24">
-                        <div
-                            className="prose prose-2xl prose-invert max-w-none prose-p:text-slate-200 prose-p:leading-relaxed font-light"
-                            dangerouslySetInnerHTML={{ __html: renderMarkdown(service.intro_content) }}
-                        />
+                {(service.intro_content || service.intro_title) && (
+                    <div className={`mb-32 ${isCentered ? 'text-center mx-auto max-w-4xl' : 'max-w-4xl'}`}>
+                        {service.intro_title && (
+                            <h2 className="text-3xl md:text-5xl font-bold text-center mb-12 tracking-tight text-white font-heading">
+                                {service.intro_title}
+                            </h2>
+                        )}
+                        {service.intro_content && (
+                            <div
+                                className="prose prose-2xl prose-invert max-w-none prose-p:text-slate-200 prose-p:leading-relaxed font-light whitespace-pre-wrap"
+                                dangerouslySetInnerHTML={{ __html: renderMarkdown(service.intro_content) }}
+                            />
+                        )}
                     </div>
                 )}
 
                 {/* 3. Features Grid (The "Grid Box") */}
                 {featuresList.length > 0 && (
-                    <div className="mb-32">
-                        <div className="flex items-center gap-4 mb-12">
+                    <div className="mb-36">
+                        <div className="flex items-center gap-4 mb-4">
                             <div className="h-px flex-grow bg-white/10" />
-                            <h2 className="text-2xl md:text-3xl font-bold tracking-tight whitespace-nowrap uppercase tracking-widest text-primary/80">Core Capabilities</h2>
+                            <h2 className="text-2xl md:text-3xl font-bold tracking-tight whitespace-nowrap uppercase tracking-widest text-primary/80">
+                                {service.features_title || 'Core Capabilities'}
+                            </h2>
+
                             <div className="h-px flex-grow bg-white/10" />
                         </div>
-                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                            {featuresList.map((feature, i) => {
-                                // Robust Image Handling
-                                let imgArr = [];
-                                const rawImg = feature.image;
-                                if (Array.isArray(rawImg)) imgArr = rawImg;
-                                else if (typeof rawImg === 'string') {
-                                    try { imgArr = JSON.parse(rawImg); } catch (e) { imgArr = []; }
-                                } else if (rawImg && typeof rawImg === 'object') {
-                                    imgArr = [rawImg];
-                                }
+                        {service.features_description && (
+                            <p className="text-center text-slate-400 max-w-2xl mx-auto mb-12">
+                                {service.features_description}
+                            </p>
+                        )}
+                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                            {featuresList.map((feature, i) => (
+                                <div
+                                    key={i}
+                                    className="h-full group p-8 rounded-3xl bg-[#0c053e] border border-white/10 hover:border-[#331676]/30 hover:bg-[#331676] transition-all duration-500 relative overflow-hidden text-left shadow-sm"
+                                >
+                                    {/* Subtle Gradient Hover Effect */}
+                                    <div className="absolute inset-0 bg-gradient-to-br from-primary/0 via-primary/0 to-primary/0 group-hover:from-primary/5 group-hover:to-primary/5 transition-all duration-500" />
 
-                                const hImage = imgArr?.[0]?.url;
-
-                                return (
-                                    <Card key={i} className="flex flex-col bg-[#0c053e]/40 border-white/10 hover:border-primary/50 transition-all duration-500 group backdrop-blur-sm rounded-[2rem] overflow-hidden">
-                                        {hImage && (
-                                            <div className="relative h-48 w-full overflow-hidden">
-                                                <Image
-                                                    src={hImage}
-                                                    alt={feature.title || 'Feature Image'}
-                                                    fill
-                                                    className="object-cover group-hover:scale-110 transition-transform duration-700"
-                                                />
-                                                <div className="absolute inset-0 bg-gradient-to-t from-[#0c053e] to-transparent opacity-60" />
-                                            </div>
-                                        )}
-                                        <div className="p-8 space-y-4 flex-grow">
-                                            <div className="flex items-center gap-3">
-                                                {!hImage && (
-                                                    <div className="w-10 h-10 rounded-xl bg-primary/20 flex items-center justify-center shrink-0 group-hover:bg-primary group-hover:text-white transition-colors duration-300">
-                                                        <CheckCircle2 className="w-5 h-5 text-primary group-hover:text-white" />
-                                                    </div>
-                                                )}
-                                                <h4 className={`text-xl font-bold text-white group-hover:text-primary transition-colors ${hImage ? 'w-full' : ''}`}>
-                                                    {feature.title || (typeof feature === 'string' ? feature : `Feature ${i + 1}`)}
-                                                </h4>
-                                            </div>
-                                            <p className="text-base text-slate-400 leading-relaxed group-hover:text-slate-200 transition-colors">
-                                                {feature.description || feature.text || ''}
-                                            </p>
-                                        </div>
-                                    </Card>
-                                );
-                            })}
+                                    <div className="relative z-10">
+                                        <h4 className="text-xl font-bold text-white mb-4 group-hover:text-white transition-colors">
+                                            {feature.title || (typeof feature === 'string' ? feature : `Feature ${i + 1}`)}
+                                        </h4>
+                                        <p className="text-slate-400 leading-relaxed text-sm group-hover:text-slate-200 transition-colors line-clamp-4">
+                                            {feature.description || feature.text || ''}
+                                        </p>
+                                    </div>
+                                </div>
+                            ))}
                         </div>
                     </div>
                 )}
 
-                <div className="grid grid-cols-1 lg:grid-cols-12 gap-16 mb-24">
+                <div className="grid grid-cols-1 lg:grid-cols-12 gap-16 mb-0">
                     <div className="lg:col-span-8 space-y-32">
                         {service.content && (
                             <div className="prose prose-lg prose-invert max-w-none prose-headings:text-white prose-p:text-slate-300 prose-strong:text-white prose-li:text-slate-300">
@@ -186,30 +179,63 @@ export default async function ServiceDetailPage({ params }) {
                             </div>
                         )}
 
-                        {sectionsList.map((section, idx) => (
-                            <div
-                                key={section.id || idx}
-                                className={`flex flex-col gap-12 py-16 border-t border-white/5 ${section.swapLayout ? 'md:flex-row-reverse' : 'md:flex-row'} items-center`}
-                            >
-                                <div className="flex-1 space-y-6">
-                                    <div
-                                        className="prose prose-invert max-w-none prose-p:text-slate-300 prose-headings:text-white prose-h2:text-4xl prose-h2:mb-8 font-heading"
-                                        dangerouslySetInnerHTML={{ __html: renderMarkdown(section.content || '') }}
-                                    />
-                                </div>
-                                {section.image?.[0]?.url && (
-                                    <div className={`flex-1 w-full relative aspect-video rounded-[3rem] overflow-hidden shadow-2xl border border-white/10 group`}>
-                                        <Image
-                                            src={section.image[0].url}
-                                            alt={section.image[0].alt || 'Section Image'}
-                                            fill
-                                            className="object-cover group-hover:scale-105 transition-transform duration-700"
+                        {sectionsList.map((section, idx) => {
+                            const hasImage = !!section.image?.[0]?.url
+                            return (
+                                <div
+                                    key={section.id || idx}
+                                    className={`flex flex-col gap-16 py-8 border-t border-white/5 ${section.swapLayout && hasImage ? 'md:flex-row-reverse' : 'md:flex-row'} ${!hasImage ? 'justify-center' : 'items-center'}`}
+                                >
+                                    <div className={`flex flex-col justify-center ${hasImage ? 'w-full md:w-1/2' : 'w-full max-w-4xl mx-auto text-center'}`}>
+
+                                        {/* Header */}
+                                        {section.header && (
+                                            <h3 className={`text-3xl md:text-3xl font-bold text-white leading-tight mb-8 ${!hasImage ? 'text-center' : 'text-left'}`}>
+                                                {section.header}
+                                            </h3>
+                                        )}
+
+                                        {/* Content */}
+                                        <div
+                                            className={`prose prose-lg prose-invert max-w-none prose-p:text-slate-300 prose-headings:text-white prose-li:text-slate-300 leading-relaxed font-light ${!hasImage ? 'text-center' : 'text-left'}`}
+                                            dangerouslySetInnerHTML={{ __html: renderMarkdown(section.content || '') }}
                                         />
-                                        <div className="absolute inset-0 bg-white/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
                                     </div>
-                                )}
+
+                                    {hasImage && (
+                                        <div className="w-full md:w-1/2 relative">
+                                            <div className="relative overflow-hidden rounded-[1rem] lg:rounded-[2rem] shadow-2xl bg-[#0c053e] border border-white/10 w-full h-full aspect-[4/3] lg:aspect-[4/3]">
+                                                <Image
+                                                    src={section.image[0].url}
+                                                    alt={section.image[0].alt || 'Section Image'}
+                                                    fill
+                                                    className="object-cover"
+                                                />
+                                            </div>
+                                        </div>
+                                    )}
+                                </div>
+                            )
+                        })}
+
+                        {/* FAQ Section */}
+                        {faqList.length > 0 && (
+                            <div className="py-16 border-t border-white/5">
+                                <h3 className="text-3xl font-bold mb-12 text-white">Frequently Asked Questions</h3>
+                                <Accordion type="single" collapsible className="w-full space-y-4">
+                                    {faqList.map((item, i) => (
+                                        <AccordionItem key={i} value={`item-${i}`} className="border-white/10 px-6 rounded-2xl bg-white/5 data-[state=open]:bg-white/10 transition-colors">
+                                            <AccordionTrigger className="text-lg font-medium hover:no-underline py-6">
+                                                {item.question}
+                                            </AccordionTrigger>
+                                            <AccordionContent className="pb-6 text-slate-300 leading-relaxed text-base">
+                                                <div dangerouslySetInnerHTML={{ __html: renderMarkdown(item.answer) }} />
+                                            </AccordionContent>
+                                        </AccordionItem>
+                                    ))}
+                                </Accordion>
                             </div>
-                        ))}
+                        )}
                     </div>
 
                     <div className="lg:col-span-4">
@@ -217,13 +243,15 @@ export default async function ServiceDetailPage({ params }) {
                             <Card className="p-10 bg-gradient-to-br from-primary/30 via-primary/10 to-transparent border-primary/40 rounded-[3rem] shadow-2xl overflow-hidden relative group">
                                 <div className="absolute inset-0 bg-primary/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
                                 <div className="relative z-10 space-y-6">
-                                    <h3 className="text-3xl font-bold mb-4 text-white tracking-tight">Ready to build?</h3>
-                                    <p className="text-slate-200 text-lg leading-relaxed font-light">
-                                        Accelerate your {service.title} roadmap with our expert engineering teams.
+                                    <h3 className="text-3xl font-bold mb-4 text-white tracking-tight">
+                                        {service.cta_title || 'Ready to build?'}
+                                    </h3>
+                                    <p className="text-slate-200 text-lg leading-relaxed font-light whitespace-pre-wrap">
+                                        {service.cta_description || `Accelerate your ${service.title} roadmap with our expert engineering teams.`}
                                     </p>
                                     <Button asChild className="w-full rounded-full font-bold bg-white text-black hover:bg-slate-200 transition-all py-8 text-xl shadow-lg hover:shadow-primary/30 active:scale-95">
-                                        <Link href="/contact" className="flex items-center justify-center">
-                                            Work With Us <ArrowRight className="ml-3 w-6 h-6" />
+                                        <Link href={service.cta_link || '/contact'} className="flex items-center justify-center">
+                                            {service.cta_button_text || 'Work With Us'} <ArrowRight className="ml-3 w-6 h-6" />
                                         </Link>
                                     </Button>
                                     <div className="flex items-center justify-center gap-2 pt-2">

@@ -21,6 +21,8 @@ import {
 import { Label } from '@/components/ui/label'
 import { Switch } from '@/components/ui/switch'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
+import { FaqEditor } from '@/components/admin/FaqEditor'
 
 async function apiCall(url, options = {}) {
     const res = await fetch(url, {
@@ -55,6 +57,7 @@ export default function CapabilitiesPage() {
         short_description: '',
         content: '',
         intro_content: '',
+        intro_title: '',
         features: [],
         details_sections: [],
         hero_data: { title: '', tagline: '', desktop: [], mobile: [] },
@@ -65,7 +68,15 @@ export default function CapabilitiesPage() {
         is_featured: false,
         is_published: true,
         sort_order: 0,
-        featured_image: []
+        featured_image: [],
+        faq: [],
+        template: 'default',
+        cta_title: '',
+        cta_description: '',
+        cta_button_text: '',
+        cta_link: '',
+        features_title: '',
+        features_description: ''
     })
     const [saving, setSaving] = useState(false)
 
@@ -94,6 +105,7 @@ export default function CapabilitiesPage() {
             short_description: '',
             content: '',
             intro_content: '',
+            intro_title: '',
             features: [],
             details_sections: [],
             hero_data: { title: '', tagline: '', desktop: [], mobile: [] },
@@ -104,7 +116,15 @@ export default function CapabilitiesPage() {
             is_featured: false,
             is_published: true,
             sort_order: 0,
-            featured_image: []
+            featured_image: [],
+            faq: [],
+            template: 'default',
+            cta_title: '',
+            cta_description: '',
+            cta_button_text: '',
+            cta_link: '',
+            features_title: '',
+            features_description: ''
         })
         setDialogOpen(true)
     }
@@ -125,6 +145,7 @@ export default function CapabilitiesPage() {
             short_description: capability.short_description || '',
             content: capability.content || '',
             intro_content: capability.intro_content || '',
+            intro_title: capability.intro_title || '',
             features: capability.features || [],
             details_sections: sections,
             hero_data: capability.hero_data || { title: '', tagline: '', desktop: [], mobile: [] },
@@ -135,7 +156,15 @@ export default function CapabilitiesPage() {
             is_featured: capability.is_featured || false,
             is_published: capability.is_published !== false,
             sort_order: capability.sort_order || 0,
-            featured_image: capability.featured_image ? [capability.featured_image] : []
+            featured_image: capability.featured_image ? [capability.featured_image] : [],
+            faq: capability.faq || [],
+            template: capability.template || 'default',
+            cta_title: capability.cta_title || '',
+            cta_description: capability.cta_description || '',
+            cta_button_text: capability.cta_button_text || '',
+            cta_link: capability.cta_link || '',
+            features_title: capability.features_title || '',
+            features_description: capability.features_description || ''
         })
         setDialogOpen(true)
     }
@@ -272,6 +301,27 @@ export default function CapabilitiesPage() {
                                         <Input value={formData.slug} onChange={(e) => setFormData({ ...formData, slug: e.target.value })} placeholder="service-slug" />
                                     </div>
                                 </div>
+                                <div className="grid grid-cols-2 gap-4">
+                                    <div>
+                                        <Label>Template Layout</Label>
+                                        <Select value={formData.template} onValueChange={(val) => setFormData({ ...formData, template: val })}>
+                                            <SelectTrigger>
+                                                <SelectValue placeholder="Select Layout" />
+                                            </SelectTrigger>
+                                            <SelectContent>
+                                                <SelectItem value="default">Default (Corporate Standard)</SelectItem>
+                                                <SelectItem value="centered">Centered Content</SelectItem>
+                                            </SelectContent>
+                                        </Select>
+                                        <p className="text-xs text-muted-foreground mt-1">
+                                            Centered moves the main heading and content to the center.
+                                        </p>
+                                    </div>
+                                    <div>
+                                        <Label>Icon URL</Label>
+                                        <Input value={formData.icon_url} onChange={(e) => setFormData({ ...formData, icon_url: e.target.value })} placeholder="/uploads/icon.svg" />
+                                    </div>
+                                </div>
                                 <div>
                                     <Label>Short Description (Card Summary)</Label>
                                     <Textarea value={formData.short_description} onChange={(e) => setFormData({ ...formData, short_description: e.target.value })} rows={2} />
@@ -281,11 +331,9 @@ export default function CapabilitiesPage() {
                                     <Textarea value={formData.description} onChange={(e) => setFormData({ ...formData, description: e.target.value })} rows={4} />
                                 </div>
                                 <div className="grid grid-cols-2 gap-4">
-                                    <MediaGallery label="Card Image (Featured)" images={formData.featured_image} onChange={imgs => setFormData({ ...formData, featured_image: imgs })} maxImages={1} />
-                                    <div>
-                                        <Label>Icon URL</Label>
-                                        <Input value={formData.icon_url} onChange={(e) => setFormData({ ...formData, icon_url: e.target.value })} placeholder="/uploads/icon.svg" />
-                                        <div className="mt-4">
+                                    <div className="grid grid-cols-2 gap-4">
+                                        <MediaGallery label="Card Image (Featured)" images={formData.featured_image} onChange={imgs => setFormData({ ...formData, featured_image: imgs })} maxImages={1} />
+                                        <div>
                                             <Label>Sort Order</Label>
                                             <Input type="number" value={formData.sort_order} onChange={(e) => setFormData({ ...formData, sort_order: parseInt(e.target.value) || 0 })} />
                                         </div>
@@ -325,17 +373,72 @@ export default function CapabilitiesPage() {
                             <TabsContent value="content" className="space-y-8">
                                 <div className="space-y-2">
                                     <h3 className="font-semibold text-lg">1. Intro Content (Below Hero)</h3>
+                                    <div className="mb-4">
+                                        <Label>Intro Title (Centered)</Label>
+                                        <Input
+                                            value={formData.intro_title || ''}
+                                            onChange={e => setFormData({ ...formData, intro_title: e.target.value })}
+                                            placeholder="e.g., Driving Digital Transformation"
+                                        />
+                                    </div>
                                     <RichEditor value={formData.intro_content || ''} onChange={val => setFormData({ ...formData, intro_content: val })} label="Introduction Text" />
                                 </div>
 
                                 <div className="space-y-2">
                                     <h3 className="font-semibold text-lg">2. Features Grid</h3>
+
+                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4 p-4 border rounded-md bg-slate-50">
+                                        <div>
+                                            <Label>Section Title</Label>
+                                            <Input
+                                                value={formData.features_title}
+                                                onChange={e => setFormData({ ...formData, features_title: e.target.value })}
+                                                placeholder="Core Capabilities"
+                                            />
+                                        </div>
+                                        <div>
+                                            <Label>Section Description (Optional)</Label>
+                                            <Input
+                                                value={formData.features_description}
+                                                onChange={e => setFormData({ ...formData, features_description: e.target.value })}
+                                                placeholder="Brief intro..."
+                                            />
+                                        </div>
+                                    </div>
+
                                     <FeaturesEditor value={formData.features || []} onChange={val => setFormData({ ...formData, features: val })} />
                                 </div>
 
                                 <div className="space-y-2">
                                     <h3 className="font-semibold text-lg">3. Details / Swap Sections</h3>
                                     <DetailsListEditor value={formData.details_sections || []} onChange={val => setFormData({ ...formData, details_sections: val })} />
+                                </div>
+
+                                <div className="space-y-2 pt-8 border-t">
+                                    <h3 className="font-semibold text-lg">4. Frequently Asked Questions</h3>
+                                    <FaqEditor value={formData.faq || []} onChange={val => setFormData({ ...formData, faq: val })} />
+                                </div>
+
+                                <div className="space-y-4 pt-8 border-t">
+                                    <h3 className="font-semibold text-lg">5. Call to Action (Bottom Section)</h3>
+                                    <div className="grid grid-cols-2 gap-4">
+                                        <div>
+                                            <Label>CTA Title</Label>
+                                            <Input value={formData.cta_title} onChange={e => setFormData({ ...formData, cta_title: e.target.value })} placeholder="Ready to build?" />
+                                        </div>
+                                        <div>
+                                            <Label>Button Text</Label>
+                                            <Input value={formData.cta_button_text} onChange={e => setFormData({ ...formData, cta_button_text: e.target.value })} placeholder="Work With Us" />
+                                        </div>
+                                    </div>
+                                    <div>
+                                        <Label>CTA Description</Label>
+                                        <Textarea value={formData.cta_description} onChange={e => setFormData({ ...formData, cta_description: e.target.value })} placeholder="Short text below title..." />
+                                    </div>
+                                    <div>
+                                        <Label>CTA Link</Label>
+                                        <Input value={formData.cta_link} onChange={e => setFormData({ ...formData, cta_link: e.target.value })} placeholder="/contact" />
+                                    </div>
                                 </div>
                             </TabsContent>
 

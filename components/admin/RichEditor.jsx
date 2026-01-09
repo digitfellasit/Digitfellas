@@ -7,6 +7,10 @@ import { Textarea } from '@/components/ui/textarea'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { renderMarkdown } from '@/lib/render-markdown'
 
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '@/components/ui/dialog'
+import { Label } from '@/components/ui/label'
+import { Input } from '@/components/ui/input'
+
 export function RichEditor({ value = '', onChange, label = 'Content', minHeight = '300px' }) {
     const textareaRef = useRef(null)
     const [preview, setPreview] = useState(false)
@@ -32,71 +36,78 @@ export function RichEditor({ value = '', onChange, label = 'Content', minHeight 
 
     const [uploading, setUploading] = useState(false)
 
+    const [imageDialogOpen, setImageDialogOpen] = useState(false)
+    const [pendingFile, setPendingFile] = useState(null)
+    const [altText, setAltText] = useState('')
+
+    const onFileSelect = (e) => {
+        const file = e.target.files?.[0]
+        if (!file) return
+        setPendingFile(file)
+        setAltText('')
+        setImageDialogOpen(true)
+    }
+
+    const confirmImageUpload = async () => {
+        if (!pendingFile) return
+
+        setUploading(true)
+        const formData = new FormData()
+        formData.append('files', pendingFile)
+
+        try {
+            const res = await fetch('/api/uploads', {
+                method: 'POST',
+                body: formData,
+            })
+
+            if (!res.ok) {
+                const err = await res.json().catch(() => ({}))
+                throw new Error(err.error || 'Upload failed')
+            }
+
+            const data = await res.json()
+            const imageUrl = data.uploaded?.[0]?.url
+
+            if (imageUrl) {
+                // Save Alt Text
+                await fetch('/api/uploads', {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ url: imageUrl, alt: altText })
+                }).catch(console.error)
+
+                if (pendingFile.type.startsWith('video/')) {
+                    insertMarkdown(`\n<video controls width="100%" class="rounded-lg my-4"><source src="${imageUrl}" type="${pendingFile.type}"></video>\n`)
+                } else {
+                    insertMarkdown(`![${altText}](${imageUrl})`)
+                }
+            }
+        } catch (error) {
+            console.error('Image upload error:', error)
+            alert(`Failed to upload image: ${error.message}`)
+        } finally {
+            setUploading(false)
+            setImageDialogOpen(false)
+            setPendingFile(null)
+        }
+    }
+
     const handleImageUpload = () => {
         const input = document.createElement('input')
         input.type = 'file'
         input.accept = 'image/*,video/*'
-        input.style.display = 'none' // Hidden
-        document.body.appendChild(input) // Append to body for safety
+        input.style.display = 'none'
+        document.body.appendChild(input)
 
-        input.onchange = async (e) => {
-            const file = e.target.files?.[0]
-            if (!file) {
-                document.body.removeChild(input)
-                return
-            }
-
-            // Prompt for Alt Text
-            const altText = window.prompt("Enter image description (Alt Text):", "")
-            if (altText === null) {
-                // User cancelled
-                document.body.removeChild(input)
-                return
-            }
-
-            setUploading(true)
-            const formData = new FormData()
-            formData.append('files', file)
-
-            try {
-                const res = await fetch('/api/uploads', {
-                    method: 'POST',
-                    body: formData,
-                })
-
-                if (!res.ok) {
-                    const err = await res.json().catch(() => ({}))
-                    throw new Error(err.error || 'Upload failed')
-                }
-
-                const data = await res.json()
-                const imageUrl = data.uploaded?.[0]?.url
-
-                if (imageUrl) {
-                    // Save Alt Text to DB as well
-                    await fetch('/api/uploads', {
-                        method: 'PUT',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({ url: imageUrl, alt: altText })
-                    }).catch(console.error)
-
-                    if (file.type.startsWith('video/')) {
-                        insertMarkdown(`\n<video controls width="100%" class="rounded-lg my-4"><source src="${imageUrl}" type="${file.type}"></video>\n`)
-                    } else {
-                        insertMarkdown(`![${altText}](${imageUrl})`)
-                    }
-                } else {
-                    throw new Error('No image URL returned')
-                }
-            } catch (error) {
-                console.error('Image upload error:', error)
-                alert(`Failed to upload image: ${error.message}`)
-            } finally {
-                setUploading(false)
-                document.body.removeChild(input)
-            }
-        }
+        input.onchange = onFileSelect
         input.click()
+
+        // Cleanup listener is tricky with hidden input created on fly, 
+        // but Since we don't reuse it, might be fine. 
+        // Better pattern: use a ref to a hidden input in generic return, but this function creation is legacy style.
+        // We'll leave the DOM element hanging for a microsecond or remove it after timeout.
+        setTimeout(() => document.body.removeChild(input), 1000)
     }
 
 
@@ -265,6 +276,31 @@ export function RichEditor({ value = '', onChange, label = 'Content', minHeight 
             <p className="text-xs text-muted-foreground flex justify-between">
                 <span>Supports Markdown & HTML</span>
             </p>
+
+            <Dialog open={imageDialogOpen} onOpenChange={setImageDialogOpen}>
+                <DialogContent>
+                    <DialogHeader>
+                        <DialogTitle>Insert Image</DialogTitle>
+                    </DialogHeader>
+                    <div className="space-y-4 py-4">
+                        <div className="space-y-2">
+                            <Label>Alternative Text (Required for SEO & Accessibility)</Label>
+                            <Input
+                                value={altText}
+                                onChange={(e) => setAltText(e.target.value)}
+                                placeholder="Describe this image..."
+                                autoFocus
+                            />
+                        </div>
+                    </div>
+                    <DialogFooter>
+                        <Button variant="outline" onClick={() => setImageDialogOpen(false)}>Cancel</Button>
+                        <Button onClick={confirmImageUpload} disabled={uploading || !altText.trim()}>
+                            {uploading ? 'Uploading...' : 'Insert Image'}
+                        </Button>
+                    </DialogFooter>
+                </DialogContent>
+            </Dialog>
         </div>
     )
 }

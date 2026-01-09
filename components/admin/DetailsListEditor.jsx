@@ -5,6 +5,7 @@ import { Plus, Trash2, ArrowUp, ArrowDown } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Switch } from '@/components/ui/switch'
 import { Label } from '@/components/ui/label'
+import { Input } from '@/components/ui/input'
 import { RichEditor } from '@/components/admin/RichEditor'
 import { MediaGallery } from '@/components/admin/MediaGallery'
 
@@ -70,6 +71,14 @@ export function DetailsListEditor({ value = [], onChange }) {
 
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                             <div className="space-y-4">
+                                <div className="space-y-2">
+                                    <Label>Section Header</Label>
+                                    <Input
+                                        value={item.header || ''}
+                                        onChange={e => handleChange(index, 'header', e.target.value)}
+                                        placeholder="e.g. Experience Shapes Our Approach"
+                                    />
+                                </div>
                                 <RichEditor
                                     label="Content"
                                     value={item.content || ''}

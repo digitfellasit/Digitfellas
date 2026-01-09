@@ -771,10 +771,10 @@ async function handleRoute(request, { params }) {
       let heroSectionId = null
 
       const result = await pool.query(`
-        INSERT INTO services (id, title, slug, description, short_description, content, excerpt, icon_url, category_id, meta_title, meta_description, is_featured, is_published, sort_order, featured_image_id, hero_data, intro_content, features, details_sections)
-        VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17, $18, $19)
+        INSERT INTO services (id, title, slug, description, short_description, content, excerpt, icon_url, category_id, meta_title, meta_description, is_featured, is_published, sort_order, featured_image_id, hero_data, intro_content, features, details_sections, faq, template, cta_title, cta_description, cta_button_text, cta_link, features_title, features_description, intro_title)
+        VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17, $18, $19, $20, $21, $22, $23, $24, $25, $26, $27, $28)
         RETURNING *
-      `, [id, body.title, body.slug, body.description, body.short_description, body.content, body.excerpt, body.icon_url, body.category_id, body.meta_title, body.meta_description, body.is_featured || false, body.is_published !== false, body.sort_order || 0, body.featured_image_id || null, JSON.stringify(body.hero_data || {}), body.intro_content || '', JSON.stringify(body.features || []), JSON.stringify(body.details_sections || [])])
+      `, [id, body.title, body.slug, body.description || '', body.short_description || '', body.content || '', body.excerpt || '', body.icon_url || '', body.category_id || null, body.meta_title || '', body.meta_description || '', body.is_featured || false, body.is_published !== false, body.sort_order || 0, body.featured_image_id || null, JSON.stringify(body.hero_data || {}), body.intro_content || '', JSON.stringify(body.features || []), JSON.stringify(body.details_sections || []), JSON.stringify(body.faq || []), body.template || 'default', body.cta_title || '', body.cta_description || '', body.cta_button_text || '', body.cta_link || '', body.features_title || '', body.features_description || '', body.intro_title || ''])
 
       return handleCORS(NextResponse.json(result.rows[0]))
     }
@@ -791,10 +791,12 @@ async function handleRoute(request, { params }) {
         UPDATE services 
         SET title = $1, slug = $2, description = $3, short_description = $4, content = $5, excerpt = $6, icon_url = $7, 
             category_id = $8, meta_title = $9, meta_description = $10, is_featured = $11, is_published = $12, sort_order = $13, featured_image_id = $15,
-            hero_data = $16, intro_content = $17, features = $18, details_sections = $19
+            hero_data = $16, intro_content = $17, features = $18, details_sections = $19, faq = $20, template = $21,
+            cta_title = $22, cta_description = $23, cta_button_text = $24, cta_link = $25,
+            features_title = $26, features_description = $27, intro_title = $28
         WHERE id = $14 AND deleted_at IS NULL
         RETURNING *
-      `, [body.title, body.slug, body.description, body.short_description, body.content, body.excerpt, body.icon_url, body.category_id, body.meta_title, body.meta_description, body.is_featured, body.is_published, body.sort_order, id, body.featured_image_id, JSON.stringify(body.hero_data || {}), body.intro_content || '', JSON.stringify(body.features || []), JSON.stringify(body.details_sections || [])])
+      `, [body.title, body.slug, body.description || '', body.short_description || '', body.content || '', body.excerpt || '', body.icon_url || '', body.category_id || null, body.meta_title || '', body.meta_description || '', body.is_featured || false, body.is_published !== false, body.sort_order || 0, id, body.featured_image_id || null, JSON.stringify(body.hero_data || {}), body.intro_content || '', JSON.stringify(body.features || []), JSON.stringify(body.details_sections || []), JSON.stringify(body.faq || []), body.template || 'default', body.cta_title || '', body.cta_description || '', body.cta_button_text || '', body.cta_link || '', body.features_title || '', body.features_description || '', body.intro_title || ''])
 
       if (!result.rows[0]) return handleCORS(NextResponse.json({ error: 'Capability not found' }, { status: 404 }))
       revalidatePath('/services')
