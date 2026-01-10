@@ -55,7 +55,7 @@ export default function CaseStudiesListingPage() {
                         variant="fade-up"
                     >
 
-                        <h1 className="text-2xl md:text-4xl font-bold text-center tracking-tight mb-6">
+                        <h1 className="text-3xl md:text-2xl font-bold text-foreground leading-tight mb-6 text-center tracking-tight">
                             Case Studies
                         </h1>
                         <p className="text-xl text-muted-foreground text-center mb-12">
@@ -81,7 +81,7 @@ export default function CaseStudiesListingPage() {
                                             fill
                                             className="object-cover transition-transform duration-700 group-hover:scale-110"
                                             sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-                                            unoptimized
+                                            priority={i < 6}
                                         />
                                         <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent opacity-60 group-hover:opacity-80 transition-opacity" />
                                         <div className="absolute bottom-6 left-6 right-6">

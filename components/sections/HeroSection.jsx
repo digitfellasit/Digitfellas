@@ -1,6 +1,6 @@
 'use client'
 
-import { motion, AnimatePresence } from 'framer-motion'
+import { motion, AnimatePresence, useScroll, useTransform } from 'framer-motion'
 import Image from 'next/image'
 import { useEffect, useState, useMemo } from 'react'
 import Link from 'next/link'
@@ -108,26 +108,35 @@ export function HeroSection({ hero }) {
     // We only use the first image now as per redesign
     const image1 = media[0]?.url || '/images/Hero_Background.webp'
 
+    // Parallax Logic
+    const { scrollY } = useScroll()
+    const backgroundY = useTransform(scrollY, [0, 1000], [0, 400]) // Moves background slower than foreground
+
     return (
         <section
             className="relative w-full overflow-hidden bg-background"
         >
             {/* Background Layer (Restored from previous style / copied from How We Work) */}
-            <div className="absolute inset-0 z-0">
+            <div className="absolute inset-0 z-0 overflow-hidden">
                 <div
                     className="absolute inset-0 z-10"
                     style={{
                         background: 'rgba(0, 0, 0, 0.4)'
                     }}
                 />
-                <Image
-                    src="/images/Hero_Background.webp"
-                    alt="Hero Background"
-                    fill
-                    className="object-cover object-right-top  opacity-80"
-                    sizes="120vw"
-                    priority
-                />
+                <motion.div
+                    className="absolute inset-0 w-full h-[120%]" // Made taller for parallax
+                    style={{ y: backgroundY }}
+                >
+                    <Image
+                        src="/images/Hero_Background.webp"
+                        alt="Hero Background"
+                        fill
+                        className="object-cover object-right-top opacity-80"
+                        sizes="100vw"
+                        priority
+                    />
+                </motion.div>
                 {/* Bottom Fade */}
                 <div className="absolute bottom-0 left-0 right-0 h-40 bg-gradient-to-t from-[#01010e] to-transparent z-20" />
             </div>

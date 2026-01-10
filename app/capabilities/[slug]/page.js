@@ -8,6 +8,7 @@ import { getPool } from '@/lib/db'
 import { notFound } from 'next/navigation'
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion'
 import { CapabilityHero } from '@/components/sections/CapabilityHero'
+import { ScrollReveal } from '@/components/ui/ScrollReveal'
 
 export const dynamic = 'force-dynamic'
 
@@ -116,10 +117,11 @@ export default async function ServiceDetailPage({ params }) {
             <div className="container max-w-[1240px] mx-auto pt-20 pb-12 px-6">
 
                 {/* 2. Intro Content (Large Typography) */}
+                {/* 2. Intro Content (Large Typography) */}
                 {(service.intro_content || service.intro_title) && (
-                    <div className={`mb-32 ${isCentered ? 'text-center mx-auto max-w-4xl' : 'max-w-4xl'}`}>
+                    <ScrollReveal className={`mb-32 ${isCentered ? 'text-center mx-auto max-w-4xl' : 'max-w-4xl'}`}>
                         {service.intro_title && (
-                            <h2 className="text-3xl md:text-5xl font-bold text-center mb-12 tracking-tight text-white font-heading">
+                            <h2 className="text-3xl md:text-2xl font-bold text-foreground leading-tight mb-6 tracking-tight font-heading">
                                 {service.intro_title}
                             </h2>
                         )}
@@ -129,29 +131,32 @@ export default async function ServiceDetailPage({ params }) {
                                 dangerouslySetInnerHTML={{ __html: renderMarkdown(service.intro_content) }}
                             />
                         )}
-                    </div>
+                    </ScrollReveal>
                 )}
 
                 {/* 3. Features Grid (The "Grid Box") */}
                 {featuresList.length > 0 && (
                     <div className="mb-36">
-                        <div className="flex items-center gap-4 mb-4">
-                            <div className="h-px flex-grow bg-white/10" />
-                            <h2 className="text-2xl md:text-3xl font-bold tracking-tight whitespace-nowrap uppercase tracking-widest text-primary/80">
-                                {service.features_title || 'Core Capabilities'}
-                            </h2>
+                        <ScrollReveal>
+                            <div className="flex items-center gap-4 mb-4">
+                                <div className="h-px flex-grow bg-white/10" />
+                                <h2 className="text-3xl md:text-2xl font-bold text-foreground leading-tight mb-6 tracking-tight whitespace-nowrap uppercase tracking-widest">
+                                    {service.features_title || 'Core Capabilities'}
+                                </h2>
 
-                            <div className="h-px flex-grow bg-white/10" />
-                        </div>
-                        {service.features_description && (
-                            <p className="text-center text-slate-400 max-w-2xl mx-auto mb-12">
-                                {service.features_description}
-                            </p>
-                        )}
+                                <div className="h-px flex-grow bg-white/10" />
+                            </div>
+                            {service.features_description && (
+                                <p className="text-center text-slate-400 max-w-2xl mx-auto mb-12">
+                                    {service.features_description}
+                                </p>
+                            )}
+                        </ScrollReveal>
                         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
                             {featuresList.map((feature, i) => (
-                                <div
+                                <ScrollReveal
                                     key={i}
+                                    delay={i * 100}
                                     className="h-full group p-8 rounded-3xl bg-[#0c053e] border border-white/10 hover:border-[#331676]/30 hover:bg-[#331676] transition-all duration-500 relative overflow-hidden text-left shadow-sm"
                                 >
                                     {/* Subtle Gradient Hover Effect */}
@@ -165,7 +170,7 @@ export default async function ServiceDetailPage({ params }) {
                                             {feature.description || feature.text || ''}
                                         </p>
                                     </div>
-                                </div>
+                                </ScrollReveal>
                             ))}
                         </div>
                     </div>
@@ -174,15 +179,15 @@ export default async function ServiceDetailPage({ params }) {
                 <div className="grid grid-cols-1 lg:grid-cols-12 gap-16 mb-0">
                     <div className="lg:col-span-8 space-y-32">
                         {service.content && (
-                            <div className="prose prose-lg prose-invert max-w-none prose-headings:text-white prose-p:text-slate-300 prose-strong:text-white prose-li:text-slate-300">
+                            <ScrollReveal className="prose prose-lg prose-invert max-w-none prose-headings:text-white prose-p:text-slate-300 prose-strong:text-white prose-li:text-slate-300">
                                 <div dangerouslySetInnerHTML={{ __html: renderMarkdown(service.content) }} />
-                            </div>
+                            </ScrollReveal>
                         )}
 
                         {sectionsList.map((section, idx) => {
                             const hasImage = !!section.image?.[0]?.url
                             return (
-                                <div
+                                <ScrollReveal
                                     key={section.id || idx}
                                     className={`flex flex-col gap-16 py-8 border-t border-white/5 ${section.swapLayout && hasImage ? 'md:flex-row-reverse' : 'md:flex-row'} ${!hasImage ? 'justify-center' : 'items-center'}`}
                                 >
@@ -190,7 +195,7 @@ export default async function ServiceDetailPage({ params }) {
 
                                         {/* Header */}
                                         {section.header && (
-                                            <h3 className={`text-3xl md:text-3xl font-bold text-white leading-tight mb-8 ${!hasImage ? 'text-center' : 'text-left'}`}>
+                                            <h3 className={`text-3xl md:text-2xl font-bold text-foreground leading-tight mb-6 ${!hasImage ? 'text-center' : 'text-left'}`}>
                                                 {section.header}
                                             </h3>
                                         )}
@@ -214,14 +219,14 @@ export default async function ServiceDetailPage({ params }) {
                                             </div>
                                         </div>
                                     )}
-                                </div>
+                                </ScrollReveal>
                             )
                         })}
 
                         {/* FAQ Section */}
                         {faqList.length > 0 && (
-                            <div className="py-16 border-t border-white/5">
-                                <h3 className="text-3xl font-bold mb-12 text-white">Frequently Asked Questions</h3>
+                            <ScrollReveal className="py-16 border-t border-white/5">
+                                <h3 className="text-3xl md:text-2xl font-bold text-foreground leading-tight mb-6">Frequently Asked Questions</h3>
                                 <Accordion type="single" collapsible className="w-full space-y-4">
                                     {faqList.map((item, i) => (
                                         <AccordionItem key={i} value={`item-${i}`} className="border-white/10 px-6 rounded-2xl bg-white/5 data-[state=open]:bg-white/10 transition-colors">
@@ -234,7 +239,7 @@ export default async function ServiceDetailPage({ params }) {
                                         </AccordionItem>
                                     ))}
                                 </Accordion>
-                            </div>
+                            </ScrollReveal>
                         )}
                     </div>
 

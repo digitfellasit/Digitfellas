@@ -35,7 +35,7 @@ export default async function CMSPage({ params }) {
             <div className="container py-24 md:py-32">
                 <div className="max-w-4xl mx-auto">
                     <header className="mb-12">
-                        <h1 className="text-4xl md:text-6xl font-bold tracking-tight mb-4">
+                        <h1 className="text-3xl md:text-2xl font-bold text-foreground leading-tight mb-6 tracking-tight">
                             {page.title}
                         </h1>
                         <div className="h-1 w-20 bg-primary rounded-full" />

@@ -1,6 +1,6 @@
 'use client'
 
-import { motion, AnimatePresence } from 'framer-motion'
+import { motion, AnimatePresence, useScroll, useTransform } from 'framer-motion'
 import Image from 'next/image'
 import { useEffect, useState, useMemo } from 'react'
 
@@ -73,34 +73,43 @@ export function CapabilityHero({ hero }) {
     const mobileBackgroundImage = hero?.mobileBackgroundImage || backgroundImage // Fallback to desktop if no mobile
     const featuredImage = hero?.featuredImage || hero?.media?.[0]?.url || '/images/Hero_Background.webp'
 
+    // Parallax Logic
+    const { scrollY } = useScroll()
+    const backgroundY = useTransform(scrollY, [0, 1000], [0, 400])
+
     return (
         <section
             className="relative w-full overflow-hidden bg-background"
         >
             {/* Background Layer (Same as Home Page) */}
-            <div className="absolute inset-0 z-0">
+            <div className="absolute inset-0 z-0 overflow-hidden">
                 <div
                     className="absolute inset-0 z-10"
                     style={{
                         background: 'rgba(0, 0, 0, 0.4)'
                     }}
                 />
-                <Image
-                    src={backgroundImage}
-                    alt="Hero Background Desktop"
-                    fill
-                    className="object-cover object-right-top opacity-80 hidden md:block"
-                    sizes="100vw"
-                    priority
-                />
-                <Image
-                    src={mobileBackgroundImage}
-                    alt="Hero Background Mobile"
-                    fill
-                    className="object-cover object-center opacity-80 block md:hidden"
-                    sizes="100vw"
-                    priority
-                />
+                <motion.div
+                    className="absolute inset-0 w-full h-[120%]"
+                    style={{ y: backgroundY }}
+                >
+                    <Image
+                        src={backgroundImage}
+                        alt="Hero Background Desktop"
+                        fill
+                        className="object-cover object-right-top opacity-80 hidden md:block"
+                        sizes="100vw"
+                        priority
+                    />
+                    <Image
+                        src={mobileBackgroundImage}
+                        alt="Hero Background Mobile"
+                        fill
+                        className="object-cover object-center opacity-80 block md:hidden"
+                        sizes="100vw"
+                        priority
+                    />
+                </motion.div>
                 {/* Bottom Fade */}
                 <div className="absolute bottom-0 left-0 right-0 h-40 bg-gradient-to-t from-[#01010e] to-transparent z-20" />
             </div>
