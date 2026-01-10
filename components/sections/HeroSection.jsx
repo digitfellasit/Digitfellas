@@ -1,6 +1,6 @@
 'use client'
 
-import { motion, AnimatePresence, useScroll, useTransform } from 'framer-motion'
+import { m, AnimatePresence, useScroll, useTransform } from 'framer-motion'
 import Image from 'next/image'
 import { useEffect, useState, useMemo } from 'react'
 import Link from 'next/link'
@@ -18,20 +18,20 @@ function SlideButton({ href, text }) {
 
     return (
         <Link href={href || '#'}>
-            <motion.div
+            <m.div
                 className="relative overflow-hidden border-2 border-[#83868a] text-[#1a73e8] hover:text-white dark:border-foreground dark:text-foreground dark:hover:text-background hover:bg-[#1a73e8] dark:hover:bg-foreground transition-colors rounded-full px-[35px] py-[15px] font-bold text-sm uppercase tracking-wide cursor-pointer h-[54px] flex items-center justify-center min-w-[300px]"
                 initial="initial"
                 whileHover="hover"
             >
                 <div className="relative overflow-hidden h-5 w-full flex flex-col items-center">
-                    <motion.span variants={buttonTextVariants} className="absolute inset-0 flex items-center justify-center whitespace-nowrap">
+                    <m.span variants={buttonTextVariants} className="absolute inset-0 flex items-center justify-center whitespace-nowrap">
                         {text || 'Learn More'}
-                    </motion.span>
-                    <motion.span variants={secondTextVariants} className="absolute inset-0 flex items-center justify-center translate-y-full whitespace-nowrap">
+                    </m.span>
+                    <m.span variants={secondTextVariants} className="absolute inset-0 flex items-center justify-center translate-y-full whitespace-nowrap">
                         {text || 'Learn More'}
-                    </motion.span>
+                    </m.span>
                 </div>
-            </motion.div>
+            </m.div>
         </Link>
     )
 }
@@ -53,7 +53,7 @@ function TypingText({ words = [] }) {
     return (
         <span className="inline-block min-w-[200px] text-left text-foreground relative">
             <AnimatePresence mode="wait">
-                <motion.span
+                <m.span
                     key={index}
                     initial={{ opacity: 0, y: 10, rotateX: -90 }}
                     animate={{ opacity: 1, y: 0, rotateX: 0 }}
@@ -62,7 +62,7 @@ function TypingText({ words = [] }) {
                     className="inline-block origin-bottom"
                 >
                     {words[index]}
-                </motion.span>
+                </m.span>
             </AnimatePresence>
         </span>
     )
@@ -124,7 +124,7 @@ export function HeroSection({ hero }) {
                         background: 'rgba(0, 0, 0, 0.4)'
                     }}
                 />
-                <motion.div
+                <m.div
                     className="absolute inset-0 w-full h-[120%]" // Made taller for parallax
                     style={{ y: backgroundY }}
                 >
@@ -135,8 +135,9 @@ export function HeroSection({ hero }) {
                         className="object-cover object-right-top opacity-80"
                         sizes="100vw"
                         priority
+                        quality={60}
                     />
-                </motion.div>
+                </m.div>
                 {/* Bottom Fade */}
                 <div className="absolute bottom-0 left-0 right-0 h-40 bg-gradient-to-t from-[#01010e] to-transparent z-20" />
             </div>
@@ -146,7 +147,7 @@ export function HeroSection({ hero }) {
 
                     {/* LEFT COLUMN (50%) */}
                     {/* Animation: FadeInLeft (1.3s) */}
-                    <motion.div
+                    <m.div
                         initial={{ opacity: 0, x: -100 }}
                         animate={{ opacity: 1, x: 0 }}
                         transition={{ duration: 1.3, ease: "easeOut" }}
@@ -180,11 +181,11 @@ export function HeroSection({ hero }) {
                             href={primary_cta_url || "/services"}
                             text={primary_cta_label || "Start a conversation"}
                         />
-                    </motion.div>
+                    </m.div>
 
                     {/* RIGHT COLUMN (50%) */}
                     {/* Animation: FadeInRight (1.3s) */}
-                    <motion.div
+                    <m.div
                         initial={{ opacity: 0, x: 100 }}
                         animate={{ opacity: 1, x: 0 }}
                         transition={{ duration: 1.3, ease: "easeOut" }}
@@ -193,13 +194,13 @@ export function HeroSection({ hero }) {
                         {/* Right Column Background - Removed per user request */}
 
                         <div className="relative w-full h-full flex items-center justify-center lg:justify-end">
-                            <motion.div
+                            <m.div
                                 className="relative w-full z-20 aspect-[16/16]"
                                 initial={{ y: 20, opacity: 0 }}
                                 animate={{ y: 0, opacity: 1 }}
                                 transition={{ duration: 0.6 }}
                             >
-                                <motion.div
+                                <m.div
                                     animate={{ y: [0, -10, 0] }}
                                     transition={{ duration: 6, repeat: Infinity, ease: "easeInOut" }}
                                     className="relative overflow-hidden rounded-[1rem] lg:rounded-[2rem] shadow-2xl bg-card w-full h-full"
@@ -211,11 +212,12 @@ export function HeroSection({ hero }) {
                                         className="object-cover"
                                         sizes="(max-width: 768px) 100vw, 55vw"
                                         priority
+                                        quality={60}
                                     />
-                                </motion.div>
-                            </motion.div>
+                                </m.div>
+                            </m.div>
                         </div>
-                    </motion.div>
+                    </m.div>
                 </div>
             </div>
         </section >

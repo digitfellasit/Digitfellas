@@ -6,15 +6,16 @@ import { useEffect, useState } from 'react'
 import { createPortal } from 'react-dom'
 import { usePathname } from 'next/navigation'
 import {
-    Menu, X, ChevronDown, ChevronRight, Code2, Sun, Moon,
+    Menu, X, ChevronDown, ChevronRight, Code, Sun, Moon,
     Newspaper, Briefcase, Layout, Smartphone, Globe,
     Server, Cpu, Layers, Settings, Terminal, Database,
-    Shield, BarChart3, Cloud, Search, Zap, MessageSquare
+    Shield, BarChart3, Cloud, Search, Zap, MessageSquare, ArrowRight, LineChart
 } from 'lucide-react'
-import { motion, AnimatePresence } from 'framer-motion'
+import { m, AnimatePresence } from 'framer-motion'
 import { useTheme } from 'next-themes'
 import { Button } from '@/components/ui/button'
 import { useNavigation, useSite, useServices, usePages } from '@/lib/api-hooks'
+
 
 function cx(...classes) {
     return classes.filter(Boolean).join(' ')
@@ -129,7 +130,7 @@ export function SiteHeader() {
     }
 
     return (
-        <motion.header
+        <m.header
             className={cx(
                 "fixed top-0 left-0 right-0 z-[20051] transition-all duration-300",
                 isSticky
@@ -177,7 +178,7 @@ export function SiteHeader() {
                             {item.type === 'dropdown' && (
                                 <AnimatePresence>
                                     {focusedItem === item.id && (
-                                        <motion.div
+                                        <m.div
                                             initial={{ opacity: 0, y: 10 }}
                                             animate={{ opacity: 1, y: 0 }}
                                             exit={{ opacity: 0, y: 10 }}
@@ -222,7 +223,7 @@ export function SiteHeader() {
                                                     </div>
                                                 </div>
                                             </div>
-                                        </motion.div>
+                                        </m.div>
                                     )}
                                 </AnimatePresence>
                             )}
@@ -235,20 +236,20 @@ export function SiteHeader() {
 
 
                     <Link href="/contact">
-                        <motion.div
+                        <m.div
                             className="relative overflow-hidden border-2 border-[#83868a] text-foreground hover:text-white hover:bg-[#331676] transition-colors rounded-full px-[35px] py-[12px] font-bold text-sm uppercase tracking-wide cursor-pointer h-[52px] flex items-center justify-center min-w-[260px]"
                             initial="initial"
                             whileHover="hover"
                         >
                             <div className="relative h-[20px] overflow-hidden flex flex-col items-center justify-center w-full">
-                                <motion.span variants={buttonTextVariants} className="absolute inset-0 flex items-center justify-center whitespace-nowrap h-full">
+                                <m.span variants={buttonTextVariants} className="absolute inset-0 flex items-center justify-center whitespace-nowrap h-full">
                                     Start a conversation
-                                </motion.span>
-                                <motion.span variants={secondTextVariants} className="absolute inset-0 flex items-center justify-center whitespace-nowrap h-full">
+                                </m.span>
+                                <m.span variants={secondTextVariants} className="absolute inset-0 flex items-center justify-center whitespace-nowrap h-full">
                                     Start a conversation
-                                </motion.span>
+                                </m.span>
                             </div>
-                        </motion.div>
+                        </m.div>
                     </Link>
                 </div>
 
@@ -265,7 +266,7 @@ export function SiteHeader() {
             {mounted && typeof document !== 'undefined' && createPortal(
                 <AnimatePresence>
                     {open && (
-                        <motion.div
+                        <m.div
                             initial={{ opacity: 0 }}
                             animate={{ opacity: 1 }}
                             exit={{ opacity: 0 }}
@@ -325,7 +326,7 @@ export function SiteHeader() {
                                         {/* Mobile Submenu - Indented & Collapsible */}
                                         <AnimatePresence>
                                             {item.type === 'dropdown' && focusedItem === item.id && (
-                                                <motion.div
+                                                <m.div
                                                     initial={{ height: 0, opacity: 0 }}
                                                     animate={{ height: 'auto', opacity: 1 }}
                                                     exit={{ height: 0, opacity: 0 }}
@@ -349,7 +350,7 @@ export function SiteHeader() {
                                                             </Link>
                                                         ))}
                                                     </div>
-                                                </motion.div>
+                                                </m.div>
                                             )}
                                         </AnimatePresence>
                                     </div>
@@ -363,12 +364,12 @@ export function SiteHeader() {
                                     </Button>
                                 </Link>
                             </div>
-                        </motion.div>
+                        </m.div>
                     )}
                 </AnimatePresence>,
                 document.body
             )}
-        </motion.header >
+        </m.header >
     )
 
 }

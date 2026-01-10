@@ -1,6 +1,6 @@
 'use client'
 
-import { motion } from 'framer-motion'
+import { m } from 'framer-motion'
 import { useClientLogos } from '@/lib/homepage-hooks'
 import { useRef } from 'react'
 import Image from 'next/image'
@@ -26,7 +26,7 @@ export function ClientLogosSection() {
                 <div className="absolute left-0 top-0 bottom-0 w-32 bg-gradient-to-r from-background to-transparent z-10" />
                 <div className="absolute right-0 top-0 bottom-0 w-32 bg-gradient-to-l from-background to-transparent z-10" />
 
-                <motion.div
+                <m.div
                     ref={scrollRef}
                     className="flex gap-12 items-center"
                     animate={{
@@ -55,7 +55,7 @@ export function ClientLogosSection() {
                             />
                         </div>
                     ))}
-                </motion.div>
+                </m.div>
             </div>
         </section>
     )

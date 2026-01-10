@@ -22,7 +22,7 @@ import {
     PanelLeftClose,
     PanelLeftOpen
 } from 'lucide-react'
-import { motion, AnimatePresence } from 'framer-motion'
+import { m, AnimatePresence } from 'framer-motion'
 import { useTheme } from 'next-themes'
 import { Button } from '@/components/ui/button'
 import { cn } from '@/lib/utils'
@@ -217,7 +217,7 @@ export function AdminLayout({ children }) {
             {/* Mobile Overlay */}
             <AnimatePresence>
                 {sidebarOpen && (
-                    <motion.div
+                    <m.div
                         initial={{ opacity: 0 }}
                         animate={{ opacity: 1 }}
                         exit={{ opacity: 0 }}

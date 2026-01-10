@@ -6,6 +6,7 @@ import { QueryProvider } from '@/components/query-provider'
 import { SiteHeader } from '@/components/SiteHeader'
 import { Toaster } from '@/components/ui/sonner'
 import { getPool } from '@/lib/db'
+import { FramerMotionProvider } from '@/components/FramerMotionProvider'
 
 async function getSiteData() {
   if (!process.env.DATABASE_URL) return {}
@@ -84,10 +85,12 @@ export default async function RootLayout({ children }) {
       <body className="min-h-screen bg-background font-sans text-foreground antialiased">
         <ThemeProvider attribute="class" forcedTheme="dark" disableTransitionOnChange={false}>
           <QueryProvider>
-            <SiteHeader />
-            {children}
-            <SiteFooter />
-            <Toaster />
+            <FramerMotionProvider>
+              <SiteHeader />
+              {children}
+              <SiteFooter />
+              <Toaster />
+            </FramerMotionProvider>
           </QueryProvider>
         </ThemeProvider>
       </body>

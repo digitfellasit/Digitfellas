@@ -1,7 +1,10 @@
 'use client'
 
-import { motion, AnimatePresence, useScroll, useTransform } from 'framer-motion'
+import { m, AnimatePresence, useScroll, useTransform } from 'framer-motion'
 import Image from 'next/image'
+import Link from 'next/link'
+import { ArrowRight } from 'lucide-react'
+import { ScrollReveal } from '@/components/ui/ScrollReveal'
 import { useEffect, useState, useMemo } from 'react'
 
 // Typing Text Component (Copied from HeroSection)
@@ -21,7 +24,7 @@ function TypingText({ words = [] }) {
     return (
         <span className="inline-block min-w-[200px] text-left text-foreground relative">
             <AnimatePresence mode="wait">
-                <motion.span
+                <m.span
                     key={index}
                     initial={{ opacity: 0, y: 10, rotateX: -90 }}
                     animate={{ opacity: 1, y: 0, rotateX: 0 }}
@@ -30,7 +33,7 @@ function TypingText({ words = [] }) {
                     className="inline-block origin-bottom"
                 >
                     {words[index]}
-                </motion.span>
+                </m.span>
             </AnimatePresence>
         </span>
     )
@@ -89,7 +92,7 @@ export function CapabilityHero({ hero }) {
                         background: 'rgba(0, 0, 0, 0.4)'
                     }}
                 />
-                <motion.div
+                <m.div
                     className="absolute inset-0 w-full h-[120%]"
                     style={{ y: backgroundY }}
                 >
@@ -100,6 +103,7 @@ export function CapabilityHero({ hero }) {
                         className="object-cover object-right-top opacity-80 hidden md:block"
                         sizes="100vw"
                         priority
+                        quality={60}
                     />
                     <Image
                         src={mobileBackgroundImage}
@@ -109,7 +113,7 @@ export function CapabilityHero({ hero }) {
                         sizes="100vw"
                         priority
                     />
-                </motion.div>
+                </m.div>
                 {/* Bottom Fade */}
                 <div className="absolute bottom-0 left-0 right-0 h-40 bg-gradient-to-t from-[#01010e] to-transparent z-20" />
             </div>
@@ -118,7 +122,7 @@ export function CapabilityHero({ hero }) {
                 <div className="flex flex-col lg:flex-row items-center pt-[140px] pb-[60px] md:pt-[110px] md:pb-[40px]">
 
                     {/* LEFT COLUMN (50%) */}
-                    <motion.div
+                    <m.div
                         initial={{ opacity: 0, x: -100 }}
                         animate={{ opacity: 1, x: 0 }}
                         transition={{ duration: 1.3, ease: "easeOut" }}
@@ -141,23 +145,23 @@ export function CapabilityHero({ hero }) {
                         {/* NO KICKER */}
                         {/* NO CTA BUTTON */}
 
-                    </motion.div>
+                    </m.div>
 
                     {/* RIGHT COLUMN (50%) */}
-                    <motion.div
+                    <m.div
                         initial={{ opacity: 0, x: 100 }}
                         animate={{ opacity: 1, x: 0 }}
                         transition={{ duration: 1.3, ease: "easeOut" }}
                         className="hidden lg:flex w-full lg:w-1/2 relative min-h-[400px] md:min-h-[500px] lg:h-[600px] items-center justify-center lg:pl-10 mt-8 lg:mt-0"
                     >
                         <div className="relative w-full h-full flex items-center justify-center lg:justify-end">
-                            <motion.div
+                            <m.div
                                 className="relative w-full z-20 aspect-[16/16]"
                                 initial={{ y: 20, opacity: 0 }}
                                 animate={{ y: 0, opacity: 1 }}
                                 transition={{ duration: 0.6 }}
                             >
-                                <motion.div
+                                <m.div
                                     animate={{ y: [0, -10, 0] }}
                                     transition={{ duration: 6, repeat: Infinity, ease: "easeInOut" }}
                                     className="relative overflow-hidden rounded-[1rem] lg:rounded-[2rem] shadow-2xl bg-card w-full h-full"
@@ -170,10 +174,10 @@ export function CapabilityHero({ hero }) {
                                         sizes="(max-width: 768px) 100vw, 55vw"
                                         priority
                                     />
-                                </motion.div>
-                            </motion.div>
+                                </m.div>
+                            </m.div>
                         </div>
-                    </motion.div>
+                    </m.div>
                 </div>
             </div>
         </section >
