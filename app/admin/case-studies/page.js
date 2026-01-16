@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useRef } from 'react'
 import { Plus, Save } from 'lucide-react'
 import { AdminLayout } from '@/components/admin/AdminLayout'
 import { DataTable, StatusBadge } from '@/components/admin/DataTable'
@@ -34,6 +34,8 @@ export default function CaseStudiesPage() {
         title: '', slug: '', excerpt: '', short_description: '', content: '', client_name: '', industry: '', project_url: '',
         meta_title: '', meta_description: '', is_featured: false, is_published: true, featured_image: []
     })
+    const autoSaveTimerRef = useRef(null)
+    const [isSaving, setIsSaving] = useState(false)
 
     const loadCaseStudies = async () => {
         setLoading(true)
@@ -49,13 +51,47 @@ export default function CaseStudiesPage() {
 
     useEffect(() => { loadCaseStudies() }, [])
 
-    const handleCreate = () => {
-        setEditing(null)
-        setFormData({
-            title: '', slug: '', excerpt: '', short_description: '', content: '', client_name: '', industry: '', project_url: '',
-            meta_title: '', meta_description: '', is_featured: false, is_published: true, featured_image: []
-        })
-        setDialogOpen(true)
+    // Debounced Auto-save
+    useEffect(() => {
+        if (!editing || !dialogOpen) return;
+
+        if (autoSaveTimerRef.current) clearTimeout(autoSaveTimerRef.current);
+
+        autoSaveTimerRef.current = setTimeout(async () => {
+            setIsSaving(true);
+            try {
+                const payload = {
+                    ...formData,
+                    featured_image_id: formData.featured_image?.[0]?.id || null
+                };
+                await apiCall(`/api/case-studies/${editing.id}`, { method: 'PUT', body: JSON.stringify(payload) });
+            } catch (error) {
+                console.error('Auto-save failed:', error);
+            } finally {
+                setIsSaving(false);
+            }
+        }, 2000);
+
+        return () => {
+            if (autoSaveTimerRef.current) clearTimeout(autoSaveTimerRef.current);
+        };
+    }, [formData, editing, dialogOpen]);
+
+    const handleCreate = async () => {
+        try {
+            const draftData = {
+                title: 'Untitled Case Study',
+                slug: `untitled-case-study-${Date.now()}`,
+                content: '',
+                is_published: false,
+                featured_image_id: null
+            }
+            const newDraft = await apiCall('/api/case-studies', { method: 'POST', body: JSON.stringify(draftData) })
+            await loadCaseStudies()
+            handleEdit(newDraft)
+        } catch (error) {
+            alert('Failed to create draft: ' + error.message)
+        }
     }
 
     const handleEdit = (caseStudy) => {
@@ -136,7 +172,14 @@ export default function CaseStudiesPage() {
                         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                             {/* Main Content */}
                             <div className="md:col-span-2 space-y-6">
-                                <div><Label>Title *</Label><Input value={formData.title} onChange={(e) => setFormData({ ...formData, title: e.target.value, slug: formData.slug || generateSlug(e.target.value) })} /></div>
+                                <div><Label>Title *</Label><Input value={formData.title} onChange={(e) => {
+                                    const newTitle = e.target.value;
+                                    setFormData(prev => ({
+                                        ...prev,
+                                        title: newTitle,
+                                        slug: (!prev.slug || prev.slug.startsWith('untitled-case-study-')) ? generateSlug(newTitle) : prev.slug
+                                    }));
+                                }} placeholder="Enter project title" /></div>
                                 <div><Label>Slug *</Label><Input value={formData.slug} onChange={(e) => setFormData({ ...formData, slug: e.target.value })} /></div>
                                 <div className="grid grid-cols-2 gap-4">
                                     <div><Label>Client Name</Label><Input value={formData.client_name} onChange={(e) => setFormData({ ...formData, client_name: e.target.value })} /></div>
@@ -181,9 +224,13 @@ export default function CaseStudiesPage() {
                             </div>
                         </div>
 
-                        <div className="flex justify-end gap-2 pt-4 border-t mt-6">
-                            <Button variant="outline" onClick={() => setDialogOpen(false)}>Cancel</Button>
-                            <Button onClick={handleSave} className="min-w-[120px]"><Save className="h-4 w-4 mr-2" />Save Case Study</Button>
+                        <div className="flex justify-end items-center gap-4 pt-6 mt-6 border-t">
+                            {isSaving && <span className="text-xs text-muted-foreground animate-pulse italic">Saving changes...</span>}
+                            {!isSaving && <span className="text-[10px] text-muted-foreground uppercase opacity-50">Saved to Drafts</span>}
+                            <div className="flex gap-2">
+                                <Button variant="outline" onClick={() => setDialogOpen(false)}>Cancel</Button>
+                                <Button onClick={handleSave} className="min-w-[120px]"><Save className="h-4 w-4 mr-2" />Save Case Study</Button>
+                            </div>
                         </div>
                     </div>
                 </DialogContent>

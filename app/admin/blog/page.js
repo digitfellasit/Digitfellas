@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useRef } from 'react'
 import { Plus, Save } from 'lucide-react'
 import { AdminLayout } from '@/components/admin/AdminLayout'
 import { DataTable, StatusBadge } from '@/components/admin/DataTable'
@@ -35,6 +35,8 @@ export default function BlogPage() {
         is_featured: false, is_published: false, reading_time_minutes: 5,
         featured_image: []
     })
+    const autoSaveTimerRef = useRef(null)
+    const [isSaving, setIsSaving] = useState(false)
 
     const loadPosts = async () => {
         setLoading(true)
@@ -50,10 +52,48 @@ export default function BlogPage() {
 
     useEffect(() => { loadPosts() }, [])
 
-    const handleCreate = () => {
-        setEditing(null)
-        setFormData({ title: '', slug: '', excerpt: '', short_description: '', content: '', meta_title: '', meta_description: '', is_featured: false, is_published: false, reading_time_minutes: 5, featured_image: [] })
-        setDialogOpen(true)
+    // Debounced Auto-save
+    useEffect(() => {
+        if (!editing || !dialogOpen) return;
+
+        if (autoSaveTimerRef.current) clearTimeout(autoSaveTimerRef.current);
+
+        autoSaveTimerRef.current = setTimeout(async () => {
+            setIsSaving(true);
+            try {
+                const payload = {
+                    ...formData,
+                    featured_image_id: formData.featured_image?.[0]?.id || null
+                };
+                await apiCall(`/api/blog/${editing.id}`, { method: 'PUT', body: JSON.stringify(payload) });
+            } catch (error) {
+                console.error('Auto-save failed:', error);
+            } finally {
+                setIsSaving(false);
+            }
+        }, 2000);
+
+        return () => {
+            if (autoSaveTimerRef.current) clearTimeout(autoSaveTimerRef.current);
+        };
+    }, [formData, editing, dialogOpen]);
+
+    const handleCreate = async () => {
+        try {
+            const draftData = {
+                title: 'Untitled Insight',
+                slug: `untitled-insight-${Date.now()}`,
+                content: '',
+                is_published: false,
+                reading_time_minutes: 5,
+                featured_image_id: null
+            }
+            const newDraft = await apiCall('/api/blog', { method: 'POST', body: JSON.stringify(draftData) })
+            await loadPosts()
+            handleEdit(newDraft)
+        } catch (error) {
+            alert('Failed to create draft: ' + error.message)
+        }
     }
 
     const handleEdit = (post) => {
@@ -132,7 +172,14 @@ export default function BlogPage() {
                             {/* Main Content */}
                             <div className="md:col-span-2 space-y-6">
                                 <Card className="p-4 space-y-4">
-                                    <div><Label>Title *</Label><Input value={formData.title} onChange={(e) => setFormData({ ...formData, title: e.target.value, slug: formData.slug || generateSlug(e.target.value) })} placeholder="Enter post title" /></div>
+                                    <div><Label>Title *</Label><Input value={formData.title} onChange={(e) => {
+                                        const newTitle = e.target.value;
+                                        setFormData(prev => ({
+                                            ...prev,
+                                            title: newTitle,
+                                            slug: (!prev.slug || prev.slug.startsWith('untitled-insight-')) ? generateSlug(newTitle) : prev.slug
+                                        }));
+                                    }} placeholder="Enter post title" /></div>
                                     <div><Label>Slug *</Label><Input value={formData.slug} onChange={(e) => setFormData({ ...formData, slug: e.target.value })} placeholder="post-slug" /></div>
                                 </Card>
 
@@ -187,9 +234,13 @@ export default function BlogPage() {
                             </div>
                         </div>
 
-                        <div className="flex justify-end gap-2 pt-6 mt-6 border-t">
-                            <Button variant="outline" onClick={() => setDialogOpen(false)}>Cancel</Button>
-                            <Button onClick={handleSave} className="min-w-[120px]"><Save className="h-4 w-4 mr-2" />Save Insight</Button>
+                        <div className="flex justify-end items-center gap-4 pt-6 mt-6 border-t">
+                            {isSaving && <span className="text-xs text-muted-foreground animate-pulse italic">Saving changes...</span>}
+                            {!isSaving && <span className="text-[10px] text-muted-foreground uppercase opacity-50">Saved to Drafts</span>}
+                            <div className="flex gap-2">
+                                <Button variant="outline" onClick={() => setDialogOpen(false)}>Cancel</Button>
+                                <Button onClick={handleSave} className="min-w-[120px]"><Save className="h-4 w-4 mr-2" />Save Insight</Button>
+                            </div>
                         </div>
                     </div>
                 </DialogContent>

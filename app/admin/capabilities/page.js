@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useRef } from 'react'
 import { Plus, Save, Loader2, Eye, ExternalLink } from 'lucide-react'
 import { AdminLayout } from '@/components/admin/AdminLayout'
 import { DataTable, StatusBadge } from '@/components/admin/DataTable'
@@ -78,6 +78,8 @@ export default function CapabilitiesPage() {
         features_title: '',
         features_description: ''
     })
+    const autoSaveTimerRef = useRef(null)
+    const [isSaving, setIsSaving] = useState(false)
     const [saving, setSaving] = useState(false)
 
     const loadCapabilities = async () => {
@@ -96,37 +98,51 @@ export default function CapabilitiesPage() {
         loadCapabilities()
     }, [])
 
-    const handleCreate = () => {
-        setEditingService(null)
-        setFormData({
-            title: '',
-            slug: '',
-            description: '',
-            short_description: '',
-            content: '',
-            intro_content: '',
-            intro_title: '',
-            features: [],
-            details_sections: [],
-            hero_data: { title: '', tagline: '', desktop: [], mobile: [] },
-            excerpt: '',
-            icon_url: '',
-            meta_title: '',
-            meta_description: '',
-            is_featured: false,
-            is_published: true,
-            sort_order: 0,
-            featured_image: [],
-            faq: [],
-            template: 'default',
-            cta_title: '',
-            cta_description: '',
-            cta_button_text: '',
-            cta_link: '',
-            features_title: '',
-            features_description: ''
-        })
-        setDialogOpen(true)
+    // Debounced Auto-save
+    useEffect(() => {
+        if (!editingService || !dialogOpen) return;
+
+        if (autoSaveTimerRef.current) clearTimeout(autoSaveTimerRef.current);
+
+        autoSaveTimerRef.current = setTimeout(async () => {
+            setIsSaving(true);
+            try {
+                const payload = {
+                    ...formData,
+                    featured_image_id: formData.featured_image?.[0]?.id || null,
+                    hero_data: formData.hero_data || { title: '', tagline: '', desktop: [], mobile: [] },
+                    features: formData.features || [],
+                    details_sections: formData.details_sections || [],
+                    faq: formData.faq || []
+                };
+                await apiCall(`/api/capabilities/${editingService.id}`, { method: 'PUT', body: JSON.stringify(payload) });
+            } catch (error) {
+                console.error('Auto-save failed:', error);
+            } finally {
+                setIsSaving(false);
+            }
+        }, 2000);
+
+        return () => {
+            if (autoSaveTimerRef.current) clearTimeout(autoSaveTimerRef.current);
+        };
+    }, [formData, editingService, dialogOpen]);
+
+    const handleCreate = async () => {
+        try {
+            const draftData = {
+                title: 'Untitled Capability',
+                slug: `untitled-capability-${Date.now()}`,
+                description: '',
+                is_published: false,
+                template: 'default'
+            }
+            const newDraft = await apiCall('/api/capabilities', { method: 'POST', body: JSON.stringify(draftData) })
+            await loadCapabilities()
+            handleEdit(newDraft)
+        } catch (error) {
+            alert('Failed to create draft: ' + error.message)
+        }
     }
 
     const handleEdit = (capability) => {
@@ -204,12 +220,12 @@ export default function CapabilitiesPage() {
     }
 
     const handleTitleChange = (title) => {
-        setFormData({
-            ...formData,
+        setFormData(prev => ({
+            ...prev,
             title,
-            slug: formData.slug || generateSlug(title),
-            meta_title: formData.meta_title || title,
-        })
+            slug: (!prev.slug || prev.slug.startsWith('untitled-capability-')) ? generateSlug(title) : prev.slug,
+            meta_title: (!prev.meta_title || prev.meta_title === prev.title) ? title : prev.meta_title,
+        }))
     }
 
     const handlePreview = () => {
@@ -461,12 +477,16 @@ export default function CapabilitiesPage() {
                         </div>
                     </Tabs>
 
-                    <div className="flex justify-end gap-2 pt-4 border-t">
-                        <Button variant="outline" onClick={() => setDialogOpen(false)} disabled={saving}>Cancel</Button>
-                        <Button onClick={handleSave} disabled={saving}>
-                            {saving ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : <Save className="w-4 h-4 mr-2" />}
-                            Save Capability
-                        </Button>
+                    <div className="flex justify-end items-center gap-4 pt-6 mt-2 border-t">
+                        {isSaving && <span className="text-xs text-muted-foreground animate-pulse italic">Saving changes...</span>}
+                        {!isSaving && <span className="text-[10px] text-muted-foreground uppercase opacity-50">Saved to Drafts</span>}
+                        <div className="flex gap-2">
+                            <Button variant="outline" onClick={() => setDialogOpen(false)} disabled={saving}>Cancel</Button>
+                            <Button onClick={handleSave} disabled={saving} className="min-w-[120px]">
+                                {saving ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : <Save className="w-4 h-4 mr-2" />}
+                                Save Capability
+                            </Button>
+                        </div>
                     </div>
                 </DialogContent>
             </Dialog>
