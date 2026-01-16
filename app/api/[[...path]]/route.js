@@ -755,7 +755,7 @@ async function handleRoute(request, { params }) {
           LEFT JOIN categories c ON s.category_id = c.id
           LEFT JOIN service_images si ON s.id = si.service_id
           LEFT JOIN media_items mi ON si.media_id = mi.id
-          WHERE s.slug = $1 AND s.deleted_at IS NULL
+          WHERE s.slug = $1 AND s.deleted_at IS NULL ${requireAdmin(request) ? '' : 'AND s.is_published = true'}
           GROUP BY s.id, c.name
         `, [slug])
         if (!result.rows[0]) return handleCORS(NextResponse.json({ error: 'Service not found' }, { status: 404 }))
@@ -888,7 +888,7 @@ async function handleRoute(request, { params }) {
           LEFT JOIN media_items mi ON pi.media_id = mi.id
           LEFT JOIN project_tags pt ON p.id = pt.project_id
           LEFT JOIN tags t ON pt.tag_id = t.id
-          WHERE p.slug = $1 AND p.deleted_at IS NULL
+          WHERE p.slug = $1 AND p.deleted_at IS NULL ${requireAdmin(request) ? '' : 'AND p.is_published = true'}
           GROUP BY p.id, c.name
         `, [slug])
         if (!result.rows[0]) return handleCORS(NextResponse.json({ error: 'Project not found' }, { status: 404 }))
@@ -1005,7 +1005,7 @@ async function handleRoute(request, { params }) {
           LEFT JOIN df_users u ON bp.author_id = u.id
           LEFT JOIN blog_post_tags bpt ON bp.id = bpt.blog_post_id
           LEFT JOIN tags t ON bpt.tag_id = t.id
-          WHERE bp.slug = $1 AND bp.deleted_at IS NULL
+          WHERE bp.slug = $1 AND bp.deleted_at IS NULL ${requireAdmin(request) ? '' : 'AND bp.is_published = true'}
           GROUP BY bp.id, c.name, u.email
         `, [slug])
         if (!result.rows[0]) return handleCORS(NextResponse.json({ error: 'Blog post not found' }, { status: 404 }))
@@ -1100,7 +1100,7 @@ async function handleRoute(request, { params }) {
                    FROM media_items fmi WHERE fmi.id = cs.featured_image_id
                  ) as featured_image
           FROM case_studies cs
-          WHERE cs.slug = $1 AND cs.deleted_at IS NULL
+          WHERE cs.slug = $1 AND cs.deleted_at IS NULL ${requireAdmin(request) ? '' : 'AND cs.is_published = true'}
         `, [slug])
         if (!result.rows[0]) return handleCORS(NextResponse.json({ error: 'Case study not found' }, { status: 404 }))
 

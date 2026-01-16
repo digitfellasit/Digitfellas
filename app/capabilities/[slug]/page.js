@@ -22,7 +22,7 @@ async function getServiceBySlug(slug) {
                (SELECT json_build_object('id', fmi.id, 'url', fmi.url, 'alt', fmi.alt_text) FROM media_items fmi WHERE fmi.id = s.featured_image_id) as featured_image
         FROM services s
         LEFT JOIN categories c ON s.category_id = c.id
-        WHERE s.slug = $1 AND s.deleted_at IS NULL
+        WHERE s.slug = $1 AND s.deleted_at IS NULL AND s.is_published = true
     `, [slug])
 
         const service = res.rows[0] || null
